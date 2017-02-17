@@ -314,7 +314,16 @@ void utl_init (void)
 #ifdef _WINNT
   if (hStdIn == INVALID_HANDLE_VALUE)
     hStdIn = GetStdHandle(STD_INPUT_HANDLE);
-  SetConsoleMode(hStdIn, ENABLE_MOUSE_INPUT);
+  if (hStdIn == INVALID_HANDLE_VALUE)
+  {
+	  fprintf(stderr, "Error: Could not get input handle.");
+	  exit(1);
+  }
+  if (!SetConsoleMode(hStdIn, ENABLE_MOUSE_INPUT))
+  {
+	  fprintf(stderr, "Error: Could not set console mode.");
+	  exit(1);
+  }
 #endif
 #ifdef _OS2
   {
@@ -671,7 +680,7 @@ BOOL utl_kb_hit (void)
   else
     return TRUE;
 #endif
-#if defined _MSC_VER || defined _QC
+#if defined _WATCOM || defined _MSC_VER || defined _QC
   if (!_bios_keybrd(_KEYBRD_READY))
     return FALSE;
   else
@@ -1346,6 +1355,9 @@ BOOL utl_get_files (CHAR *pcMask, CHAR *pcBuffer, UTL_DIRECTORY_ENTRY *pdeTable,
   qsort(pdeTable, uiTableUsed, sizeof(UTL_DIRECTORY_ENTRY), int_utl_file_compare);
 
   return TRUE;
+#endif
+#ifdef _MSDOS
+  return FALSE;
 #endif
 }
 

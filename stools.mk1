@@ -1,188 +1,241 @@
 !define BLANK ""
-d:\programm\bc31\stools\boxes.obj : d:\programm\bc31\stools\boxes.c .AUTODEP&
-END
- @d:
- cd d:\programm\bc31\stools
- *wcc386 boxes.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\incl&
-ude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\mouse.obj"&
+ : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\mouse.a&
+sm" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wasm mouse.asm -i="C:\WATCOM/h" -ml -d1 -w4 -e25 -zq
 
-d:\programm\bc31\stools\dlg.obj : d:\programm\bc31\stools\dlg.c .AUTODEPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 dlg.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\includ&
-e -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\video.obj"&
+ : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\video.a&
+sm" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wasm video.asm -i="C:\WATCOM/h" -ml -d1 -w4 -e25 -zq
 
-d:\programm\bc31\stools\dlgact.obj : d:\programm\bc31\stools\dlgact.c .AUTOD&
-EPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 dlgact.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\inc&
-lude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\boxes.obj"&
+ : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\boxes.c&
+" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc boxes.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -zq &
+-od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\dlgbord.obj : d:\programm\bc31\stools\dlgbord.c .AUT&
-ODEPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 dlgbord.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\in&
-clude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\buffers.ob&
+j" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\buffe&
+rs.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc buffers.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -z&
+q -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\dlgcolor.obj : d:\programm\bc31\stools\dlgcolor.c .A&
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlg.obj" :&
+ "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlg.c" .A&
 UTODEPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 dlgcolor.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\i&
-nclude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc dlg.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -zq -o&
+d -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\dlgedit.obj : d:\programm\bc31\stools\dlgedit.c .AUT&
-ODEPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 dlgedit.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\in&
-clude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgact.obj&
+" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgact&
+.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc dlgact.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -zq&
+ -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\dlghelp.obj : d:\programm\bc31\stools\dlghelp.c .AUT&
-ODEPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 dlghelp.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\in&
-clude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgbord.ob&
+j" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgbo&
+rd.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc dlgbord.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -z&
+q -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\dlglabel.obj : d:\programm\bc31\stools\dlglabel.c .A&
-UTODEPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 dlglabel.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\i&
-nclude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgcolor.o&
+bj" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgc&
+olor.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc dlgcolor.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -&
+zq -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\dlglist.obj : d:\programm\bc31\stools\dlglist.c .AUT&
-ODEPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 dlglist.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\in&
-clude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgedit.ob&
+j" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlged&
+it.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc dlgedit.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -z&
+q -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\dlgpush.obj : d:\programm\bc31\stools\dlgpush.c .AUT&
-ODEPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 dlgpush.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\in&
-clude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlghelp.ob&
+j" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlghe&
+lp.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc dlghelp.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -z&
+q -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\dlgradio.obj : d:\programm\bc31\stools\dlgradio.c .A&
-UTODEPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 dlgradio.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\i&
-nclude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlglabel.o&
+bj" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgl&
+abel.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc dlglabel.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -&
+zq -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\dlgscrol.obj : d:\programm\bc31\stools\dlgscrol.c .A&
-UTODEPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 dlgscrol.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\i&
-nclude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlglist.ob&
+j" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgli&
+st.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc dlglist.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -z&
+q -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\dlgtext.obj : d:\programm\bc31\stools\dlgtext.c .AUT&
-ODEPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 dlgtext.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\in&
-clude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgpush.ob&
+j" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgpu&
+sh.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc dlgpush.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -z&
+q -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\global.obj : d:\programm\bc31\stools\global.c .AUTOD&
-EPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 global.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\inc&
-lude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgradio.o&
+bj" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgr&
+adio.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc dlgradio.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -&
+zq -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\menu.obj : d:\programm\bc31\stools\menu.c .AUTODEPEN&
-D
- @d:
- cd d:\programm\bc31\stools
- *wcc386 menu.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\inclu&
-de -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgscrol.o&
+bj" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgs&
+crol.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc dlgscrol.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -&
+zq -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\mouseos2.obj : d:\programm\bc31\stools\mouseos2.c .A&
-UTODEPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 mouseos2.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\i&
-nclude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgtext.ob&
+j" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\dlgte&
+xt.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc dlgtext.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -z&
+q -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\queue.obj : d:\programm\bc31\stools\queue.c .AUTODEP&
-END
- @d:
- cd d:\programm\bc31\stools
- *wcc386 queue.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\incl&
-ude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\global.obj&
+" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\global&
+.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc global.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -zq&
+ -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\stack.obj : d:\programm\bc31\stools\stack.c .AUTODEP&
-END
- @d:
- cd d:\programm\bc31\stools
- *wcc386 stack.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\incl&
-ude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\memofile.o&
+bj" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\memo&
+file.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc memofile.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -&
+zq -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\status.obj : d:\programm\bc31\stools\status.c .AUTOD&
-EPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 status.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\inc&
-lude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\menu.obj" &
+: "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\menu.c" &
+.AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc menu.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -zq -&
+od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\sthelp.obj : d:\programm\bc31\stools\sthelp.c .AUTOD&
-EPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 sthelp.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\inc&
-lude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\queue.obj"&
+ : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\queue.c&
+" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc queue.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -zq &
+-od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\utility.obj : d:\programm\bc31\stools\utility.c .AUT&
-ODEPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 utility.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\in&
-clude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\stack.obj"&
+ : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\stack.c&
+" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc stack.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -zq &
+-od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\videoos2.obj : d:\programm\bc31\stools\videoos2.c .A&
-UTODEPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 videoos2.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\i&
-nclude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\status.obj&
+" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\status&
+.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc status.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -zq&
+ -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\window.obj : d:\programm\bc31\stools\window.c .AUTOD&
-EPEND
- @d:
- cd d:\programm\bc31\stools
- *wcc386 window.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\inc&
-lude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\sthelp.obj&
+" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\sthelp&
+.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc sthelp.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -zq&
+ -od -d2 -bt=dos -fo=.obj -ml
 
-d:\programm\bc31\stools\stools.lib : d:\programm\bc31\stools\boxes.obj d:\pr&
-ogramm\bc31\stools\dlg.obj d:\programm\bc31\stools\dlgact.obj d:\programm\bc&
-31\stools\dlgbord.obj d:\programm\bc31\stools\dlgcolor.obj d:\programm\bc31\&
-stools\dlgedit.obj d:\programm\bc31\stools\dlghelp.obj d:\programm\bc31\stoo&
-ls\dlglabel.obj d:\programm\bc31\stools\dlglist.obj d:\programm\bc31\stools\&
-dlgpush.obj d:\programm\bc31\stools\dlgradio.obj d:\programm\bc31\stools\dlg&
-scrol.obj d:\programm\bc31\stools\dlgtext.obj d:\programm\bc31\stools\global&
-.obj d:\programm\bc31\stools\menu.obj d:\programm\bc31\stools\mouseos2.obj d&
-:\programm\bc31\stools\queue.obj d:\programm\bc31\stools\stack.obj d:\progra&
-mm\bc31\stools\status.obj d:\programm\bc31\stools\sthelp.obj d:\programm\bc3&
-1\stools\utility.obj d:\programm\bc31\stools\videoos2.obj d:\programm\bc31\s&
-tools\window.obj .AUTODEPEND
- @d:
- cd d:\programm\bc31\stools
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\utility.ob&
+j" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\utili&
+ty.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc utility.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -z&
+q -od -d2 -bt=dos -fo=.obj -ml
+
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\window.obj&
+" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\window&
+.c" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
+ *wcc window.c -i="C:\WATCOM/h" -i="include" -w4 -e25 -d_MSDOS -d_WATCOM -zq&
+ -od -d2 -bt=dos -fo=.obj -ml
+
+"C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\stools.lib&
+" : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\mouse.&
+obj" "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\video&
+.obj" "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\boxe&
+s.obj" "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\buf&
+fers.obj" "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\&
+dlg.obj" "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\d&
+lgact.obj" "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools&
+\dlgbord.obj" "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\sto&
+ols\dlgcolor.obj" "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc&
+\stools\dlgedit.obj" "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borla&
+ndc\stools\dlghelp.obj" "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\bo&
+rlandc\stools\dlglabel.obj" "C:\Users\Mark Probst\Dropbox (Personal)\Work\do&
+s\borlandc\stools\dlglist.obj" "C:\Users\Mark Probst\Dropbox (Personal)\Work&
+\dos\borlandc\stools\dlgpush.obj" "C:\Users\Mark Probst\Dropbox (Personal)\W&
+ork\dos\borlandc\stools\dlgradio.obj" "C:\Users\Mark Probst\Dropbox (Persona&
+l)\Work\dos\borlandc\stools\dlgscrol.obj" "C:\Users\Mark Probst\Dropbox (Per&
+sonal)\Work\dos\borlandc\stools\dlgtext.obj" "C:\Users\Mark Probst\Dropbox (&
+Personal)\Work\dos\borlandc\stools\global.obj" "C:\Users\Mark Probst\Dropbox&
+ (Personal)\Work\dos\borlandc\stools\memofile.obj" "C:\Users\Mark Probst\Dro&
+pbox (Personal)\Work\dos\borlandc\stools\menu.obj" "C:\Users\Mark Probst\Dro&
+pbox (Personal)\Work\dos\borlandc\stools\queue.obj" "C:\Users\Mark Probst\Dr&
+opbox (Personal)\Work\dos\borlandc\stools\stack.obj" "C:\Users\Mark Probst\D&
+ropbox (Personal)\Work\dos\borlandc\stools\status.obj" "C:\Users\Mark Probst&
+\Dropbox (Personal)\Work\dos\borlandc\stools\sthelp.obj" "C:\Users\Mark Prob&
+st\Dropbox (Personal)\Work\dos\borlandc\stools\utility.obj" "C:\Users\Mark P&
+robst\Dropbox (Personal)\Work\dos\borlandc\stools\window.obj" .AUTODEPEND
+ @C:
+ cd C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools
  %create stools.lb1
-!ifneq BLANK "boxes.obj dlg.obj dlgact.obj dlgbord.obj dlgcolor.obj dlgedit.&
-obj dlghelp.obj dlglabel.obj dlglist.obj dlgpush.obj dlgradio.obj dlgscrol.o&
-bj dlgtext.obj global.obj menu.obj mouseos2.obj queue.obj stack.obj status.o&
-bj sthelp.obj utility.obj videoos2.obj window.obj"
- @for %i in (boxes.obj dlg.obj dlgact.obj dlgbord.obj dlgcolor.obj dlgedit.o&
-bj dlghelp.obj dlglabel.obj dlglist.obj dlgpush.obj dlgradio.obj dlgscrol.ob&
-j dlgtext.obj global.obj menu.obj mouseos2.obj queue.obj stack.obj status.ob&
-j sthelp.obj utility.obj videoos2.obj window.obj) do @%append stools.lb1 +'%&
-i'
+!ifneq BLANK "mouse.obj video.obj boxes.obj buffers.obj dlg.obj dlgact.obj d&
+lgbord.obj dlgcolor.obj dlgedit.obj dlghelp.obj dlglabel.obj dlglist.obj dlg&
+push.obj dlgradio.obj dlgscrol.obj dlgtext.obj global.obj memofile.obj menu.&
+obj queue.obj stack.obj status.obj sthelp.obj utility.obj window.obj"
+ @for %i in (mouse.obj video.obj boxes.obj buffers.obj dlg.obj dlgact.obj dl&
+gbord.obj dlgcolor.obj dlgedit.obj dlghelp.obj dlglabel.obj dlglist.obj dlgp&
+ush.obj dlgradio.obj dlgscrol.obj dlgtext.obj global.obj memofile.obj menu.o&
+bj queue.obj stack.obj status.obj sthelp.obj utility.obj window.obj) do @%ap&
+pend stools.lb1 +'%i'
 !endif
 !ifneq BLANK ""
  @for %i in () do @%append stools.lb1 +'%i'

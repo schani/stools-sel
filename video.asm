@@ -3,18 +3,18 @@ IFDEF MS
   %OUT Memory Model Small
 ELSE
   IFDEF MM
-	 .MODEL MEDIUM,C
-	 %OUT Memory Model Medium
+         .MODEL MEDIUM,C
+         %OUT Memory Model Medium
   ELSE
-	 IFDEF MC
-		.MODEL COMPACT,C
-		SAVE_DATA EQU 1
-		%OUT Memory Model Compact
-	 ELSE
-		.MODEL LARGE,C
-		SAVE_DATA EQU 1
-		%OUT Memory Model Large
-	 ENDIF
+         IFDEF MC
+                .MODEL COMPACT,C
+                SAVE_DATA EQU 1
+                %OUT Memory Model Compact
+         ELSE
+                .MODEL LARGE,C
+                SAVE_DATA EQU 1
+                ;%OUT Memory Model Large
+         ENDIF
   ENDIF
 ENDIF
 
@@ -109,7 +109,7 @@ WEITER:
 ;==========================================================================
 
   PUBLIC vio_set_vir_page
-  vio_set_vir_page PROC pvNewZeiger : FAR PTR BYTE
+  vio_set_vir_page PROC pvNewZeiger : PTR
 
   les  ax,BILDPTR
   mov  [word ptr SAVEPTR],ax
@@ -199,8 +199,8 @@ SET_TYPE_VIRTUAL:
 ;==========================================================================
 
   PUBLIC vio_get_cursor
-  vio_get_cursor PROC pucX : PTR BYTE, pucY : PTR BYTE, \
-                      pucStart : PTR BYTE, pucStop : PTR BYTE
+  vio_get_cursor PROC pucX : PTR, pucY : PTR, \
+                      pucStart : PTR, pucStop : PTR
 
   mov  ah,03h
   mov  bh,SEITE
@@ -477,7 +477,7 @@ Z_SCHREIBEN:
 ;==========================================================================
 
   PUBLIC vio_ss
-  vio_ss PROC USES si di, ucX : BYTE, ucY : BYTE, pucString : PTR BYTE
+  vio_ss PROC USES si di, ucX : BYTE, ucY : BYTE, pucString : PTR
 
   dec  ucX
   dec  ucY
@@ -508,7 +508,7 @@ ENDE_SS:
 ;==========================================================================
 
   PUBLIC vio_ss_a
-  vio_ss_a PROC USES si di, ucX : BYTE, ucY : BYTE, pucString : PTR BYTE, \
+  vio_ss_a PROC USES si di, ucX : BYTE, ucY : BYTE, pucString : PTR, \
                             ucAttri : BYTE
 
   dec  ucX
@@ -652,7 +652,7 @@ W_ZA_ENDE:
 
   PUBLIC vio_lw
   vio_lw PROC USES si di, ucX : BYTE, ucY : BYTE, ucBreite : BYTE, \
-                          ucHoehe : BYTE, puiBuffer : PTR WORD
+                          ucHoehe : BYTE, puiBuffer : PTR
 
   dec  ucX
   dec  ucY
@@ -705,7 +705,7 @@ W_LESEN_ENDE:
 
   PUBLIC vio_sw
   vio_sw PROC USES si di, ucX : BYTE, ucY : BYTE, ucBreite : BYTE, \
-                          ucHoehe : BYTE, puiBuffer : PTR WORD
+                          ucHoehe : BYTE, puiBuffer : PTR
 
   dec  ucX
   dec  ucY
@@ -757,7 +757,7 @@ W_SCHREIBEN_ENDE:
   
   PUBLIC vio_sw_ff
   vio_sw_ff PROC USES si di, ucX : BYTE, ucY : BYTE, ucBreite : BYTE, \
-                             ucHoehe : BYTE, puiBuffer : PTR WORD
+                             ucHoehe : BYTE, puiBuffer : PTR
 
   dec  ucX
   dec  ucY

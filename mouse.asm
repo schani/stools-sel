@@ -3,22 +3,25 @@ IFDEF MS
   %OUT Memory Model Small
 ELSE
   IFDEF MM
-	 .MODEL MEDIUM,C
-	 %OUT Memory Model Medium
+         .MODEL MEDIUM,C
+         %OUT Memory Model Medium
   ELSE
-	 IFDEF MC
-		.MODEL COMPACT,C
-		%OUT Memory Model Compact
-		SAVE_DATA EQU 1
-	 ELSE
-		.MODEL LARGE,C
-		%OUT Memory Model Large
-		SAVE_DATA EQU 1
-	 ENDIF
+         IFDEF MC
+                .MODEL COMPACT,C
+                %OUT Memory Model Compact
+                SAVE_DATA EQU 1
+         ELSE
+                .MODEL LARGE,C
+                ;ECHO Memory Model Large
+                SAVE_DATA EQU 1
+         ENDIF
   ENDIF
 ENDIF
 
-.CODE
+_TEXT SEGMENT BYTE PUBLIC 'CODE'
+      ASSUME  cs:_TEXT
+
+;.CODE
 
   COPYRI    db "Schani Tools (c) 1990-92 by Schani Electronics"
   AKTIV     db 00h
@@ -97,9 +100,8 @@ ENDE_IS:
 
 ;==========================================================================
 
-  PUBLIC msm_get_buttons
-  msm_get_buttons PROC USES di, puiButtons : PTR WORD, puiHor : PTR WORD, \
-                                puiVer : PTR WORD
+  PUBLIC msm_get_buttons_
+  msm_get_buttons_ PROC USES di, puiButtons : PTR, puiHor : PTR, puiVer : PTR
 
   mov  ax,0003h
   int  33h
@@ -131,7 +133,7 @@ ENDE_IS:
   ENDIF
   ret
 
-  msm_get_buttons ENDP
+  msm_get_buttons_ ENDP
 
 ;==========================================================================
 
@@ -156,9 +158,9 @@ ENDE_IS:
 ;==========================================================================
 
   PUBLIC msm_button_press
-  msm_button_press PROC USES di, uiKnopf : WORD, puiButtons : PTR WORD, \
-                                 puiKlicks : PTR WORD, puiHor : PTR WORD, \
-                                 puiVer : PTR WORD
+  msm_button_press PROC USES di, uiKnopf : WORD, puiButtons : PTR, \
+                                 puiKlicks : PTR, puiHor : PTR, \
+                                 puiVer : PTR
 
   mov  ax,0005h
   mov  bx,uiKnopf
@@ -200,9 +202,9 @@ ENDE_IS:
 ;==========================================================================
 
   PUBLIC msm_button_release
-  msm_button_release PROC USES di, uiKnopf : WORD, puiButtons : PTR WORD, \
-                                   puiKlicks : PTR WORD, puiHor : PTR WORD, \
-                                   puiVer : PTR WORD
+  msm_button_release PROC USES di, uiKnopf : WORD, puiButtons : PTR, \
+                                   puiKlicks : PTR, puiHor : PTR, \
+                                   puiVer : PTR
 
   mov  ax,0006h
   mov  bx,uiKnopf
@@ -312,7 +314,7 @@ ENDE_IS:
 ;==========================================================================
 
   PUBLIC msm_move
-  msm_move PROC USES di, puiHor : PTR WORD, puiVer : PTR WORD
+  msm_move PROC USES di, puiHor : PTR, puiVer : PTR
 
   mov  ax,000Bh
   int  33h
@@ -377,8 +379,8 @@ ENDE_IS:
 ;==========================================================================
 
   PUBLIC msm_get_mickeys
-  msm_get_mickeys PROC USES di, puiHorMickey : PTR WORD, \
-                                puiVerMickey : PTR WORD
+  msm_get_mickeys PROC USES di, puiHorMickey : PTR, \
+                                puiVerMickey : PTR
 
   mov  ax,001Bh
   int  33h
@@ -450,8 +452,8 @@ ENDE_IS:
 ;==========================================================================
 
   PUBLIC msm_get_version
-  msm_get_version PROC USES di, pucVersionMajor : PTR BYTE, \
-                                pucVersionMinor : PTR BYTE
+  msm_get_version PROC USES di, pucVersionMajor : PTR, \
+                                pucVersionMinor : PTR
 
   mov  ax,0024h
   int  33h
@@ -472,5 +474,7 @@ ENDE_IS:
   ret
 
   msm_get_version ENDP
+
+_TEXT   ENDS
 
 END

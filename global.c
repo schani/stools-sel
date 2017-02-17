@@ -446,7 +446,7 @@ void glb_init (void (*handle_event)(GLB_PROGRAM*, UTL_EVENT*))
 #endif
   utl_init();
 #ifdef _MSDOS
-  sbl_init();
+  //sbl_init();
 #endif
   win_init();
   mnu_init();

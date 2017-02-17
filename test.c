@@ -85,7 +85,7 @@ int main (void)
   glb_init(program_handler);
 
 /*
-  hlp_open_file("d:\\programm\\bc31\\stools\\stools.hlp");
+  hlp_open_file("stools.hlp");
   box_help(CTX_BOX_HELP);
   pcBuffer = utl_alloc(8192);
   strcpy(pcBuffer, "This is a demo text!");
@@ -109,7 +109,7 @@ int main (void)
   win_add_element(winWindow, dlg_init_label(33, 3, "#List-Box", pelement, 110));
   win_add_element(winWindow, pelement);
 
-  win_add_element(winWindow, dlg_init_border(1, 1, 38, 8, 1000));
+  //win_add_element(winWindow, dlg_init_border(1, 1, 38, 8, 1000));
   win_sizeable(winWindow, TRUE);
   win_cursor(winWindow, TRUE);
   win_show(winWindow);

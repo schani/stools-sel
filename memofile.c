@@ -144,3 +144,4 @@ UINT mem_write (FILE *pfileMemo, CHAR *pcText, UINT uiLength)
   }
   return(uiReturnVar);
 }
+

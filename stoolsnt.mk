@@ -1,8 +1,8 @@
 project : "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\&
-stools.lib" "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stool&
-s\test.exe" .SYMBOLIC
+stoolsnt.lib" "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\sto&
+ols\testnt.exe" .SYMBOLIC
 
 !include "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\s&
-tools.mk1"
+toolsnt.mk1"
 !include "C:\Users\Mark Probst\Dropbox (Personal)\Work\dos\borlandc\stools\t&
-est.mk1"
+estnt.mk1"
