@@ -1,0 +1,24 @@
+!define BLANK ""
+d:\programm\bc31\stools\test.obj : d:\programm\bc31\stools\test.c .AUTODEPEN&
+D
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 test.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\includ&
+e -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\testnt.exe : d:\programm\bc31\stools\test.obj d:\pro&
+gramm\bc31\stools\stoolsnt.lib .AUTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ @%write testnt.lk1 NAME testnt
+ @%append testnt.lk1 FIL test.obj
+ @%append testnt.lk1 LIBR stoolsnt.lib
+!ifneq BLANK ""
+ *wlib -q -n -b testnt.imp 
+ @%append testnt.lk1 LIBR testnt.imp
+!endif
+ *wlink SYS nt op m d all op st=8192 op maxe=25 op q op symf @testnt.lk1
+!ifneq BLANK ""
+ wrc -q -ad -s0  testnt.exe
+!endif
+

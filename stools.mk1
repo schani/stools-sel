@@ -1,0 +1,191 @@
+!define BLANK ""
+d:\programm\bc31\stools\boxes.obj : d:\programm\bc31\stools\boxes.c .AUTODEP&
+END
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 boxes.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\incl&
+ude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\dlg.obj : d:\programm\bc31\stools\dlg.c .AUTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlg.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\includ&
+e -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\dlgact.obj : d:\programm\bc31\stools\dlgact.c .AUTOD&
+EPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgact.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\inc&
+lude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\dlgbord.obj : d:\programm\bc31\stools\dlgbord.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgbord.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\in&
+clude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\dlgcolor.obj : d:\programm\bc31\stools\dlgcolor.c .A&
+UTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgcolor.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\i&
+nclude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\dlgedit.obj : d:\programm\bc31\stools\dlgedit.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgedit.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\in&
+clude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\dlghelp.obj : d:\programm\bc31\stools\dlghelp.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlghelp.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\in&
+clude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\dlglabel.obj : d:\programm\bc31\stools\dlglabel.c .A&
+UTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlglabel.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\i&
+nclude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\dlglist.obj : d:\programm\bc31\stools\dlglist.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlglist.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\in&
+clude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\dlgpush.obj : d:\programm\bc31\stools\dlgpush.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgpush.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\in&
+clude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\dlgradio.obj : d:\programm\bc31\stools\dlgradio.c .A&
+UTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgradio.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\i&
+nclude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\dlgscrol.obj : d:\programm\bc31\stools\dlgscrol.c .A&
+UTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgscrol.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\i&
+nclude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\dlgtext.obj : d:\programm\bc31\stools\dlgtext.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgtext.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\in&
+clude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\global.obj : d:\programm\bc31\stools\global.c .AUTOD&
+EPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 global.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\inc&
+lude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\menu.obj : d:\programm\bc31\stools\menu.c .AUTODEPEN&
+D
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 menu.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\inclu&
+de -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\mouseos2.obj : d:\programm\bc31\stools\mouseos2.c .A&
+UTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 mouseos2.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\i&
+nclude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\queue.obj : d:\programm\bc31\stools\queue.c .AUTODEP&
+END
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 queue.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\incl&
+ude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\stack.obj : d:\programm\bc31\stools\stack.c .AUTODEP&
+END
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 stack.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\incl&
+ude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\status.obj : d:\programm\bc31\stools\status.c .AUTOD&
+EPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 status.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\inc&
+lude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\sthelp.obj : d:\programm\bc31\stools\sthelp.c .AUTOD&
+EPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 sthelp.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\inc&
+lude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\utility.obj : d:\programm\bc31\stools\utility.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 utility.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\in&
+clude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\videoos2.obj : d:\programm\bc31\stools\videoos2.c .A&
+UTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 videoos2.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\i&
+nclude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\window.obj : d:\programm\bc31\stools\window.c .AUTOD&
+EPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 window.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\inc&
+lude -w4 -e25 -d_OS2 -d_WATCOM -zq -od -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\stools.lib : d:\programm\bc31\stools\boxes.obj d:\pr&
+ogramm\bc31\stools\dlg.obj d:\programm\bc31\stools\dlgact.obj d:\programm\bc&
+31\stools\dlgbord.obj d:\programm\bc31\stools\dlgcolor.obj d:\programm\bc31\&
+stools\dlgedit.obj d:\programm\bc31\stools\dlghelp.obj d:\programm\bc31\stoo&
+ls\dlglabel.obj d:\programm\bc31\stools\dlglist.obj d:\programm\bc31\stools\&
+dlgpush.obj d:\programm\bc31\stools\dlgradio.obj d:\programm\bc31\stools\dlg&
+scrol.obj d:\programm\bc31\stools\dlgtext.obj d:\programm\bc31\stools\global&
+.obj d:\programm\bc31\stools\menu.obj d:\programm\bc31\stools\mouseos2.obj d&
+:\programm\bc31\stools\queue.obj d:\programm\bc31\stools\stack.obj d:\progra&
+mm\bc31\stools\status.obj d:\programm\bc31\stools\sthelp.obj d:\programm\bc3&
+1\stools\utility.obj d:\programm\bc31\stools\videoos2.obj d:\programm\bc31\s&
+tools\window.obj .AUTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ %create stools.lb1
+!ifneq BLANK "boxes.obj dlg.obj dlgact.obj dlgbord.obj dlgcolor.obj dlgedit.&
+obj dlghelp.obj dlglabel.obj dlglist.obj dlgpush.obj dlgradio.obj dlgscrol.o&
+bj dlgtext.obj global.obj menu.obj mouseos2.obj queue.obj stack.obj status.o&
+bj sthelp.obj utility.obj videoos2.obj window.obj"
+ @for %i in (boxes.obj dlg.obj dlgact.obj dlgbord.obj dlgcolor.obj dlgedit.o&
+bj dlghelp.obj dlglabel.obj dlglist.obj dlgpush.obj dlgradio.obj dlgscrol.ob&
+j dlgtext.obj global.obj menu.obj mouseos2.obj queue.obj stack.obj status.ob&
+j sthelp.obj utility.obj videoos2.obj window.obj) do @%append stools.lb1 +'%&
+i'
+!endif
+!ifneq BLANK ""
+ @for %i in () do @%append stools.lb1 +'%i'
+!endif
+ *wlib -b -c -n -q -p=512 stools.lib @stools.lb1
+

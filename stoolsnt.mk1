@@ -1,0 +1,181 @@
+!define BLANK ""
+d:\programm\bc31\stools\boxes.obj : d:\programm\bc31\stools\boxes.c .AUTODEP&
+END
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 boxes.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\inclu&
+de -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\dlg.obj : d:\programm\bc31\stools\dlg.c .AUTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlg.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\include&
+ -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\dlgact.obj : d:\programm\bc31\stools\dlgact.c .AUTOD&
+EPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgact.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\incl&
+ude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\dlgbord.obj : d:\programm\bc31\stools\dlgbord.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgbord.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\inc&
+lude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\dlgcolor.obj : d:\programm\bc31\stools\dlgcolor.c .A&
+UTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgcolor.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\in&
+clude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\dlgedit.obj : d:\programm\bc31\stools\dlgedit.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgedit.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\inc&
+lude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\dlghelp.obj : d:\programm\bc31\stools\dlghelp.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlghelp.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\inc&
+lude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\dlglabel.obj : d:\programm\bc31\stools\dlglabel.c .A&
+UTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlglabel.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\in&
+clude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\dlglist.obj : d:\programm\bc31\stools\dlglist.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlglist.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\inc&
+lude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\dlgpush.obj : d:\programm\bc31\stools\dlgpush.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgpush.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\inc&
+lude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\dlgradio.obj : d:\programm\bc31\stools\dlgradio.c .A&
+UTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgradio.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\in&
+clude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\dlgscrol.obj : d:\programm\bc31\stools\dlgscrol.c .A&
+UTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgscrol.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\in&
+clude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\dlgtext.obj : d:\programm\bc31\stools\dlgtext.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 dlgtext.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\inc&
+lude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\global.obj : d:\programm\bc31\stools\global.c .AUTOD&
+EPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 global.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\incl&
+ude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\menu.obj : d:\programm\bc31\stools\menu.c .AUTODEPEN&
+D
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 menu.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\includ&
+e -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\mousent.obj : d:\programm\bc31\stools\mousent.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 mousent.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\inc&
+lude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\queue.obj : d:\programm\bc31\stools\queue.c .AUTODEP&
+END
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 queue.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\inclu&
+de -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\stack.obj : d:\programm\bc31\stools\stack.c .AUTODEP&
+END
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 stack.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\inclu&
+de -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\status.obj : d:\programm\bc31\stools\status.c .AUTOD&
+EPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 status.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\incl&
+ude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\sthelp.obj : d:\programm\bc31\stools\sthelp.c .AUTOD&
+EPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 sthelp.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\incl&
+ude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\utility.obj : d:\programm\bc31\stools\utility.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 utility.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\inc&
+lude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\videont.obj : d:\programm\bc31\stools\videont.c .AUT&
+ODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 videont.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\inc&
+lude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\window.obj : d:\programm\bc31\stools\window.c .AUTOD&
+EPEND
+ @d:
+ cd d:\programm\bc31\stools
+ *wcc386 window.c -i=E:\WATCOM\h;E:\WATCOM\h\nt;d:\programm\bc31\stools\incl&
+ude -w4 -e25 -d_WINNT -d_WATCOM -zq -od -d2 -mf -5r -bt=nt
+
+d:\programm\bc31\stools\stoolsnt.lib : d:\programm\bc31\stools d:\programm\b&
+c31\stools d:\programm\bc31\stools\boxes.obj d:\programm\bc31\stools\dlg.obj&
+ d:\programm\bc31\stools\dlgact.obj d:\programm\bc31\stools\dlgbord.obj d:\p&
+rogramm\bc31\stools\dlgcolor.obj d:\programm\bc31\stools\dlgedit.obj d:\prog&
+ramm\bc31\stools\dlghelp.obj d:\programm\bc31\stools\dlglabel.obj d:\program&
+m\bc31\stools\dlglist.obj d:\programm\bc31\stools\dlgpush.obj d:\programm\bc&
+31\stools\dlgradio.obj d:\programm\bc31\stools\dlgscrol.obj d:\programm\bc31&
+\stools\dlgtext.obj d:\programm\bc31\stools\global.obj d:\programm\bc31\stoo&
+ls\menu.obj d:\programm\bc31\stools\mousent.obj d:\programm\bc31\stools\queu&
+e.obj d:\programm\bc31\stools\stack.obj d:\programm\bc31\stools\status.obj d&
+:\programm\bc31\stools\sthelp.obj d:\programm\bc31\stools\utility.obj d:\pro&
+gramm\bc31\stools\videont.obj d:\programm\bc31\stools\window.obj .AUTODEPEND
+ @d:
+ cd d:\programm\bc31\stools
+ @%write stoolsnt.lb1 boxes.obj+dlg.obj+dlgact.obj+dlgbord.obj+dlgcolor.obj+&
+dlgedit.obj+dlghelp.obj+dlglabel.obj+dlglist.obj+dlgpush.obj+dlgradio.obj+dl&
+gscrol.obj+dlgtext.obj+global.obj+menu.obj+mousent.obj+queue.obj+stack.obj+s&
+tatus.obj+sthelp.obj+utility.obj+videont.obj+window.obj
+ *wlib -b -c -n -q -p=512 stoolsnt.lib @stoolsnt.lb1
+

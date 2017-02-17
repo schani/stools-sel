@@ -1,0 +1,3 @@
+NAME sthc
+FIL sthc.obj
+LIBR ..\stools.lib

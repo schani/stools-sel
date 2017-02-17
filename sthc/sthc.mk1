@@ -1,0 +1,24 @@
+!define BLANK ""
+d:\programm\bc31\stools\sthc\sthc.obj : d:\programm\bc31\stools\sthc\sthc.c &
+.AUTODEPEND
+ @d:
+ cd d:\programm\bc31\stools\sthc
+ *wcc386 sthc.c -i=e:\WATCOM\h;e:\WATCOM\h\os2;d:\programm\bc31\stools\inclu&
+de -w4 -e25 -d_OS2 -d_WATCOM -zq -otexan -d2 -mf -5r -bt=os2
+
+d:\programm\bc31\stools\sthc\sthc.exe : d:\programm\bc31\stools\sthc\sthc.ob&
+j d:\programm\bc31\stools\stools.lib .AUTODEPEND
+ @d:
+ cd d:\programm\bc31\stools\sthc
+ @%write sthc.lk1 NAME sthc
+ @%append sthc.lk1 FIL sthc.obj
+ @%append sthc.lk1 LIBR ..\stools.lib
+!ifneq BLANK ""
+ *wlib -q -n -b sthc.imp 
+ @%append sthc.lk1 LIBR sthc.imp
+!endif
+ *wlink SYS os2v2 op m d all op st=16384 op maxe=25 op q op symf @sthc.lk1
+!ifneq BLANK ""
+ rc -i $[: -i e:\WATCOM\h -i e:\WATCOM\h\os2  sthc.exe
+!endif
+

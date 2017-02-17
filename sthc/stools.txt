@@ -1,0 +1,687 @@
+.context box_help
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iHilfe ber Hilfe\i  Û\b
+  \bßßßßßßßßßßßßßßßßßßßßßß\b
+
+  ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Hilfe ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ Blablablabla...                       ³
+  ³ Das ist der Hilfetext!                ³
+  ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³
+  ³ < Abbruch > < Zurck >      < Hilfe > ³
+  ÀÄÄÄÄÄ³ÄÄÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÙ
+        ³            ³               ³
+   Mit diesem \a\iKnopf\i\vdlg_action_button\v  ³               ÀÄÄ Diesen \a\iKnopf\i\vdlg_action_button\v
+   k”nnen Sie ins    ÀÄÄ Dieser \a\iKnopf\i\vdlg_action_button\v    haben Sie
+   Programm              bringt Sie      (wahrscheinlich)
+   zurckkehren          zum letzen      gerade gedrckt!
+                         Thema
+
+ In der Hilfe-Dialogbox k”nnen Sie Hilfetexte zu allen
+ im Programm verfgbaren Funktionen ansehen. Sie
+ erreichen diese Dialogbox am einfachsten, indem Sie
+ die Taste F1 drcken. Egal, in welchem Programmteil
+ Sie sich gerade befinden, wird ihnen sofort Hilfe
+ geleistet. Wollen Sie im Programm fortfahren, drcken
+ Sie den "Abbruch"-\a\iKnopf\i\vdlg_action_button\v. Die Dialogbox schlieát sich
+ und Sie befinden sich wieder an der Position, an der
+ Sie Hilfe angefordert haben. Bet„tigen Sie den
+ "Zurck"-\a\iKnopf\i\vdlg_action_button\v, wechselt die Dialogbox zu dem Hilfe-
+ thema, das Sie zuletzt gelesen haben. Der
+ "Hilfe"-\a\iKnopf\i\vdlg_action_button\v zeigt diesen Hilfetext an.
+
+.context box_mouse
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iMauseinstellungen\i  Û\b
+  \bßßßßßßßßßßßßßßßßßßßßßßß\b
+
+  ÚÄÄÄÄÄÄ Mauseinstellungen ÄÄÄÄÄÄ¿
+  ³           langsam     schnell ³
+  ³ Mausgeschw. \d027       Û    \d026ÄÄÄÄÄÄÄÄÄ Geschwindigkeit
+  ³ Doppelklick \d027   Û        \d026ÄÄÄÄÄ¿    des Mauscursors
+  ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³ÀÄÄ Abstand zwischen     
+  ³ < OK > < Abbruch >  < Hilfe > ³    zwei Klicks, um
+  ÀÄÄÄ³ÄÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÙ    als Doppelklick
+      ³           ³          ³         zu gelten
+   Dieser \a\iKnopf\i\vdlg_action_button\v   ³          ÀÄÄ Diesen \a\iKnopf\i\vdlg_action_button\v haben Sie 
+   bernimmt die  ³              (wahrscheinlich) gerade
+   nderungen     ³              gedrckt!
+                  ÀÄÄ Mit diesem \a\iKnopf\i\vdlg_action_button\v kehren Sie 
+                      in das Programm zurck, ohne
+                      die nderungen zu bernehmen
+
+ In dieser Dialogbox k”nnen Sie die Geschwindigkeit des
+ Mauscursors und den maximalen Abstand zwischen zwei
+ Klicks, die einen Doppelklick ergeben, einstellen.
+ Befindet sich dieser \a\iScroller\i\vdlg_scroll_bar\v ganz links, so ist
+ dieser Abstand sehr groá. Das heiát einerseits, daá Sie
+ sich nicht sehr beeilen mssen, um einen Doppelklick
+ zustande zu bringen, daá es allerdings auch ”fters
+ vorkommen wird, daá Sie einen Doppelklick ausl”sen,
+ obwohl Sie nur zwei mal nacheinander anklicken wollten.
+ Befindet sich der \a\iScroller\i\vdlg_scroll_bar\v andererseits ganz rechts, so
+ wird es Ihnen wohl kaum m”glich sein, einen Doppelklick
+ auszul”sen, weil Sie dazu ganz einfach nicht schnell
+ genug sind.
+ Drcken Sie den "OK"-\a\iKnopf\i\vdlg_action_button\v, nachdem Sie eine Einstellung
+ ge„ndert haben, wird diese Einstellung in das Programm
+ bernommen. Wenn Sie hingegen den "Abbruch"-\a\iKnopf\i\vdlg_action_button\v
+ bet„tigen, wird an den Mauseinstellungen nichts ge„ndert,
+ auch wenn Sie eine Einstellung ver„ndert haben. Mit dem
+ "Hilfe"-\a\iKnopf\i\vdlg_action_button\v k”nnen Sie Hilfe zur Dialogbox anfordern.
+
+.context box_farbpalette
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iFarbpalette\i  Û\b
+  \bßßßßßßßßßßßßßßßßß\b
+
+  ÚÄÄÄÄÄÄÄÄÄ Farbpalette ÄÄÄÄÄÄÄÄÄ¿
+  ³ (\d007) blaue Palette             ³
+  ³        ...     ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ gewnschte
+  ³ ( ) eigene Palette            ³     Farbpalette
+  ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³
+  ³ < OK > < Abbruch >  < Hilfe > ³
+  ÀÄÄÄ³ÄÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÙ
+      ³           ³          ³
+   Dieser \a\iKnopf\i\vdlg_action_button\v   ³          ÀÄÄ Diesen \a\iKnopf\i\vdlg_action_button\v haben Sie
+   bernimmt die  ³              (wahrscheinlich) gerade
+   nderung       ³              gedrckt!
+                  ÀÄÄ Mit diesem \a\iKnopf\i\vdlg_action_button\v kehren Sie
+                      in das Programm zurck, ohne
+                      die nderung zu bernehmen
+
+ In dieser Dialogbox k”nnen Sie eine Farbpalette
+ ausw„hlen, die Ihren Wnschen entspricht. Dazu mssen
+ Sie nur die jeweilige Palette aus den \a\iRadio-Buttons\i\vdlg_radio_button\v
+ ausw„hlen. Sollten Sie den Wunsch haben, sich eine eigene
+ Farbpalette zusammenzustellen, w„hlen Sie
+ "eigene Palette", drcken "OK" und w„hlen die Dialogbox
+ "Eigene Farbpalette" an. Dort k”nnen Sie jede einzelne
+ Farbe ver„ndern.
+ Drcken Sie den "OK"-\a\iKnopf\i\vdlg_action_button\v, nachdem Sie eine andere
+ Palette ausgew„hlt haben, wird diese Palette anschlieáend
+ im Programm verwendet. Wenn Sie "Abbruch" drcken, „ndert
+ sich nichts. Mit dem "Hilfe"-\a\iKnopf\i\vdlg_action_button\v k”nnen Sie diese Hilfe
+ ansehen.
+
+.context box_laufwerke
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iLaufwerkswahl\i  Û\b
+  \bßßßßßßßßßßßßßßßßßßß\b
+
+  ÚÄÄÄÄÄÄÄÄ Laufwerkswahl ÄÄÄÄÄÄÄÄ¿
+  ³ Laufwerke  ÚÄÄ¿               ³
+  ³            ³A:\d024ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Gewnschtes Laufwerk
+  ³            ³B:Û               ³                     
+  ³            ³C:\d025               ³                     
+  ³            ÀÄÄÙ               ³                     
+  ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³                         
+  ³ < OK > < Abbruch >  < Hilfe > ³                   
+  ÀÄÄÄ³ÄÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÙ                   
+      ³           ³          ³                  
+   Dieser \a\iKnopf\i\vdlg_action_button\v   ³          ÀÄÄ Diesen \a\iKnopf\i\vdlg_action_button\v haben Sie 
+   wechselt das   ³              (wahrscheinlich) gerade
+   Laufwerk       ³              gedrckt!
+                  ÀÄÄ Mit diesem \a\iKnopf\i\vdlg_action_button\v kehren Sie
+                      in das Programm zurck, ohne
+                      das Laufwerk zu wechseln
+
+ Mit dieser Dialogbox k”nnen Sie auf ein anderes Laufwerk
+ wechseln. Dazu w„hlen Sie das gewnschte Laufwerk in der
+ \a\iList-Box\i\vdlg_list_box\v aus und drcken "OK". Der "OK"-\a\iKnopf\i\vdlg_action_button\v wechselt
+ dann auf das Laufwerk, daá Sie ausgew„hlt haben. Wenn Sie
+ den "Abbruch"-\a\iKnopf\i\vdlg_action_button\v drcken, kehrt die Dialogbox wieder
+ ins Programm zurck, allerdings ohne das Laufwerk zu
+ wechseln. Benutzen Sie den "Hilfe"-\a\iKnopf\i\vdlg_action_button\v, um diesen
+ Hilfetext darzustellen.
+
+.context box_laden_speichern
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iLaden/Speichern\i  Û\b
+  \bßßßßßßßßßßßßßßßßßßßßß\b
+
+  ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Laden/Speichern ÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ Dateiname [ùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùù]ÄÄÄÄ¿        
+  ³ Dateien in C:\\TEST                          ³ Name der      
+  ³         ÚÄÄÄÄÄÄÄÄÄÄÄ¿                       ³ Datei
+  ³         ³..         \d024                       ³ bzw.
+  ³         ³SEMENU     Û                       ³ Maske
+  ³         ³STOOLS      ÄÄÄÄ Dateien im        ³
+  ³         ³test.bat   \d025     aktuellen         ³
+  ³         ÀÄÄÄÄÄÄÄÄÄÄÄÙ     Verzeichnis       ³
+  ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³
+  ³ < OK > < Abbruch > < Laufwerk >   < Hilfe > ³
+  ÀÄÄ³ÄÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÄÄÄÄ³ÄÄÄÄÄÙ
+     ³           ³               ³        ³
+   Mit diesem    ³               ³    Diesen \a\iKnopf\i\vdlg_action_button\v haben
+   \a\iKnopf\i\vdlg_action_button\v k”nnen  ³               ³    Sie (wahrscheinlich)
+   Sie die      Dieser \a\iKnopf\i\vdlg_action_button\v     ³    gerade gedrckt!
+   ausgew„hlte  kehrt in das     ³
+   Datei        Programm zurck, ÀÄÄ Mit diesem \a\iKnopf\i\vdlg_action_button\v
+   best„tigen   ohne die Datei       k”nnen Sie das 
+                zu verwenden         Laufwerk wechseln      
+
+ Mit dieser Dialogbox k”nnen Sie Dateien fr verschiedene
+ Zwecke, z.B. dem Laden oder Speichern, ausw„hlen. Dazu
+ w„hlen Sie die gewnschte Datei in der \a\iList-Box\i\vdlg_list_box\v an und
+ drcken "OK". Sollte sich die Datei nicht im aktuellen
+ Verzeichnis befinden, k”nnen Sie das Verzeichnis mittels
+ der \a\iList-Box\i\vdlg_list_box\v wechseln. klicken Sie dazu einfach das
+ Verzeichnis, in das Sie wechseln wollen, doppelt an 
+ (Verzeichnisnamen sind groá geschrieben). Das 
+ bergeordnete Verzeichnis wird durch ".." repr„sentiert. 
+ Befindet sich die Datei auf einem anderen Laufwerk, so 
+ k”nnen sie mittels des "Laufwerk"-\a\iKnopf\i\vdlg_action_button\ves das Laufwerk 
+ wechseln. Wissen Sie ganz genau, in welchem Verzeichnis
+ sich die Datei befindet, geben Sie einfach den Dateinamen
+ in das \a\iTextfeld\i\vdlg_text_field\v ein und drcken Sie "OK". Sie k”nnen das
+ \a\iTextfeld\i\vdlg_text_field\v auch dazu benutzen, eine andere Dateimaske zu
+ verwenden. Wollen Sie z.B., daá nur "EXE"-Dateien
+ angezeigt werden, geben Sie "*.EXE" ein und drcken "OK".
+ Der "Hilfe"-\a\iKnopf\i\vdlg_text_field\v zeigt diesen Hilfetext an.
+
+.context box_warnton
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iWarnton\i  Û\b
+  \bßßßßßßßßßßßßß\b
+
+  ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Warnton ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ [X] Warnton einÄÄÄÄÄ Soll Warnton erklingen?      ³
+  ³ [X] Digi-Warnton einÄÄÄ Soundblaster-Warnton?     ³
+  ³ L„nge    \d027                       Û      \d026ÄÄÄÄL„nge³     
+  ³ Frequenz \d027       Û                      \d026ÄFrequenz³
+  ³ VOC-Datei [ùùùùùùùùùùùùùùùùùùùùùùùùùùùùù]ÄVOC-Datei
+  ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³
+  ³ < OK > < Abbruch > < Suchen > < Test >  < Hilfe > ³
+  ÀÄÄ³ÄÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÄÄÄ³ÄÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÄÄÄ³ÄÄÄÄÄÄÄÄÙ
+     ³           ³       ³           ³       ³
+  Mit diesem     ³  Mit diesem \a\iKnopf\i\vdlg_action_button\v ³   Diesen \a\iKnopf\i\vdlg_action_button\v      
+  \a\iKnopf\i\vdlg_action_button\v werden   ³  k”nnen Sie eine  ³   haben sie
+  die nderungen ³  VOC-Datei suchen ³   (wahrscheinlich)
+  bernommen     ³                   ³   gerade gedrckt!
+                 ³                   ³            
+            Mit diesem \a\iKnopf\i\vdlg_action_button\v     Mit diesem \a\iKnopf\i\vdlg_action_button\v
+            kehren Sie zum       k”nnen Sie den
+            Programm zurck,     Warnton testen
+            ohne die nderungen
+            zu bernehmen
+
+ Mit dieser Dialogbox k”nnen Sie alle Parameter des
+ Warntones einstellen, der z.B. erklingt, wenn Sie sich
+ "verklicken". Wenn Sie wollen, daá dieser Warnton zu
+ h”ren ist, muá der \a\iPush-Button\i\vdlg_push_button\v "Warnton ein" aktiviert
+ sein. Besitzen Sie eine SoundBlaster oder kompatible
+ Soundkarte, sollten Sie "Digi-Warnton ein" aktivieren.
+ Tragen Sie dann in das \a\iTextfeld\i\vdlg_text_field\v "VOC-Datei" den Namen
+ einer VOC-Datei ein, die als Warnton erklingen soll.
+ Sollten Sie den Namen nicht auswendig wissen, drcken
+ Sie den "Suchen"-Knopf, der die "\a\iLaden/Speichern\i\vbox_laden_speichern\v"-
+ Dialogbox aktiviert, in der Sie eine Datei ausw„hlen
+ k”nnen. Beachten Sie aber bitte, daá die VOC-Datei
+ \b\i\unicht l„nger als 64 KByte\u\i\b sein darf!
+ Besitzen Sie keine Soundkarte, mssen Sie sich mit
+ dem PC-Sound zufriedengeben. Dazu k”nnen Sie mit den
+ beiden \a\iScroll-Bar\i\vdlg_scroll_bar\vs die L„nge und die Frequenz des
+ Warntones einstellen. Wenn Sie den Warnton
+ "probeh”ren" m”chten, drcken Sie "Test".
+ Der "Hilfe"-\a\iKnopf\i\vdlg_action_button\v zeigt diesen Hilfetext an.
+
+.context box_custom_farben
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iFarbpalette „ndern\i  Û\b
+  \bßßßßßßßßßßßßßßßßßßßßßßßß\b
+
+  ÚÄÄÄÄÄÄÄÄÄÄÄ Farbpalette „ndern ÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ Farbe                                    ³
+  ³  ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿ ³  
+  ³  ³Hintergrund                          ³ÄÄÄ Farbe, die
+  ³  ³Menzeile                            ³ ³  Sie „ndern
+  ³  ³Aktives Item                         ³ ³  wollen
+  ³  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ ³
+  ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³
+  ³ < OK > < Abbruch > < ndern >  < Hilfe > ³
+  ÀÄÄ³ÄÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÄÄÄ³ÄÄÄÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÄÙ
+     ³           ³       ³             ³  
+   Dieser \a\iKnopf\i\vdlg_action_button\v  ³    Mit diesem \a\iKnopf\i\vdlg_action_button\v ³  
+   bernimmt die ³    k”nnen Sie die   ³
+   nderungen,   ³    angew„hlte Farbe ³
+   die Sie       ³    „ndern           ³
+   gemacht haben ³                     ³
+                 ³              Diesen \a\iKnopf\i\vdlg_action_button\v haben Sie
+       Mit diesem \a\iKnopf\i\vdlg_action_button\v         (wahrscheinlich) gerade
+       kehren Sie zum           gedrckt!
+       Programm zurck,
+       ohne die nderungen
+       zu bernehmen
+
+ Mit dieser Dialogbox k”nnen Sie eine eigene Farbpalette
+ entwerfen, fr den Fall, daá Ihnen keine der eingebauten
+ Paletten zusagt. W„hlen Sie zu diesem Zweck in der 
+ \a\iList-Box\i\vdlg_list_box\v die Farbe aus, die Sie „ndern m”chten und
+ drcken "ndern". Daraufhin erscheint die Dialogbox
+ "\a\iFarbe definieren\i\vbox_custom_farbe\v", in der Sie die Farbe „ndern k”nnen.
+ Wollen Sie die nderungen in das Programm bernehmen,
+ drcken Sie "OK". Wollen Sie das nicht, drcken Sie
+ den "Abbruch"-\a\iKnopf\i\vdlg_action_button\v. Bitte beachten Sie, daá Sie die
+ nderung nur dann sofort bemerken, wenn Sie in der
+ "\a\iFarbpalette\i\vbox_farbpalette\v"-Dialogbox "eigene Palette" ausgew„hlt
+ haben. Andernfalls werden Ihre nderungen zwar zur
+ Kenntnis genommen aber, nicht dargestellt.
+ Mit dem "Hilfe"-\a\iKnopf\i\vdlg_action_button\v k”nnen Sie diesen Hilfetext
+ darstellen lassen.
+
+.context box_custom_farbe
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iFarbe definieren\i  Û\b
+  \bßßßßßßßßßßßßßßßßßßßßßß\b
+
+  ÚÄÄÄÄÄÄÄ Farbe definieren ÄÄÄÄÄÄÄ¿
+  ³ Vordergrund    Hintergrund     ³
+  ³  XXXXXXXXXXXX   XXXXXXXXXXXXÄÄÄÄÄ Hintergrundfarbe
+  ³  XXXXXXXXXXXX   XXXXXXXXXXXX   ³
+  ³  XXXXXXXXXX±XÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Vordergrundfarbe
+  ³  XXXXXXXXXXXX  TestTestTestÄÄÄÄÄÄ Testfeld
+  ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³
+  ³ < OK > < Abbruch >   < Hilfe > ³
+  ÀÄÄ³ÄÄÄÄÄÄÄÄ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÄÙ
+     ³        ³              ³
+  Mit diesem  ³        Diesen \a\iKnopf\i\vdlg_action_button\v haben
+  \a\iKnopf\i\vdlg_action_button\v wird  ³        Sie (wahrscheinlich)
+  die Farbe   ³        gerade gedrckt.
+  bernommen  ³
+              ³
+       Mit diesem \a\iKnopf\i\vdlg_action_button\v
+       k”nnen Sie zum
+       Programm zurckkehren
+       ohne die nderungen
+       zu bernehmen
+
+ Mit dieser Dialogbox k”nnen Sie eine einzelne Farbe
+ editieren. Dazu w„hlen Sie in den \a\iFarbauswahlfeld\i\vdlg_color_field\vern
+ die Vorder- und Hintergrundfarbe aus und drcken "OK".
+ Im Testfeld k”nnen Sie das Aussehen der Farbe berprfen.
+ Wollen Sie die nderungen die Sie gemacht haben nicht
+ bernehmen, drcken Sie "Abbruch".
+ Der "Hilfe"-\a\iKnopf\i\vdlg_action_button\v zeigt diesen Hilfetext an.
+
+.context box_screen_saver
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iBildschirmschoner\i  Û\b
+  \bßßßßßßßßßßßßßßßßßßßßßßß\b
+
+  ÚÄÄÄÄÄÄ Bildschirmschoner ÄÄÄÄÄÄ¿
+  ³ [X] Bildschirmschoner aktivÄÄÄÄÄÄ Bildschirmschoner
+  ³ Zeit \d027            Û       \d026ÄÄÄ¿   aktiv?
+  ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÀÄÄ Zeit bis zur 
+  ³ < OK > < Abbruch >  < Hilfe > ³   Aktivierung
+  ÀÄÄ³ÄÄÄÄÄÄÄÄÄÄ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³ÄÄÙ
+     ³          ³              ³
+  Dieser \a\iKnopf\i\vdlg_action_button\v  ³      Diesen \a\iKnopf\i\vdlg_action_button\v haben Sie
+  bernimmt die ³      (wahrscheinlich) gerade
+  nderungen    ³      gedrckt!
+                ³
+      Mit diesem \a\iKnopf\i\vdlg_action_button\v kehren
+      Sie zum Programm zurck,
+      ohne die nderungen zu
+      bernehmen
+
+ Mit dieser Dialogbox k”nnen Sie die Parameter des
+ Bildschirmschoners ver„ndern. Mit Hilfe des \a\iPush-Button\i\vdlg_push_button\vs
+ k”nnen Sie festlegen, ob der Bildschirmschoner aktiv sein
+ soll oder nicht. Wenn Sie wollen, daá der
+ Bildschirmschoner nach einer bestimmten Zeit in Kraft
+ tritt, muá der \a\iPush-Button\i\vdlg_push_button\v aktiviert sein. Der \a\iScroller\i\vdlg_scroll_bar\v
+ legt die Zeit fest, die verstreichen muá, bis der
+ Bildschirmschoner aktiv wird. Wenn Sie in dieser
+ Zeitspanne weder eine Taste drcken noch die Maus
+ benutzen, wird der Schoner aktiv. Sie sehen dann Sterne
+ in drei Ebenen von rechts nach links scrollen. Wollen
+ Sie die nderungen, die Sie gemacht haben bernehmen,
+ drcken Sie "OK", andernfalls "Abbruch". Mit dem "Hilfe"-
+ \a\iKnopf\i\vdlg_action_button\v k”nnen Sie diesen Hilfetext darstellen lassen.
+
+.context dlg_action_button
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iKn”pfe\i  Û\b
+  \bßßßßßßßßßßßß\b
+
+  < \bK\bnopf >
+
+ Das ist ein Knopf. Kn”pfe sind meistens dazu gedacht,
+ eine Dialogbox zu beenden und dabei eine bestimmte
+ Funktion durchzufhren. Manche Kn”pfe sind auch dazu
+ gedacht, eine andere Dialogbox aufzurufen und nach
+ deren Beendung wieder zurckzukehren.
+ Sie k”nnen eine Knopf einfach dadurch "drcken", indem
+ sie ihn mit der Maus einmal anklicken. Wenn Sie keine
+ Maus besitzen oder diese nicht verwenden wollen, k”nnen
+ Sie den Knopf auch durch einen Hot-Key aktivieren. Dieser
+ ist immer hervorgehoben dargestellt, wie das "K" im
+ Beispielknopf. Um diesen Knopf zu aktivieren, br„uchten
+ Sie nur Alt-K zu drcken. Hat ein Knopf keinen Hot-Key,
+ handelt es sich wahrscheinlich um einen der
+ Spezialkn”pfe, die weiter unten besprochen werden.
+ Es gibt natrlich noch eine andere M”glichkeit, den Knopf
+ zu drcken: Drcken Sie solange Tab- bzw. Shift-Tab, bis
+ der Cursor sich auf dem Knopf befindet und drcken Sie
+ Enter.
+
+ \b\iSpezialkn”pfe\i\b
+
+  \b<\b OK \b>\b
+
+ Das ist der "OK"-Knopf, der sich in den meisten
+ Dialogboxen befindet. Er wird dazu verwendet, die Daten,
+ die Sie eingegeben haben, zu best„tigen. Sie k”nnen ihn
+ immer (auáer Sie befinden sich mit dem Cursor auf einem
+ anderen Knopf) mit Enter drcken.
+
+  < Abbruch >
+
+ Der "Abbruch"-Knopf wird dazu verwendet, die eingegebenen
+ Daten zu verwerfen. Drcken Sie ihn also dann, wenn Sie
+ etwas Falsches eingegeben haben oder die Dialogbox
+ verlassen wollen, ohne etwas zu „ndern. Sie k”nnen ihn
+ immer mit Esc drcken!
+
+  < Hilfe >
+
+ Mit dem "Hilfe"-Knopf k”nnen Sie zu jeder Dialogbox einen
+ Hilfetext aufrufen, der Ihnen weiterhilft, wenn Sie sich
+ nicht mehr zurechtfinden. Wenn Sie ihn drcken, wird die
+ Dialogbox nicht geschlossen, Sie mssen also keine Angst
+ haben, daá irgendwelche Daten, die Sie eingegeben haben,
+ verlorengehen. Sie k”nnen ihn immer mit F1 drcken.
+
+.context dlg_push_button
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iPush-Buttons\i  Û\b
+  \bßßßßßßßßßßßßßßßßßß\b
+
+  [X] \bP\bush-Button
+
+ Das ist ein aktivierter Push-Button. Ein Push-Button wird
+ dazu benutzt, eine Ja/Nein-Entscheidung zu treffen. Ein
+ "X" bedeutet Ja und kein "X" ist Nein. Sie k”nnen den
+ Push-Button ganz einfach dadurch aktivieren bzw.
+ deaktivieren, indem Sie ihn mit der Maus einmal
+ anklicken. Wollen Sie das Programm mit der Tastatur
+ bedienen, benutzen Sie entweder den Hot-Key oder
+ aktivieren bzw. deaktivieren den Push-Button direkt. Ein
+ Hot-Key wird immer hervorgehoben dargestellt (im obigen
+ Beispiel das "P"). Um den Push-Button oben zu aktivieren
+ bzw. zu deaktivieren, máten Sie also einfach Alt-P
+ drcken. Der Push-Button kann auch durch Space gedrckt
+ werden, aber nur, wenn der Cursor gerade auf ihm steht.
+ Dazu drcken Sie Tab bzw. Shift-Tab, solange, bis der
+ Cursor am gewnschten Button angelangt ist.
+
+.context dlg_radio_button
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iRadio-Buttons\i  Û\b
+  \bßßßßßßßßßßßßßßßßßßß\b
+
+  (\d007) Button \b1\b
+  ( ) Button \b2\b
+  ( ) Button \b3\b
+
+ Das ist ein Radio-Button-Array in dem der erste Button
+ aktiviert ist. Radio-Buttons werden dazu benutzt, eine
+ Entscheidung zu treffen, wobei mehrere, feststehende
+ Auswahlm”glichkeiten bestehen. Es muá jedoch immer ein
+ und nur ein Button aktiv sein. Um einen Button zu
+ aktivieren, gibt es mehrere M”glichkeiten. Entweder, Sie
+ klicken den gewnschten Button mit der Maus einmal an,
+ oder Sie benutzen die Tastatur. Dazu drcken Sie einfach
+ den jeweiligen Hot-Key. Wollen Sie im obigen Array z.B.
+ den dritten Button aktivieren, drcken Sie Alt-3. Der
+ Hot-Key ist dabei immer das hervorgehobene Zeichen. Die
+ zweite M”glichkeit, die sich Ihnen bietet ist die, zuerst
+ den Cursor auf das Button-Array zu setzen (durch ein-
+ oder mehrmaliges Drcken von Tab bzw. Shift-Tab) und dann
+ die Cursor rauf- bzw. runter-Tasten zu benutzen.
+
+.context dlg_text_field
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iTextfelder\i  Û\b
+  \bßßßßßßßßßßßßßßßß\b
+
+  \bT\bextfeld [Testtextùùùùùùùù]
+
+ Das ist ein Textfeld. Ein Textfeld wird dazu benutzt,
+ einen Text unbestimmter L„nge einzugeben. Dazu klicken
+ Sie das Textfeld an bzw. setzen Sie den Cursor auf das
+ Textfeld (durch ein- oder mehrmaliges Drcken von Tab
+ bzw. Shift-Tab). Sie k”nnen stattdessen natrlich auch
+ den Hot-Key benutzen. Das ist der hervorgehobene
+ Buchstabe (im obigen Textfeld das "T"). Um das oben
+ dargestellte Textfeld zu aktivieren, drcken Sie Alt-T.
+ Der Inhalt des Textfeldes wird daraufhin markiert 
+ dargestellt. Wenn Sie jetzt einen Text eingeben wird
+ sofort der alte Text gel”scht und durch den neuen
+ ersetzt. Wollen Sie das nicht, drcken Sie die 
+ Cursor-links bzw. Cursor-rechts Taste. Sie k”nnen sich so 
+ ganz einfach durch das Textfeld bewegen. Bleiben Sie an
+ der Stelle stehen, an der sie schreiben wollen und
+ beginnen Sie zu tippen.
+
+ \b\iTastaturbelegung\i\b
+
+ Cursor-links  - Cursor nach links bewegen
+ Cursor-rechts - Cursor nach rechts bewegen
+ Einfg         - Einfgemodus ein- bzw. ausschalten
+ Pos1          - An den Textanfang springen
+ Ende          - An das Textende springen
+ Backspace     - Das Zeichen links vom Cursor l”schen
+ Entf          - Das Zeichen unter dem Cursor l”schen
+
+ \b\iMarkieren\i\b
+
+ Sie k”nnen einen Ausschnitt des Textes markieren indem
+ Sie an das erste Zeichen gehen, das markiert werden soll,
+ die Shift-Taste drcken und sich mit den Cursortasten an
+ das letzte zu markierende Zeichen bewegen. Wollen Sie
+ mit der Maus markieren, gehen Sie an das erste zu
+ markierende Zeichen, drcken die linke Maustaste und
+ gehen zum letzten zu markierenden Zeichen.
+ Einen markierten Textabschnitt k”nnen Sie durch einfaches
+ Drcken einer Taste berschreiben oder mit Entf ganz
+ l”schen. Sie k”nnen eine Markierung durch Cursor-links
+ bzw. Cursor-rechts aufheben.
+
+.context dlg_list_box
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iList-Boxen\i  Û\b
+  \bßßßßßßßßßßßßßßßß\b
+
+  \bL\bist-Box
+   ÚÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+   ³Element 1    \d024         
+   ³Element 2    Û
+   ³Element 3     
+   ³Element 4     
+   ³Element 5     
+   ³Element 6     
+   ³Element 7    \d025
+   ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+ Das ist eine List-Box. List-Boxen werden dazu benutzt,
+ aus mehreren M”glichkeiten eine auszuw„hlen, wobei sie
+ sich von Radio-Buttons dahingehend unterscheidet, daá
+ eine List-Box meistens mehrere Elemente aufnimmt und sich
+ der Inhalt der List-Box „ndern kann, wie z.B. in der
+ \a\iLaden/Speichern\i\vbox_laden_speichern\v-Dialogbox. Um ein Element auszuw„hlen,
+ mssen Sie zuerst die List-Box selektieren, was Sie
+ entweder mit einem Mausklick oder mittels ein- oder 
+ mehrmaligem Drcken von Tab- bzw. Shift-Tab machen
+ k”nnen. Natrlich ist es auch m”glich, die List-Box mit
+ dem Hot-Key anzuw„hlen, der hervorgehoben dargestellt
+ wird (im obigen Beispiel das "L"). Sie máten also, um
+ die oben dargestellte Dialogbox zu selektieren, Alt-L
+ drcken.
+ Wenn die List-Box selektiert ist, k”nnen Sie den
+ Auswahlbalken mit Cursor-rauf bzw. Cursor-runter bewegen.
+ Um einen ganze Seite zu springen, benutzen Sie bitte
+ Page-up bzw. Page-down.
+
+ \b\iTastaturbelegung\i\b
+
+ Cursor-rauf   - Bewegt den Auswahlbalken nach oben
+ Cursor-runter - Bewegt den Auswahlbalken nach unten
+ Page-up       - Springt eine Seite nach oben
+ Page-down     - Springt eine Seite nach unten
+ Pos1          - Springt zum Anfang der Liste
+ Ende          - Springt ans Ende der Liste
+
+ \b\iBedienung mit der Maus\i\b
+
+ Zus„tzlich zur Tastaturbedienung ist es m”glich, eine
+ List-Box auch mit der Maus zu bedienen. Dazu klicken Sie
+ ganz einfach auf das Element, das Sie ausw„hlen wollen.
+ Befindet sich dieses Element nicht im aktuellen
+ Ausschnitt, selektieren Sie ein Element, lassen aber die
+ Maustaste gedrckt und bewegen die Maus nach oben bzw.
+ unten. Der Inhalt der List-Box scrollt dann in die
+ jeweilige Richtung. Es ist aber auch m”glich, sich
+ mittels des Laufbalkens an der rechten Seite der List-Box
+ durch die Liste zu bewegen. Klicken Sie einfach auf einen
+ der Pfeile und der Auswahlbalken bewegt sich in die
+ jeweilige Richtung. Lassen Sie die Maustaste l„nger
+ gedrckt, bewegt sich der Balken weiter. Um eine ganze
+ Seite zu springen, klicken Sie auf den Bereich zwischen
+ einem der Pfeile und dem Scroller. Wenn Sie den Scroller
+ direkt anklicken, die Maustaste gedrckt lassen und ihn
+ bewegen ist sogar eine noch schnellere Navigation
+ m”glich.
+
+.context dlg_scroll_bar
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iScroll-Bars\i  Û\b
+  \bßßßßßßßßßßßßßßßßß\b
+
+  \bS\bcroll-Bar \d027       Û    \d026
+
+ Das ist ein Scroll-Bar. Scroll-Bars werden dazu benutzt,
+ einen numerischen Wert einzustellen, der jedoch nicht so
+ genau festgesetzt werden muá. Ein Beispiel fr einen
+ Scroll-Bar w„re ein Lautst„rkeregler. Um den Wert des
+ Scroll-Bars zu ver„ndern, mssen Sie ihn zuerst
+ aktivieren. Dazu klicken Sie ihn mit der Maus an, oder
+ drcken Sie ein- oder mehrmals Tab bzw. Shift-Tab. Sie
+ k”nnen natrlich auch den Hot-Key (der hervorgehobene
+ Buchstabe) benutzen. Um obigen Scroll-Bar zu aktiviern
+ máten Sie also Alt-S drcken.
+ Nachdem der Scroll-Bar aktiviert ist, k”nnen Sie den
+ Scroller ganz bequem mit Cursor-links bzw. -rechts
+ bewegen. Mit der Maus l„át sich diese Aktion durch
+ einfaches Anklicken der Pfeile nachvollziehen. Wenn
+ Sie mit der Maus den Scroller anklicken, gedrckt lassen
+ und jetzt die Maus nach links bzw. rechts bewegen, k”nnen
+ Sie den Wert sogar noch etwas schneller einstellen.
+
+.context dlg_color_field
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iFarbauswahlfelder\i  Û\b
+  \bßßßßßßßßßßßßßßßßßßßßßßß\b
+
+  \bF\barbe
+   XXXXXXXXXXXX
+   XXXXXXXXXXXX
+   X±XXXXXXXXXX
+   XXXXXXXXXXXX
+
+  Das ist ein Farbauswahlfeld. Farbauswahlfelder werden
+  benutzt, um eine Farbe einzustellen, wie z.B. in der
+  "\a\iFarbe definieren\i\vbox_custom_farbe\v"-Dialogbox. Um ein Farbauswahlfeld zu
+  aktivieren, klicken Sie es einfach mit der Maus an,
+  benutzen die Tab- bzw. Shift-Tab-Tasten oder den
+  Hot-Key. Der Hot-Key ist der hervorgehobene Buchstabe,
+  im obigen Beispiel das "F". Sie máten also Alt-F
+  drcken, um dieses Farbauswahlfeld zu aktivieren. Wenn
+  das Feld aktiviert ist, ist es ein Leichtes, eine
+  einzelne Farbe auszuw„hlen. Dazu benutzen Sie entweder
+  die Cursortasten oder Sie klicken die gewnschte Farbe
+  mit der Maus an.
+
+.context mnu_menu
+.freeze 3
+  \bÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ\b
+  \bÛ  \iPull-Down Mens\i  Û\b
+  \bßßßßßßßßßßßßßßßßßßßßß\b
+
+ Die Bedienung der Pull-Down Mens ist recht einfach. Sie
+ l„át sich grunds„tzlich in Tastatur- und Mausbedienung
+ unterteilen, wobei man die Mens natrlich auch gemischt
+ bedienen kann, was aber wenig praktikabel ist.
+
+ \b\iMausbedienung\i\b
+
+ Die Mausbedienung l„át sich wiederum in zwei verschiedene
+ Arten einteilen, und zwar in das "Press and Hold"- und
+ das "Press and Release"-Verfahren.
+ Beim "Press and Hold"-Verfahren bewegt man zuerst den 
+ Mauscursor auf den gewnschten Menpunkt in der
+ Menzeile, drckt die linke Maustaste und bel„át sie auch
+ in diesem Zustand. Je nach Option erscheint jetzt ein 
+ Window oder auch nicht. In beiden F„llen bewegt man den 
+ Mauscursor jetzt auf die Option, die man ausw„hlen
+ m”chte, falls er sich dort nicht schon befindet und l„át
+ erst dann die Maustaste los. Sofern die angew„hlte Option
+ aktiv ist, wird sie ausgefhrt.
+ Das "Press and Release"-Verfahren funktioniert fast
+ genauso. Wie beim "Press and Hold"-Verfahren bewegt man
+ den Mauscursor auf den Menpunkt in der Menzeile und
+ drckt die linke Maustaste, die man daraufhin aber gleich
+ wieder losl„át. Falls die Option ein Window besitzt, wird
+ sich dieses ”ffnen, falls nicht, wird die Option
+ ausgefhrt, falls sie aktiv ist. Besitzt der Menpunkt
+ ein Fenster, so bewegt man den Mauscursor auf das
+ gewnschte Item, drckt wieder die linke Maustaste und
+ l„át sie wieder los. Die Option wird anschlieáend
+ ausgefhrt.
+
+ \b\iTastaturbedienung\i\b
+
+ Die Bedienung der Mens mit der Tastatur wird in die 
+ Bedienung mit Hot-Keys und der Bedienung mit
+ Cursortasten unterteilt.
+ Die Bedienung mit Hot-Keys geht relativ schnell, da fr
+ die Auswahl einer Option nur maximal drei Tastenanschl„ge
+ notwendig sind. Als erstes drckt man die ALT- oder die 
+ F10-Taste, wobei man die Alt-Taste auch gedrckt lassen
+ kann, die F10-Taste hingegen wird ausgelassen. Als
+ n„chstes sucht man sich die Option heraus, die man
+ aktivieren will, und drckt den zugeh”rigen Hot-Key, also
+ den farblich hervorgehobenen Buchstaben. Nun ”ffnet sich 
+ ein Window, - oder auch nicht, wenn es sich um eine
+ Option ohne Window handelt - das wieder verschiedene
+ Optionen anbietet. Hier drckt man wie oben wieder den 
+ richtigen Hot-Key und die Aktion wird ausgewfhrt.
+ Die Bedienung mit den Cursortasten. Aktiviert wird das
+ Men mit ALT bzw. F10. Daraufhin erscheint ein
+ Auswahlbalken auf dem ersten Punkt in der Menzeile. Mit
+ der Cursor-links- und Cursor-rechts-Taste kann man nun
+ einen der Menpunkte ausw„hlen. Beim richtigen
+ angekommen, drckt man die Enter-Taste, woraufhin sich
+ ein Window ”ffnet, oder, bei Optionen, die kein Window 
+ besitzen, die gewnschte Arbeit getan wird. In diesem
+ Window kann man nun mit Cursor-rauf und Cursor-runter
+ eines der Items ausw„hlen, oder mit der Cursor-links- und
+ Cursor-rechts-Taste in ein anderes Window springen. Mit
+ Enter w„hlt man auch hier den Menpunkt aus.
+
