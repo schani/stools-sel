@@ -84,16 +84,14 @@ int main (void)
 
   glb_init(program_handler);
 
-/*
-  hlp_open_file("stools.hlp");
+#if 1
+  hlp_open_file("/Users/schani/Dropbox/Work/stools/stools.hlp");
   box_help(CTX_BOX_HELP);
   pcBuffer = utl_alloc(8192);
   strcpy(pcBuffer, "This is a demo text!");
   box_edit(" Edit ", pcBuffer, 8192, TRUE, 0);
   glb_run();
-*/
-
-
+#else
   winWindow = win_new(10, 5, 40, 10, "standard_dialogue", 0);
   win_add_element(winWindow, dlg_init_act_button(3, 3, "OK", K_ENTER, NULL, 101, TRUE, NULL));
   win_add_element(winWindow, dlg_init_act_button(11, 3, "Abbruch", K_ESC, NULL, 102, TRUE, NULL));
@@ -114,7 +112,7 @@ int main (void)
   win_cursor(winWindow, TRUE);
   win_show(winWindow);
   glb_run();
-
+#endif
 
   return 0;
 }

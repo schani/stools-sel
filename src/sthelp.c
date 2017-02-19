@@ -122,7 +122,10 @@ HLP_CONTEXT* hlp_get_context (DWORD dwContext)
   fread(&dwColors, sizeof(DWORD), 1, pfileHelpFile);
   if (!(pclrColorBuffer = utl_alloc(sizeof(HLP_COLOR) * dwColors)) && dwColors)
     return NULL;
-  fread(pclrColorBuffer, sizeof(HLP_COLOR) * dwColors, 1, pfileHelpFile);
+  for (DWORD dw = 0; dw < dwColors; dw++) {
+      fread (&pclrColorBuffer[dw].byColor, sizeof (BYTE), 1, pfileHelpFile);
+      fread (&pclrColorBuffer[dw].swCount, sizeof (SWORD), 1, pfileHelpFile);
+  }
   int_hlp_set_colors(pclrColorBuffer, pctxReturnVar->ppclrColors, pctxReturnVar->swLines);
   fread(&pctxReturnVar->dwLinks, sizeof(DWORD), 1, pfileHelpFile);
   if (pctxReturnVar->dwLinks)
@@ -130,7 +133,13 @@ HLP_CONTEXT* hlp_get_context (DWORD dwContext)
     if (!(pctxReturnVar->plnkLinks = utl_alloc(sizeof(HLP_LINK) * pctxReturnVar->dwLinks)) &&
         pctxReturnVar->dwLinks)
       return FALSE;
-    fread(pctxReturnVar->plnkLinks, sizeof(HLP_LINK) * pctxReturnVar->dwLinks, 1, pfileHelpFile);
+    for (DWORD dw = 0; dw < pctxReturnVar->dwLinks; dw++) {
+        fread (&pctxReturnVar->plnkLinks [dw].swX, sizeof (SWORD), 1, pfileHelpFile);
+        fread (&pctxReturnVar->plnkLinks [dw].swY, sizeof (SWORD), 1, pfileHelpFile);
+        fread (&pctxReturnVar->plnkLinks [dw].swWidth, sizeof (SWORD), 1, pfileHelpFile);
+        fread (&pctxReturnVar->plnkLinks [dw].swHeight, sizeof (SWORD), 1, pfileHelpFile);
+        fread (&pctxReturnVar->plnkLinks [dw].dwContext, sizeof (DWORD), 1, pfileHelpFile);
+    }
   }
   else
     pctxReturnVar->plnkLinks = NULL;
