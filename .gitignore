@@ -1,0 +1,9 @@
+*~
+*.sbr
+*.err
+*.obj
+*.lib
+*.map
+obj/
+test
+*.dSYM
