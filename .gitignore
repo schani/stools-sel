@@ -7,3 +7,5 @@
 obj/
 test
 *.dSYM
+xcode/stools.xcodeproj/xcuserdata
+xcode/stools.xcodeproj/project.xcworkspace/xcuserdata

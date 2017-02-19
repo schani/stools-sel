@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <buffers.h>
+#include <assert.h>
 
 /***************************************************************************
  *                       Allgemeine Funktionen                             *
@@ -97,6 +98,9 @@ UCHAR buf_eof (BUFFER *pbufBuffer)
       return(FALSE);
     case BUF_FILE_BUFFER :
       return(feof(BUF_FB));
+    default:
+      assert (FALSE);
+      return FALSE;
   }
 }
 
