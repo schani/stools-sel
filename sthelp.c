@@ -21,6 +21,10 @@
 #include <utility.h>
 #include <boxes.h>
 
+void         static int_hlp_set_file_pos  (DWORD);
+void         static int_hlp_set_colors    (HLP_COLOR*, HLP_COLOR**, SWORD);
+void         static int_hlp_set_text      (CHAR*, CHAR**, SWORD);
+
 FILE *pfileHelpFile = NULL;
 DWORD dwContexts    = 0,
       dwActContext  = 0;
@@ -71,7 +75,7 @@ void static int_hlp_set_text (CHAR *pcBuffer, CHAR **ppcText, SWORD swLines)
 
 BOOL hlp_open_file (CHAR *pcFileName)
 {
-  if (pfileHelpFile = fopen(pcFileName, "rb"))
+  if ((pfileHelpFile = fopen(pcFileName, "rb")))
   {
     fread(&dwContexts, sizeof(DWORD), 1, pfileHelpFile);
     return TRUE;

@@ -16,27 +16,11 @@
 
 #define        vio_attri(ucV, ucH)       (UCHAR)(ucV + (ucH << 4))
 
-#define        VIO_BUFFER_POS(x,y)       (pcharVirPage + ((x)-1+((y)-1)*iSizeX))
-
-#if defined(_MSDOS) || defined(_OS2)
 typedef struct
 {
-  CHAR character;
-  CHAR attribute;
+	CHAR character;
+	CHAR attribute;
 } CHARACTER;
-#endif
-#if defined(_WINNT) || defined(_LINUX)
-#ifndef _WATCOM
-#define far
-#endif
-typedef struct
-{
-  CHAR character;
-  CHAR dummy1;
-  CHAR attribute;
-  CHAR dummy2;
-} CHARACTER;
-#endif
 
 typedef struct
 {
@@ -61,6 +45,7 @@ extern "C"
 {
 #endif
 void      vio_init            (void);
+void      vio_redraw          (void);
 void      vio_set_page        (WORD);
 WORD      vio_get_page        (void);
 void      vio_set_vir_page    (CHARACTER far*);

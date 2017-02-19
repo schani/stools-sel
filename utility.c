@@ -29,10 +29,8 @@
 #include <sthelp.h>
 #include <dlg.h>
 #include <window.h>
-#include <dos.h>
 #include <string.h>
 #include <stdlib.h>
-#include <conio.h>
 #include <stdio.h>
 #include <time.h>
 #include <ctype.h>
@@ -47,6 +45,12 @@
 #ifdef _OS2
 #include <stos2.h>
 #endif
+#include <unistd.h>
+#include <assert.h>
+
+BOOL  static int_utl_char_valid      (CHAR);
+BOOL  static int_utl_string_valid    (CHAR*, BOOL);
+BOOL  static int_utl_short_cut       (WORD);
 
 extern CHAR        aacBorder[22][8];
 extern BOOL        bSaverActive;
@@ -168,7 +172,7 @@ BOOL static int_utl_string_valid (CHAR *pcString, BOOL bName)
 
   if (strlen(pcString) > 12)
     return FALSE;
-  if (pcPos = strchr(pcString, '.'))
+  if ((pcPos = strchr(pcString, '.')))
   {
     if ((pcString + strlen(pcString) - 1 - pcPos) > 3)
       return FALSE;
@@ -673,6 +677,7 @@ void utl_border (INT iX, INT iY, INT iWidth, INT iHeight, UCHAR ucRahmenTyp, CHA
 
 BOOL utl_kb_hit (void)
 {
+	assert (FALSE);
 #ifdef _MSDOS
 #ifdef __TURBOC__
   if (!bioskey(1))
@@ -838,6 +843,7 @@ BOOL utl_short_cuts (BOOL bStatus)
 
 WORD utl_get_key (void)
 {
+	assert (FALSE);
 #ifdef _MSDOS
   WORD wReturnVar;
 
@@ -884,68 +890,16 @@ WORD utl_get_key (void)
 
 DWORD utl_get_timer (void)
 {
-#ifdef _MSDOS
-  union REGS regs;
+	struct timeval tv;
 
-  regs.h.ah = 0;
-  int86(0x1a, &regs, &regs);
-  return ((DWORD)((ULONG)regs.x.dx + ((DWORD)regs.x.cx << 16)) * 549) / 10;
-#endif
-#ifdef _WINNT
-  SYSTEMTIME st;
-
-  GetLocalTime(&st);
-  return (DWORD)st.wHour * 3600000 + (DWORD)st.wMinute * 60000 + (DWORD)st.wSecond * 1000 + (DWORD)st.wMilliseconds;
-#endif
-#ifdef _OS2
-  DATETIME dt;
-
-  DosGetDateTime(&dt);
-  return (DWORD)dt.hours * 3600000 + (DWORD)dt.minutes * 60000 + (DWORD)dt.seconds * 1000 + (DWORD)dt.hundredths * 10;
-#endif
+	gettimeofday (&tv, NULL);
+	return (DWORD)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
 void utl_cls (CHAR cAttri)
 {
   vio_scroll_down(1, 1, 80, 25, cAttri, 0);
 }
-
-BYTE utl_keyb_status (void)
-{
-#ifdef _MSDOS
-  union REGS regs;
-
-  regs.h.ah = 0x02;
-  int86(0x16, &regs, &regs);
-  return(regs.h.al);
-#endif
-#ifdef _WINNT
-  BYTE byReturnVar = 0;
-
-  if (dwKeyboardStatus & LEFT_ALT_PRESSED || dwKeyboardStatus & RIGHT_ALT_PRESSED)
-    byReturnVar |= ALT;
-  if (dwKeyboardStatus & LEFT_CTRL_PRESSED || dwKeyboardStatus & RIGHT_CTRL_PRESSED)
-    byReturnVar |= CTRL;
-  if (dwKeyboardStatus & SHIFT_PRESSED)
-    byReturnVar |= SHIFT_RIGHT;
-  if (dwKeyboardStatus & NUMLOCK_ON)
-    byReturnVar |= NUM_LOCK;
-  if (dwKeyboardStatus & SCROLLLOCK_ON)
-    byReturnVar |= SCROLL_LOCK;
-  if (dwKeyboardStatus & CAPSLOCK_ON)
-    byReturnVar |= CAPS_LOCK;
-  if (bKeyboardInsert)
-    byReturnVar |= INSERT;
-
-  return byReturnVar;
-#endif
-#ifdef _OS2
-  KBDINFO ki;
-
-  KbdGetStatus(&ki, hkbdKeyboard);
-  return ki.fsState & 0xff;
-#endif
-}   
 
 void utl_strdel (CHAR *pcText, INT iStart, INT iLength)
 {
@@ -1074,66 +1028,18 @@ INT utl_hot_strlen (CHAR *pcText)
 
 void utl_get_path (CHAR *pcBuffer)
 {
-#ifdef _MSDOS
-  CHAR         far *pcPath;
-  union  REGS       regs;
-  struct SREGS      sregs;
-
-  pcPath = (CHAR far*)pcBuffer;
-  pcPath[1] = ':';
-  pcPath[2] = '\\';
-  *pcPath = (CHAR)(utl_get_drive() + 65);
-  regs.h.ah = 0x47;
-  regs.h.dl = 0;
-  pcPath += 3;
-  sregs.ds = FP_SEG(pcPath);
-  regs.x.si = FP_OFF(pcPath);
-  intdosx(&regs, &regs, &sregs);
-#endif
-#ifdef _WINNT
-  GetCurrentDirectory(128, pcBuffer);
-#endif
-#ifdef _OS2
-  ULONG ulDriveNumber,
-        ulDummy;
-
-  DosQueryCurrentDisk(&ulDriveNumber, &ulDummy);
-  pcBuffer[0] = (CHAR)ulDriveNumber - 1 + 'A';
-  pcBuffer[1] = ':';
-  pcBuffer[2] = '\\';
-  DosQueryCurrentDir(ulDriveNumber, pcBuffer + 3, &ulDummy);
-#endif
+	getcwd (pcBuffer, 128);
 }
 
 void utl_set_path (CHAR *pcPath)
 {
-#ifdef _MSDOS
-  CHAR         far *pcBuffer;
-  union REGS        regs;
-  struct SREGS      sregs;
+	chdir (pcPath);
+}
 
-  if (pcPath[1] == ':')
-  {
-    utl_set_drive(toupper(*pcPath) - 'A');
-    pcPath += 2;
-  }
-  pcBuffer = (CHAR far*)pcPath;
-  regs.h.ah = 0x3b;
-  sregs.ds = FP_SEG(pcBuffer);
-  regs.x.dx = FP_OFF(pcBuffer);
-  intdosx(&regs, &regs, &sregs);
-#endif
-#ifdef _WINNT
-  SetCurrentDirectory(pcPath);
-#endif
-#ifdef _OS2
-  if (pcPath[1] == ':')
-  {
-    DosSetDefaultDisk(toupper(pcPath[0]) - 'A' + 1);
-    pcPath += 2;
-  }
-  DosSetCurrentDir(pcPath);
-#endif
+void
+utl_split_path (CHAR *path, CHAR *drive, CHAR *dir, CHAR *name, CHAR *ext)
+{
+	assert (FALSE);
 }
 
 /*
@@ -1255,6 +1161,7 @@ BOOL utl_get_files (CHAR *pcPuffer, CHAR *pcMaske, UINT uiBufferLength)
 BOOL utl_get_files (CHAR *pcMask, CHAR *pcBuffer, UTL_DIRECTORY_ENTRY *pdeTable, UINT uiBufferSize,
                     UINT uiTableSize, BOOL bIncludeDirs)
 {
+	assert (FALSE);
 #ifdef _WINNT
   UINT            uiBufferFree = uiBufferSize,
                   uiTableUsed  = 0;
@@ -1407,125 +1314,26 @@ void utl_set_win_events (BOOL bStatus)
 
 UCHAR utl_get_drive (void)
 {
-#ifdef _MSDOS
-  union REGS regs;
-
-  regs.h.ah = 0x19;
-  intdos(&regs, &regs);
-  return(regs.h.al);
-#endif
-#ifdef _WINNT
-  CHAR acBuffer[128];
-
-  utl_get_path(acBuffer);
-  return acBuffer[0] - 'A';
-#endif
-#ifdef _OS2
-  ULONG ulDrive,
-        ulDriveMap;
-
-  DosQueryCurrentDisk(&ulDrive, &ulDriveMap);
-  return (UCHAR)ulDrive - 1;
-#endif
+	return 'C';
 }
 
 void utl_set_drive (UCHAR ucNewDrive)
 {
-#ifdef _MSDOS
-  union REGS regs;
-
-  regs.h.ah = 0x0e;
-  regs.h.dl = ucNewDrive;
-  intdos(&regs, &regs);
-#endif
-#ifdef _WINNT
-  CHAR acPath[3];
-
-  acPath[0] = ucNewDrive + 'A';
-  acPath[1] = ':';
-  acPath[2] = 0;
-  SetCurrentDirectory(acPath);
-#endif
-#ifdef _OS2
-  DosSetDefaultDisk((ULONG)ucNewDrive + 1);
-#endif
 }
 
 CHAR* utl_get_drives (void)
 {
-#ifdef _MSDOS
-  union REGS  regs;
-  UCHAR       ucZaehler,
-              ucOldDrive;
-  CHAR       *pcReturnVar,
-             *pcDummy;
+	CHAR *pcReturnVar;
 
-  if (!(pcDummy = pcReturnVar = utl_alloc(79)))
-    return(NULL);
-  ucOldDrive = utl_get_drive();
-  for (ucZaehler = 0; ucZaehler < 26; ucZaehler++)
-  {
-    utl_set_drive(ucZaehler);
-    if (utl_get_drive() == ucZaehler)
-    {
-      pcDummy[0] = (ucZaehler + 65);
-      pcDummy[1] = ':';
-      pcDummy[2] = 0;
-      pcDummy += 3;
-    }
-  }
-  *pcDummy = 0;
-  utl_set_drive(ucOldDrive);
+	if (!(pcReturnVar = utl_alloc (4)))
+		return NULL;
 
-  return pcReturnVar;
-#endif
-#ifdef _WINNT
-  DWORD  dwDrives;
-  CHAR  *pcReturnVar,
-        *pcCounter,
-         cDriveLetter = 'A';
+	pcReturnVar [0] = 'C';
+	pcReturnVar [1] = ':';
+	pcReturnVar [2] = '\0';
+	pcReturnVar [3] = '\0';
 
-  dwDrives = GetLogicalDrives();
-  pcCounter = pcReturnVar = utl_alloc(79);
-  while (dwDrives != 0)
-  {
-    if (dwDrives & 1)
-    {
-      pcCounter[0] = cDriveLetter++;
-      pcCounter[1] = ':';
-      pcCounter[2] = 0;
-      pcCounter += 3;
-    }
-    dwDrives >>= 1;
-  }
-  *pcCounter = 0;
-
-  return pcReturnVar;
-#endif
-#ifdef _OS2
-  ULONG  ulDrive,
-         ulDriveMap;
-  CHAR  *pcReturnVar,
-        *pcCounter,
-         cDriveLetter = 'A';
-
-  DosQueryCurrentDisk(&ulDrive, &ulDriveMap);
-  pcCounter = pcReturnVar = utl_alloc(79);
-  while (ulDriveMap != 0)
-  {
-    if (ulDriveMap & 1)
-    {
-      pcCounter[0] = cDriveLetter++;
-      pcCounter[1] = ':';
-      pcCounter[2] = 0;
-      pcCounter += 3;
-    }
-    ulDriveMap >>= 1;
-  }
-  *pcCounter = 0;
-
-  return pcReturnVar;
-#endif
+	return pcReturnVar;
 }
 
 void utl_move_win (void)
@@ -1691,8 +1499,12 @@ void utl_fill_event (UTL_EVENT *peventEvent)
   peventEvent->pFrom = NULL;
 }
 
+/*
 void utl_event (UTL_EVENT *peventEvent)
 {
+	utl_fill_event (peventEvent);
+	vio_redraw ();
+
 #ifdef _MSDOS
   static WORD   swButtons     = 0,
                 wClickButton  = 0;
@@ -1856,7 +1668,7 @@ void utl_event (UTL_EVENT *peventEvent)
   while (dwEvents)
   {
     ReadConsoleInput(hStdIn, &ir, 1, &dwEvents);
-    if (dwEvents == 0)             /* this should not happen! */
+    if (dwEvents == 0)             // this should not happen!
       break;
 
     dwLastTimer = peventEvent->dwTimer;
@@ -2112,9 +1924,4 @@ void utl_event (UTL_EVENT *peventEvent)
   }
 #endif
 }
-
-/*
-Local Variables:
-compile-command: "wmake -f stools.mk -h -e"
-End:
 */

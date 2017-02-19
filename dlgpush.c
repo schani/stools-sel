@@ -72,7 +72,7 @@ void dlg_push_but_handle_event (DLG_ELEMENT *pelementElement, UTL_EVENT *peventE
           peventEvent->uiKind = E_DONE;
           return;
         case M_SET_VALUES :
-          if (ppushbut->bActive = (BOOL)peventEvent->ulAddInfo)
+          if ((ppushbut->bActive = (BOOL)peventEvent->ulAddInfo))
             win_s_z(OWNER, ppushbut->coord.iX + 1, ppushbut->coord.iY, ' ');
           else
             win_s_z(OWNER, ppushbut->coord.iX + 1, ppushbut->coord.iY, 'X');

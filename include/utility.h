@@ -135,26 +135,7 @@ typedef struct
  *                               Makros                                    *
  ***************************************************************************/
 
-#ifdef _MSDOS
-#ifdef __TURBOC__
-#define utl_free_far(pBlock)                         farfree(pBlock)
-#define utl_split_path(pucP,pucL,pucV,pucD,pucE)     fnsplit(pucP,pucL, \
-                                                             pucV,pucD, \
-                                                             pucE)
-#endif
-#if defined(_MSC_VER) || defined (_QC)
-#define utl_free_far(pBlock)                         _ffree(pBlock)
-#define utl_split_path(pucP,pucL,pucV,pucD,pucE)     _splitpath(pucP,pucL, \
-                                                                pucV,pucD, \
-                                                                pucE)
-#define asm                                          _asm
-#endif
-#endif
-
-#if defined(_WINNT) || defined(_OS2) || defined(_LINUX)
 #define utl_free_far(p)                              free(p)
-#define utl_split_path(p,l,v,d,e)                    _splitpath(p,l,v,d,e)
-#endif
 
 #ifdef _MSDOS
 #define utl_no_sound()                   utl_sound(0)
@@ -192,9 +173,6 @@ typedef struct
 extern "C"
 {
 #endif
-BOOL  static int_utl_char_valid      (CHAR);
-BOOL  static int_utl_string_valid    (CHAR*, BOOL);
-BOOL  static int_utl_short_cut       (WORD);
 void         utl_init                (void);
 void         utl_randomize           (void);
 UINT         utl_random              (UINT);
@@ -237,6 +215,7 @@ CHAR         utl_get_hot_key         (CHAR*);
 INT          utl_hot_strlen          (CHAR*);
 void         utl_get_path            (CHAR*);
 void         utl_set_path            (CHAR*);
+void         utl_split_path          (CHAR *path, CHAR *drive, CHAR *dir, CHAR *name, CHAR *ext);
 BOOL         utl_get_files           (CHAR*, CHAR*, UTL_DIRECTORY_ENTRY*, UINT, UINT, BOOL);
 BOOL         utl_filename_valid      (CHAR*);
 BOOL         utl_get_win_events      (void);

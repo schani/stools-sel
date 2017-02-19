@@ -29,10 +29,6 @@ typedef struct
 extern "C"
 {
 #endif
-void  static int_mem_set_usage     (FILE*, UINT, UCHAR);
-UINT  static int_mem_get_next_free (FILE*);
-void  static int_mem_read_header   (FILE*, UINT, MEM_HEADER*);
-void  static int_mem_write_header  (FILE*, UINT, MEM_HEADER*);
 FILE*        mem_open_file         (CHAR*);
 CHAR*        mem_read              (FILE*, UINT);
 void         mem_delete            (FILE*, UINT);

@@ -48,12 +48,6 @@ typedef struct
 extern "C"
 {
 #endif
-void  static int_sts_display_help_line   (void);
-INT   static int_sts_get_item_x          (INT);
-void  static int_sts_display_item        (CHAR*, INT, BOOL);
-void  static int_sts_display_active_item (CHAR*, INT);
-void  static int_sts_display_items       (void);
-INT   static int_sts_get_index           (INT);
 void         sts_pre_process             (UTL_EVENT*);
 void         sts_write_help              (CHAR*);
 void         sts_clear_help              (void);

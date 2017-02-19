@@ -19,11 +19,26 @@
 #include <sthelp.h>
 #include <dlg.h>
 #include <window.h>
-#include <global.h>                  
+#include <global.h>
 #include <mouse.h>
 #include <stdlib.h>
 #include <string.h>
-                 
+
+static void        int_mnu_write_menu_bar  (void);
+static void        int_mnu_del_item        (MNU_ITEM*);
+static void        int_mnu_del_window      (MNU_WINDOW*);
+static BOOL        int_mnu_search_item     (MNU_ITEM*, WORD);
+static BOOL        int_mnu_search_window   (MNU_WINDOW*, WORD);
+static void        int_mnu_draw_item       (MNU_WINDOW*, WINDOW, BOOL);
+static void        int_mnu_display_window  (MNU_WINDOW*, INT, INT);
+static MNU_WINDOW* int_mnu_open_window     (MNU_WINDOW*, CNT_STACK*);
+static MNU_ITEM*   int_mnu_check_item      (MNU_WINDOW*, WINDOW, UTL_EVENT*);
+static BOOL        int_mnu_is_tear_down    (WINDOW, ULONG);
+static void        int_mnu_make_tear_down  (MNU_WINDOW*, INT, INT);
+static BOOL        int_mnu_tear_down_event (UTL_EVENT*, MNU_WINDOW*);
+static BOOL        int_mnu_check_tear_down (WINDOW, ULONG);
+static MNU_ITEM*   int_mnu_find_item       (MNU_WINDOW*, UINT, MNU_WINDOW**);
+
 extern WINDOW      winDesktop;
 extern GLB_PROGRAM prgProgram;    
 extern BOOL        bUpdating;
@@ -358,7 +373,7 @@ static MNU_ITEM* int_mnu_find_item (MNU_WINDOW *pwindowWindow, UINT uiMessage, M
     }
     else                               
       if (pitemCounter->pwindowWindow)
-        if (pitemItem = int_mnu_find_item(pitemCounter->pwindowWindow, uiMessage, ppwindowFound))
+        if ((pitemItem = int_mnu_find_item(pitemCounter->pwindowWindow, uiMessage, ppwindowFound)))
           return pitemItem;
   }
   return NULL;

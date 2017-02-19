@@ -25,6 +25,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+static INT          int_dlg_editor_count_lines       (DLG_ELEMENT*);
+static CHAR*        int_dlg_editor_get_line          (DLG_ELEMENT*, INT);
+static void         int_dlg_editor_make_line_buffer  (DLG_ELEMENT*, CHAR*);
+static CHAR*        int_dlg_editor_next_line         (DLG_ELEMENT*, CHAR*);
+static CHAR*        int_dlg_editor_prev_line         (DLG_ELEMENT*, CHAR*);
+static void         int_dlg_editor_draw              (DLG_ELEMENT*, INT, INT);
+static void         int_dlg_editor_set_cursor        (DLG_ELEMENT*);
+static INT          int_dlg_editor_len_to_end        (DLG_ELEMENT*);
+static void         int_dlg_editor_go_char           (DLG_ELEMENT*, INT);
+static INT          int_dlg_editor_line_length       (DLG_ELEMENT*);
+static void         int_dlg_editor_go_line           (DLG_ELEMENT*, INT);
+static void         int_dlg_editor_insert_char       (DLG_ELEMENT*, CHAR);
+static void         int_dlg_editor_del_char          (DLG_ELEMENT*, BOOL);
+static void         int_dlg_editor_del_line          (DLG_ELEMENT*);
+
 extern GLB_PROGRAM prgProgram;
 
 static CHAR        acLineBuffer[MAX_LINE_LENGTH + 1];

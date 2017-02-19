@@ -25,6 +25,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+static CHAR         int_dlg_get_attri                (DLG_ELEMENT*, BYTE);
+static HLP_LINK*    int_dlg_check_link               (DLG_ELEMENT*);
+static void         int_dlg_hide_link                (DLG_ELEMENT*, HLP_LINK*);
+static void         int_dlg_show_link                (DLG_ELEMENT*, HLP_LINK*);
+static void         int_dlg_make_line_buffer         (DLG_ELEMENT*, INT);
+static void         int_dlg_make_color_buffer        (DLG_ELEMENT*, INT);
+static void         int_dlg_draw_line                (DLG_ELEMENT*, INT);
+static void         int_dlg_draw_inner               (DLG_ELEMENT*);
+
 extern GLB_PROGRAM prgProgram;
 
 static CHAR acLineBuffer[256];

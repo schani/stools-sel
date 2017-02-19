@@ -1,7 +1,7 @@
 /***************************************************************************
  ***************************************************************************
  ***                                                                     ***
- ***                       Schani-Tools fÅr C                            ***
+ ***                       Schani-Tools fuer C                           ***
  ***                                                                     ***
  ***                       Fertige Dialogboxen                           ***
  ***                                                                     ***
@@ -26,12 +26,10 @@
 #include <context.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>   
-#include <direct.h>
+#include <string.h>
 #ifdef _MSDOS
 #include <mem.h>
 #endif
-#include <dos.h>
 #include <ctype.h>
 #ifdef __TURBOC__
 #include <dir.h>
@@ -40,10 +38,13 @@
 #if defined _MSC_VER || defined _QC
 #include <malloc.h>
 #endif
+#include <unistd.h>
 
-#if defined(_OS2) || defined(_MSDOS)
+static void  int_box_file_window  (WINDOW, UTL_EVENT*);
+static void  int_box_color_window (WINDOW, UTL_EVENT*);
+static void  int_box_edit_window  (WINDOW, UTL_EVENT*);
+
 extern UINT         uiMouseSpeed;
-#endif
 extern ULONG        ulDoubleClick;
 extern BOOL         bBeep;
 extern ULONG        ulBeepFrequency;
@@ -72,13 +73,13 @@ CNT_STACK  *psHelpBack;
 STS_ITEM    aitemHelpItems[]     =
                                    {
                                      {
-                                       "~F1~ Hilfe Åber Hilfe",
+                                       "~F1~ Hilfe ""\x81""ber Hilfe",
                                        M_HELP_HELP,
                                        K_F1,
                                        TRUE
                                      },
                                      {
-                                       "~Alt-F1~ ZurÅck",
+                                       "~Alt-F1~ Zur""\x81""ck",
                                        M_HELP_BACK,
                                        K_A_F1,
                                        TRUE
@@ -92,46 +93,46 @@ STS_ITEM    aitemHelpItems[]     =
                                      STS_END
                                    };
 CHAR       *pcHelp               = " Zeigt einen Hilfetext zu dieser Dialogbox an",
-           *pcInfoOK             = " Information bestÑtigen",
+           *pcInfoOK             = " Information best\x84tigen",
            *pcInfoCancel         = " Aktion abbrechen",
            *pcMouseSpeed         = " Geschwindigkeit des Mauscursors",
            *pcMouseClick         = " Geschwindigkeit eines Doppelklicks",
            *pcMouseOK            = " Eingestellte Werte setzen",
            *pcMouseCancel        = " Alte Werte beibehalten",
-           *pcPalette            = " GewÅnschte Farbpalette",
-           *pcPaletteOK          = " AngewÑhlte Palette setzen",
+           *pcPalette            = " Gew\x81nschte Farbpalette",
+           *pcPaletteOK          = " Angew\x84hlte Palette setzen",
            *pcPaletteCancel      = " Alte Palette beibehalten",
-           *pcDrive              = " GewÅnschtes Laufwerk",
-           *pcDriveOK            = " Laufwerk auswÑhlen",
+           *pcDrive              = " Gew\x81nschtes Laufwerk",
+           *pcDriveOK            = " Laufwerk ausw\x84hlen",
            *pcDriveCancel        = " Altes Laufwerk beibehalten",
-           *pcFileName           = " GewÅnschte Datei oder Dateimaske",
-           *pcFileFiles          = " GewÅnschte Datei",
-           *pcFileOK             = " Datei auswÑhlen",
+           *pcFileName           = " Gew\x81nschte Datei oder Dateimaske",
+           *pcFileFiles          = " Gew\x81nschte Datei",
+           *pcFileOK             = " Datei ausw\x84hlen",
            *pcFileCancel         = " Aktion abbrechen",
-           *pcFileDrives         = " Laufwerk Ñndern",
-           *pcFileInvalid        = "Der Dateiname ist ungÅltig!",
+           *pcFileDrives         = " Laufwerk \x84ndern",
+           *pcFileInvalid        = "Der Dateiname ist ung\x81ltig!",
            *pcSound              = " Angabe, ob Warnton erklingen soll",
            *pcSoundDigi          = " Angabe, ob ein Digi-Sound als Warnton dienen soll",
            *pcSoundLength        = " Dauer des Warntones",
            *pcSoundFreq          = " Frequenz des Warntones",
-           *pcSoundDigiName      = " Name der VOC-Datei fÅr Digi-Warnton",
+           *pcSoundDigiName      = " Name der VOC-Datei f\x81r Digi-Warnton",
            *pcSoundOK            = " Neue Werte einstellen",
            *pcSoundCancel        = " Alte Werte beibehalten",
-           *pcSoundSearchDigi    = " LÑ·t Sie in einem Verzeichnisfenster den Digi-Sound suchen",
-           *pcSoundTest          = " LÑ·t den Warnton erklingen",
-           *pcColor              = " Farbe, die Sie Ñndern wollen",
-           *pcColorWindow        = " Fenstertyp, fÅr den eine Farbe verÑndert werden soll",
+           *pcSoundSearchDigi    = " L\x84""\xe1""t Sie in einem Verzeichnisfenster den Digi-Sound suchen",
+           *pcSoundTest          = " L\x84""\xe1""t den Warnton erklingen",
+           *pcColor              = " Farbe, die Sie \x84ndern wollen",
+           *pcColorWindow        = " Fenstertyp, f\x81r den eine Farbe ver\x84ndert werden soll",
            *pcColorChar          = " Vordergrundfarbe",
            *pcColorBack          = " Hintergrundfarbe",
            *pcColorOK            = " öbernimmt die énderungen",
-           *pcColorCancel        = " BehÑlt die alten Farben bei",
+           *pcColorCancel        = " Beh\x84lt die alten Farben bei",
            *pcSaverActive        = " Angabe, ob der Bildschirmschoner aktiv ist",
            *pcSaverTime          = " Zeitspanne, nach der sich der Bildschirmschoner aktiviert",
            *pcSaverOK            = " öbernimmt die énderungen",
-           *pcSaverCancel        = " BehÑlt die alten Einstellungen bei",
+           *pcSaverCancel        = " Beh\x84lt die alten Einstellungen bei",
            *pcHelpHelp           = " Hilfetext",
-           *pcHelpCancel         = " Kehrt zum Programm zurÅck",
-           *pcHelpBack           = " Kehrt zum letzten Kontext zurÅck",
+           *pcHelpCancel         = " Kehrt zum Programm zur""\x81""ck",
+           *pcHelpBack           = " Kehrt zum letzten Kontext zur""\x81""ck",
            *pcNAWinNT            = "Diese Funktion ist unter\n"
                                    "Windows NT nicht vorhanden!";
            
@@ -661,7 +662,7 @@ BOOL box_palette (void)
                                     3,
                                     3,
                                     0,
-                                    "#wei·e Palette"
+                                    "#wei""\xe1""e Palette"
                                   },
                                   {
                                     3,
@@ -679,7 +680,7 @@ BOOL box_palette (void)
                                     3,
                                     6,
                                     0,
-                                    "#grÅne Palette"
+                                    "#gr\x81ne Palette"
                                   },
                                   {
                                     3,
@@ -874,7 +875,7 @@ BOOL box_beep (BOOL bLoadOnCall)
   UINT         uiID;
   void        *pVOC;
   DLG_ELEMENT *pelement;
-#if defined(_OS2) || defined(_WINNT)
+#if defined(_OS2) || defined(_WINNT) || defined(_LINUX)
   BOOL         bVOCBeep            = FALSE;
 #endif
 
@@ -884,7 +885,7 @@ BOOL box_beep (BOOL bLoadOnCall)
   if (!win_title(winWindow, " Warnton ", TITLE_T_C))
     return FALSE;
 
-#if defined(_OS2) || defined(_WINNT)
+#if defined(_OS2) || defined(_WINNT) || defined(_LINUX)
   strcpy(acDigiName, "not yet available");
 #else
   strcpy(acDigiName, acBeepVOC);
@@ -894,7 +895,7 @@ BOOL box_beep (BOOL bLoadOnCall)
                                                   BOX_SOUND_DIGI, TRUE, NULL));
   iDuration = ulBeepDuration / 55 - 1;
   pelement = dlg_init_scroll(12, 6, 20, iDuration, DLG_HORIZONTAL, pcSoundLength, BOX_SOUND_LENGTH, TRUE, NULL);
-  win_add_element(winWindow, dlg_init_label(3, 6, "#LÑnge", pelement, 0));
+  win_add_element(winWindow, dlg_init_label(3, 6, "#L\x84nge", pelement, 0));
   win_add_element(winWindow, pelement);
   iFrequency = ulBeepFrequency / 50 - 1;
   pelement = dlg_init_scroll(12, 9, 20, iFrequency, DLG_HORIZONTAL, pcSoundFreq, BOX_SOUND_FREQ, TRUE, NULL);
@@ -1085,7 +1086,7 @@ BOOL box_custom_palette (void)
     return FALSE;
   if (!(winWindow = win_new(18, 2, 43, 23, "color_box", (ULONG)pcPalette)))
     return FALSE;
-  if (!win_title(winWindow, " Farbpalette Ñndern ", TITLE_T_C))
+  if (!win_title(winWindow, " Farbpalette \x84ndern ", TITLE_T_C))
     return FALSE;
   memcpy(pcPalette, prgProgram.pcPalette, PAL_COLORS * PAL_WINDOWS);
   pelement = dlg_init_list_box(5, 3, 19, 7, apcPalWindows, TRUE, pcColorWindow, BOX_COLOR_WINDOW, TRUE, NULL);
@@ -1200,7 +1201,7 @@ BOOL box_modal_help (DWORD dwContext)
                                                NULL));
   win_add_element(winWindow, dlg_init_act_button(3, 19, "Abbruch", K_ESC, pcHelpCancel, BOX_CANCEL, TRUE,
                                                  NULL));
-  win_add_element(winWindow, dlg_init_act_button(16, 19, "ZurÅck", K_A_F1, pcHelpBack, BOX_HELP_BACK, TRUE,
+  win_add_element(winWindow, dlg_init_act_button(16, 19, "Zur""\x81""ck", K_A_F1, pcHelpBack, BOX_HELP_BACK, TRUE,
                                                  NULL));
   win_add_element(winWindow, dlg_init_act_button(54, 19, "Hilfe", K_F1, pcHelp, BOX_HELP, TRUE, NULL));
   win_add_element(winWindow, dlg_init_border(1, 18, 64, 1, 0));
@@ -1257,9 +1258,3 @@ BOOL box_edit (CHAR *pcTitle, CHAR *pcBuffer, ULONG ulBufferLength, BOOL bCanCha
   win_show(winWindow);
   return TRUE;
 }
-
-/*
-Local Variables:
-compile-command: "wmake -f stools.mk -h -e"
-End:
-*/

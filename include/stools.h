@@ -10,10 +10,6 @@
  ***************************************************************************
  ***************************************************************************/
 
-#if !defined(_OS2) && !defined(_WINNT) && !defined(_MSDOS)
-#define _MSDOS
-#endif
-
 #include <gemein.h>
 #include <video.h>
 #include <mouse.h>

@@ -60,9 +60,6 @@ typedef struct
 extern "C"
 {
 #endif
-void         static int_hlp_set_file_pos  (DWORD);
-void         static int_hlp_set_colors    (HLP_COLOR*, HLP_COLOR**, SWORD);
-void         static int_hlp_set_text      (CHAR*, CHAR**, SWORD);
 BOOL                hlp_open_file         (CHAR*);
 void                hlp_close_file        (void);
 BOOL                hlp_context_available (DWORD);

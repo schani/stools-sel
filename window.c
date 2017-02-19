@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
-#include <conio.h>
 #include <sthelp.h>
 #include <dlg.h>
 #include <window.h>
@@ -37,6 +36,24 @@
 #else
 #include <malloc.h>
 #endif
+
+static BOOL          int_win_overlapping   (WINDOW, WINDOW);
+static void          int_win_make_overlap  (WINDOW, INT*, INT*, INT*, INT*);
+static void          int_win_make_region   (INT, INT, INT, INT, INT, INT, INT, INT, INT*, INT*, INT*, INT*);
+static void          int_win_get_region    (CHARACTER*, INT, INT, INT, INT);
+static void          int_win_put_region    (CHARACTER*, INT, INT, INT, INT);
+static void          int_win_get_window    (WINDOW);
+static void          int_win_put_window    (WINDOW);
+static void          int_win_save_region   (WINDOW, INT, INT, INT, INT, UCHAR);
+static void          int_win_save_windows  (WINDOW);
+static void          int_win_write_region  (WINDOW, INT, INT, INT, INT, INT, INT, INT, CHARACTER*, UCHAR);
+static BOOL          int_win_write_windows (WINDOW);
+static void          int_win_set_ff        (WINDOW, INT, INT, INT, INT, UCHAR);
+static void          int_win_border_title  (WINDOW);
+static BOOL          int_win_front         (WINDOW);
+static void          int_win_printf_output (WINDOW, CHAR*);
+static WINDOW_CLASS* int_win_get_class     (CHAR*);
+static BOOL          int_win_is_class      (WINDOW, ULONG);
 
 extern ULONG       ulBeepFrequency;
 extern ULONG       ulBeepDuration;
@@ -1103,7 +1120,7 @@ BOOL win_register_class (CHAR *pcName, UCHAR ucColors, UCHAR ucBorder, UCHAR ucT
 {
   WINDOW_CLASS *pwc;
 
-  if (pwc = int_win_get_class(pcName))
+  if ((pwc = int_win_get_class(pcName)))
     return FALSE;
   if (!(pwc = utl_alloc(sizeof(WINDOW_CLASS))))
     return FALSE;

@@ -70,9 +70,6 @@ typedef struct
 extern "C" 
 {
 #endif
-static void  int_box_file_window  (WINDOW, UTL_EVENT*);
-static void  int_box_color_window (WINDOW, UTL_EVENT*);
-static void  int_box_edit_window  (WINDOW, UTL_EVENT*);
 void         box_init             (void);
 UINT         box_info             (UCHAR, UINT, CHAR*, DWORD);
 BOOL         box_mouse            (void);

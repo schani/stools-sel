@@ -49,7 +49,7 @@
 #define END_MOUSE                      if (m1)                       \
                                          msm_cursor_on();
 #endif
-#ifdef _WINNT
+#if defined(_WINNT) || defined(_LINUX)
 #define MOUSE                          struct __dummy_struct { int i; }
 #define BEGIN_MOUSE
 #define BEGIN_MOUSE_IN(w)
