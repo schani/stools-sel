@@ -875,7 +875,7 @@ BOOL box_beep (BOOL bLoadOnCall)
   UINT         uiID;
   void        *pVOC;
   DLG_ELEMENT *pelement;
-#if defined(_OS2) || defined(_WINNT) || defined(_LINUX)
+#if defined(_OS2) || defined(_WINNT) || defined(_UNIX)
   BOOL         bVOCBeep            = FALSE;
 #endif
 
@@ -885,7 +885,7 @@ BOOL box_beep (BOOL bLoadOnCall)
   if (!win_title(winWindow, " Warnton ", TITLE_T_C))
     return FALSE;
 
-#if defined(_OS2) || defined(_WINNT) || defined(_LINUX)
+#if defined(_OS2) || defined(_WINNT) || defined(_UNIX)
   strcpy(acDigiName, "not yet available");
 #else
   strcpy(acDigiName, acBeepVOC);

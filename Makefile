@@ -10,7 +10,7 @@ OBJDIR := obj
 
 STOOLS_OBJ := $(STOOLS_SRC:%.c=$(OBJDIR)/%.o)
 
-CFLAGS := -D_LINUX -Iinclude -O0 -g -Wall -Wno-invalid-source-encoding `pkg-config --cflags sdl2 SDL2_ttf`
+CFLAGS := -D_UNIX -Iinclude -O0 -g -Wall -Wno-invalid-source-encoding `pkg-config --cflags sdl2 SDL2_ttf`
 
 test : $(OBJDIR)/test.o $(STOOLS_OBJ)
 	gcc -o $@ -g $^ `pkg-config --libs sdl2 SDL2_ttf`

@@ -140,7 +140,7 @@ typedef struct
 #ifdef _MSDOS
 #define utl_no_sound()                   utl_sound(0)
 #endif
-#if defined(_WINNT) || defined(_OS2) || defined(_LINUX)
+#if defined(_WINNT) || defined(_OS2) || defined(_UNIX)
 #define utl_no_sound()
 #endif
 
@@ -161,7 +161,7 @@ typedef struct
 #define IS_BORDER_EVENT(e,w)              (MOUSE_EVENT(e) &&                 \
                                           ON_BORDER((e).iHor, (e).iVer, w))
 
-#if (defined(_WINNT) && !defined(_WATCOM)) || defined(_LINUX)
+#if (defined(_WINNT) && !defined(_WATCOM)) || defined(_UNIX)
 #define far
 #endif
 
