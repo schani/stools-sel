@@ -151,6 +151,9 @@ typedef        double           DOUBLE;
 
 /* DOS keycodes */
 #define EXT_CODE        0x100
+#define EXT_CODE_SHIFT  0x200
+#define EXT_CODE_ALT    0x400
+#define EXT_CODE_CTRL   0x800
 
 #define K_F1    ( 59 |  EXT_CODE)
 #define K_F2    ( 60 |  EXT_CODE)
@@ -163,38 +166,38 @@ typedef        double           DOUBLE;
 #define K_F9    ( 67 |  EXT_CODE)
 #define K_F10   ( 68 |  EXT_CODE)
 
-#define K_S_F1   ( 84 | EXT_CODE)
-#define K_S_F2   ( 85 | EXT_CODE)
-#define K_S_F3   ( 86 | EXT_CODE)
-#define K_S_F4   ( 87 | EXT_CODE)
-#define K_S_F5   ( 88 | EXT_CODE)
-#define K_S_F6   ( 89 | EXT_CODE)
-#define K_S_F7   ( 90 | EXT_CODE)
-#define K_S_F8   ( 91 | EXT_CODE)
-#define K_S_F9   ( 92 | EXT_CODE)
-#define K_S_F10  ( 93 | EXT_CODE)
+#define K_S_F1   ( K_F1 | EXT_CODE_SHIFT)
+#define K_S_F2   ( K_F2 | EXT_CODE_SHIFT)
+#define K_S_F3   ( K_F3 | EXT_CODE_SHIFT)
+#define K_S_F4   ( K_F4 | EXT_CODE_SHIFT)
+#define K_S_F5   ( K_F5 | EXT_CODE_SHIFT)
+#define K_S_F6   ( K_F6 | EXT_CODE_SHIFT)
+#define K_S_F7   ( K_F7 | EXT_CODE_SHIFT)
+#define K_S_F8   ( K_F8 | EXT_CODE_SHIFT)
+#define K_S_F9   ( K_F9 | EXT_CODE_SHIFT)
+#define K_S_F10  (K_F10 | EXT_CODE_SHIFT)
 
-#define K_C_F1   ( 94 | EXT_CODE)
-#define K_C_F2   ( 95 | EXT_CODE)
-#define K_C_F3   ( 96 | EXT_CODE)
-#define K_C_F4   ( 97 | EXT_CODE)
-#define K_C_F5   ( 98 | EXT_CODE)
-#define K_C_F6   ( 99 | EXT_CODE)
-#define K_C_F7   (100 | EXT_CODE)
-#define K_C_F8   (101 | EXT_CODE)
-#define K_C_F9   (102 | EXT_CODE)
-#define K_C_F10  (103 | EXT_CODE)
+#define K_C_F1   ( K_F1 | EXT_CODE_CTRL)
+#define K_C_F2   ( K_F2 | EXT_CODE_CTRL)
+#define K_C_F3   ( K_F3 | EXT_CODE_CTRL)
+#define K_C_F4   ( K_F4 | EXT_CODE_CTRL)
+#define K_C_F5   ( K_F5 | EXT_CODE_CTRL)
+#define K_C_F6   ( K_F6 | EXT_CODE_CTRL)
+#define K_C_F7   ( K_F7 | EXT_CODE_CTRL)
+#define K_C_F8   ( K_F8 | EXT_CODE_CTRL)
+#define K_C_F9   ( K_F9 | EXT_CODE_CTRL)
+#define K_C_F10  (K_F10 | EXT_CODE_CTRL)
 
-#define K_A_F1   (104 | EXT_CODE)
-#define K_A_F2   (105 | EXT_CODE)
-#define K_A_F3   (106 | EXT_CODE)
-#define K_A_F4   (107 | EXT_CODE)
-#define K_A_F5   (108 | EXT_CODE)
-#define K_A_F6   (109 | EXT_CODE)
-#define K_A_F7   (110 | EXT_CODE)
-#define K_A_F8   (111 | EXT_CODE)
-#define K_A_F9   (112 | EXT_CODE)
-#define K_A_F10  (113 | EXT_CODE)
+#define K_A_F1   ( K_F1 | EXT_CODE_ALT)
+#define K_A_F2   ( K_F2 | EXT_CODE_ALT)
+#define K_A_F3   ( K_F3 | EXT_CODE_ALT)
+#define K_A_F4   ( K_F4 | EXT_CODE_ALT)
+#define K_A_F5   ( K_F5 | EXT_CODE_ALT)
+#define K_A_F6   ( K_F6 | EXT_CODE_ALT)
+#define K_A_F7   ( K_F7 | EXT_CODE_ALT)
+#define K_A_F8   ( K_F8 | EXT_CODE_ALT)
+#define K_A_F9   ( K_F9 | EXT_CODE_ALT)
+#define K_A_F10  (K_F10 | EXT_CODE_ALT)
 
 #define K_HOME     (71 | EXT_CODE)
 #define K_END      (79 | EXT_CODE)
@@ -205,92 +208,91 @@ typedef        double           DOUBLE;
 #define K_UP       (72 | EXT_CODE)
 #define K_DOWN     (80 | EXT_CODE)
 #define K_INS      (82 | EXT_CODE)
-#define K_DEL      (83 | EXT_CODE)
+#define K_DEL      (127)
 
-#define K_C_HOME  (119 | EXT_CODE)
-#define K_C_END   (117 | EXT_CODE)
-#define K_C_PGUP  (132 | EXT_CODE)
-#define K_C_PGDN  (118 | EXT_CODE)
-#define K_C_LEFT  (115 | EXT_CODE)
-#define K_C_RIGHT (116 | EXT_CODE)
+#define K_C_HOME  (K_HOME  | EXT_CODE_CTRL)
+#define K_C_END   (K_END   | EXT_CODE_CTRL)
+#define K_C_PGUP  (K_PGUP  | EXT_CODE_CTRL)
+#define K_C_PGDN  (K_PGDN  | EXT_CODE_CTRL)
+#define K_C_LEFT  (K_LEFT  | EXT_CODE_CTRL)
+#define K_C_RIGHT (K_RIGHT | EXT_CODE_CTRL)
 
-#define K_C_A         1
-#define K_C_B         2
-#define K_C_C         3
-#define K_C_D         4
-#define K_C_E         5
-#define K_C_F         6
-#define K_C_G         7
-#define K_C_H         8
-#define K_C_I         9
-#define K_C_J        10
-#define K_C_K        11
-#define K_C_L        12
-#define K_C_M        13
-#define K_C_N        14
-#define K_C_O        15
-#define K_C_P        16
-#define K_C_Q        17
-#define K_C_R        18
-#define K_C_S        19
-#define K_C_T        20
-#define K_C_U        21
-#define K_C_V        22
-#define K_C_W        23
-#define K_C_X        24
-#define K_C_Y        25
-#define K_C_Z        26
+#define K_C_A        ('a' | EXT_CODE_CTRL)
+#define K_C_B        ('b' | EXT_CODE_CTRL)
+#define K_C_C        ('c' | EXT_CODE_CTRL)
+#define K_C_D        ('d' | EXT_CODE_CTRL)
+#define K_C_E        ('e' | EXT_CODE_CTRL)
+#define K_C_F        ('f' | EXT_CODE_CTRL)
+#define K_C_G        ('g' | EXT_CODE_CTRL)
+#define K_C_H        ('h' | EXT_CODE_CTRL)
+#define K_C_I        ('i' | EXT_CODE_CTRL)
+#define K_C_J        ('j' | EXT_CODE_CTRL)
+#define K_C_K        ('k' | EXT_CODE_CTRL)
+#define K_C_L        ('l' | EXT_CODE_CTRL)
+#define K_C_M        ('m' | EXT_CODE_CTRL)
+#define K_C_N        ('n' | EXT_CODE_CTRL)
+#define K_C_O        ('o' | EXT_CODE_CTRL)
+#define K_C_P        ('p' | EXT_CODE_CTRL)
+#define K_C_Q        ('q' | EXT_CODE_CTRL)
+#define K_C_R        ('r' | EXT_CODE_CTRL)
+#define K_C_S        ('s' | EXT_CODE_CTRL)
+#define K_C_T        ('t' | EXT_CODE_CTRL)
+#define K_C_U        ('u' | EXT_CODE_CTRL)
+#define K_C_V        ('v' | EXT_CODE_CTRL)
+#define K_C_W        ('w' | EXT_CODE_CTRL)
+#define K_C_X        ('x' | EXT_CODE_CTRL)
+#define K_C_Y        ('y' | EXT_CODE_CTRL)
+#define K_C_Z        ('z' | EXT_CODE_CTRL)
 
-#define K_A_A        (30 | EXT_CODE)
-#define K_A_B        (48 | EXT_CODE)
-#define K_A_C        (46 | EXT_CODE)
-#define K_A_D        (32 | EXT_CODE)
-#define K_A_E        (18 | EXT_CODE)
-#define K_A_F        (33 | EXT_CODE)
-#define K_A_G        (34 | EXT_CODE)
-#define K_A_H        (35 | EXT_CODE)
-#define K_A_I        (23 | EXT_CODE)
-#define K_A_J        (36 | EXT_CODE)
-#define K_A_K        (37 | EXT_CODE)
-#define K_A_L        (38 | EXT_CODE)
-#define K_A_M        (50 | EXT_CODE)
-#define K_A_N        (49 | EXT_CODE)
-#define K_A_O        (24 | EXT_CODE)
-#define K_A_P        (25 | EXT_CODE)
-#define K_A_Q        (16 | EXT_CODE)
-#define K_A_R        (19 | EXT_CODE)
-#define K_A_S        (31 | EXT_CODE)
-#define K_A_T        (20 | EXT_CODE)
-#define K_A_U        (22 | EXT_CODE)
-#define K_A_V        (47 | EXT_CODE)
-#define K_A_W        (17 | EXT_CODE)
-#define K_A_X        (45 | EXT_CODE)
-#define K_A_Y        (21 | EXT_CODE)
-#define K_A_Z        (44 | EXT_CODE)
+#define K_A_A        ('a' | EXT_CODE_ALT)
+#define K_A_B        ('b' | EXT_CODE_ALT)
+#define K_A_C        ('c' | EXT_CODE_ALT)
+#define K_A_D        ('d' | EXT_CODE_ALT)
+#define K_A_E        ('e' | EXT_CODE_ALT)
+#define K_A_F        ('f' | EXT_CODE_ALT)
+#define K_A_G        ('g' | EXT_CODE_ALT)
+#define K_A_H        ('h' | EXT_CODE_ALT)
+#define K_A_I        ('i' | EXT_CODE_ALT)
+#define K_A_J        ('j' | EXT_CODE_ALT)
+#define K_A_K        ('k' | EXT_CODE_ALT)
+#define K_A_L        ('l' | EXT_CODE_ALT)
+#define K_A_M        ('m' | EXT_CODE_ALT)
+#define K_A_N        ('n' | EXT_CODE_ALT)
+#define K_A_O        ('o' | EXT_CODE_ALT)
+#define K_A_P        ('p' | EXT_CODE_ALT)
+#define K_A_Q        ('q' | EXT_CODE_ALT)
+#define K_A_R        ('r' | EXT_CODE_ALT)
+#define K_A_S        ('s' | EXT_CODE_ALT)
+#define K_A_T        ('t' | EXT_CODE_ALT)
+#define K_A_U        ('u' | EXT_CODE_ALT)
+#define K_A_V        ('v' | EXT_CODE_ALT)
+#define K_A_W        ('w' | EXT_CODE_ALT)
+#define K_A_X        ('x' | EXT_CODE_ALT)
+#define K_A_Y        ('y' | EXT_CODE_ALT)
+#define K_A_Z        ('z' | EXT_CODE_ALT)
 
-#define K_A_1         (120 | EXT_CODE)
-#define K_A_2         (121 | EXT_CODE)
-#define K_A_3         (122 | EXT_CODE)
-#define K_A_4         (123 | EXT_CODE)
-#define K_A_5         (124 | EXT_CODE)
-#define K_A_6         (125 | EXT_CODE)
-#define K_A_7         (126 | EXT_CODE)
-#define K_A_8         (127 | EXT_CODE)
-#define K_A_9         (128 | EXT_CODE)
-#define K_A_0         (129 | EXT_CODE)
-#define K_A_DASH      (130 | EXT_CODE)
-#define K_A_EQUAL     (131 | EXT_CODE)
+#define K_A_1         ('1' | EXT_CODE_ALT)
+#define K_A_2         ('2' | EXT_CODE_ALT)
+#define K_A_3         ('3' | EXT_CODE_ALT)
+#define K_A_4         ('4' | EXT_CODE_ALT)
+#define K_A_5         ('5' | EXT_CODE_ALT)
+#define K_A_6         ('6' | EXT_CODE_ALT)
+#define K_A_7         ('7' | EXT_CODE_ALT)
+#define K_A_8         ('8' | EXT_CODE_ALT)
+#define K_A_9         ('9' | EXT_CODE_ALT)
+#define K_A_0         ('0' | EXT_CODE_ALT)
+#define K_A_DASH      ('-' | EXT_CODE_ALT)
+#define K_A_EQUAL     ('=' | EXT_CODE_ALT)
 
 #define K_ESC           27
 #define K_SPACE         32
-#define K_TAB           K_C_I
-#define K_SHIFT_TAB     (15 | EXT_CODE)
-#define K_BACKSPACE     K_C_H
-#define K_C_BACKSPACE   127
-#define K_C_PTRSC       (114 | EXT_CODE)
+#define K_TAB           9
+#define K_SHIFT_TAB     (9 | EXT_CODE_SHIFT)
+#define K_BACKSPACE     8
+#define K_C_BACKSPACE   (K_BACKSPACE | EXT_CODE_CTRL)
 #define K_ENTER         13
-#define K_S_ENTER       13
-#define K_C_ENTER       10
+#define K_S_ENTER       (K_ENTER | EXT_CODE_SHIFT)
+#define K_C_ENTER       (K_ENTER | EXT_CODE_CTRL)
 
 /***************************************************************************
  *                      Konstanten fÅr  Rahmentypen                        *

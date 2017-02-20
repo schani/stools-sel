@@ -194,7 +194,9 @@ vio_init (void)
 	make_colors ();
 	font_texture = make_font_texture (font);
 	TTF_Quit();
-
+    
+    SDL_StartTextInput();
+    
 	iSizeX = TEXT_COLUMNS;
 	iSizeY = TEXT_ROWS;
 
@@ -619,25 +621,24 @@ msm_set_mickeys (WORD wHorMickeys, WORD wVerMickeys)
 {
 }
 
+static BYTE byKeyboardStatus = 0;
+
+static BYTE
+keycode_to_status (SDL_Keycode sym)
+{
+    switch (sym) {
+        case SDLK_LSHIFT: return SHIFT_LEFT;
+        case SDLK_RSHIFT: return SHIFT_RIGHT;
+        case SDLK_LCTRL: case SDLK_RCTRL: return CTRL;
+        case SDLK_LALT: case SDLK_RALT: return ALT;
+        default: return 0;
+    }
+}
+
 BYTE
 utl_keyb_status (void)
 {
-	BYTE byReturnVar = 0;
-	SDL_Keymod mod = SDL_GetModState ();
-
-	if (mod & KMOD_ALT)
-		byReturnVar |= ALT;
-	if (mod & KMOD_CTRL)
-		byReturnVar |= CTRL;
-	if (mod & KMOD_SHIFT)
-		byReturnVar |= SHIFT_RIGHT;
-	if (mod & KMOD_NUM)
-		byReturnVar |= NUM_LOCK;
-	if (mod & KMOD_CAPS)
-		byReturnVar |= CAPS_LOCK;
-	// FIXME: INSERT !
-
-	return byReturnVar;
+    return byKeyboardStatus;
 }
 
 static void
@@ -734,7 +735,76 @@ utl_event (UTL_EVENT *peventEvent)
 				assert (FALSE);
 			}
 			break;
-
+            
+        case SDL_KEYDOWN: {
+            SDL_Event next;
+            if (SDL_PeepEvents(&next, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT) == 1 &&
+                    next.type == SDL_TEXTINPUT) {
+                if (strlen(next.text.text) == 1 && !(next.text.text[0] & 0x80))
+                    break;
+                SDL_PeepEvents(&next, 1, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
+            }
+            SDL_Keycode sym = event.key.keysym.sym;
+            WORD key = 0;
+            switch (sym) {
+                case SDLK_LEFT: key = K_LEFT; break;
+                case SDLK_RIGHT: key = K_RIGHT; break;
+                case SDLK_UP: key = K_UP; break;
+                case SDLK_DOWN: key = K_DOWN; break;
+                case SDLK_HOME: key = K_HOME; break;
+                case SDLK_END: key = K_END; break;
+                case SDLK_PAGEUP: key = K_PGUP; break;
+                case SDLK_PAGEDOWN: key = K_PGDN; break;
+                case SDLK_F1: key = K_F1; break;
+                case SDLK_F2: key = K_F2; break;
+                case SDLK_F3: key = K_F3; break;
+                case SDLK_F4: key = K_F4; break;
+                case SDLK_F5: key = K_F5; break;
+                case SDLK_F6: key = K_F6; break;
+                case SDLK_F7: key = K_F7; break;
+                case SDLK_F8: key = K_F8; break;
+                case SDLK_F9: key = K_F9; break;
+                case SDLK_F10: key = K_F10; break;
+                default:
+                    if (sym == (sym & 0x7f))
+                        key = sym;
+                    if (sym & SDLK_SCANCODE_MASK)
+                        printf("key down %s\n", SDL_GetKeyName(sym));
+                    break;
+            }
+            if (key != 0) {
+                if (byKeyboardStatus & SHIFT)
+                    key |= EXT_CODE_SHIFT;
+                if (byKeyboardStatus & CTRL)
+                    key |= EXT_CODE_CTRL;
+                if (byKeyboardStatus & ALT)
+                    key |= EXT_CODE_ALT;
+                peventEvent->uiKind = E_KEY;
+                peventEvent->wKey = key;
+                break;
+            }
+            BYTE status = keycode_to_status(sym);
+            if (status)
+                byKeyboardStatus |= status;
+            break;
+        }
+            
+        case SDL_KEYUP: {
+            BYTE status = keycode_to_status(event.key.keysym.sym);
+            if (status)
+                byKeyboardStatus &= ~status;
+            break;
+        }
+            
+        case SDL_TEXTINPUT: {
+            WORD key = event.text.text[0];
+            if (key != (key & 0x7f))
+                break;
+            peventEvent->uiKind = E_KEY;
+            peventEvent->wKey = key;
+            break;
+        }
+            
 		case SDL_QUIT:
 			// FIXME: handle properly
 			SDL_DestroyRenderer(renderer);
