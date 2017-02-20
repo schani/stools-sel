@@ -692,22 +692,33 @@ utl_event (UTL_EVENT *peventEvent)
 			iLastMouseVer = peventEvent->iVer;
 			break;
 
-		case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONDOWN: {
+            BOOL is_double = event.button.clicks == 2;
 			// FIXME: double clicks
 			if (event.button.button == SDL_BUTTON_LEFT) {
-				peventEvent->uiKind = E_MSM_L_DOWN;
+                if (is_double)
+                    peventEvent->uiKind = E_MSM_L_DOUBLE;
+                else
+                    peventEvent->uiKind = E_MSM_L_DOWN;
 				wMouseButtons |= MSM_B_LEFT;
 			} else if (event.button.button == SDL_BUTTON_MIDDLE) {
-				peventEvent->uiKind = E_MSM_M_DOWN;
+                if (is_double)
+                    peventEvent->uiKind = E_MSM_M_DOUBLE;
+                else
+                    peventEvent->uiKind = E_MSM_M_DOWN;
 				wMouseButtons |= MSM_B_MIDDLE;
 			} else if (event.button.button == SDL_BUTTON_RIGHT) {
-				peventEvent->uiKind = E_MSM_R_DOWN;
+                if (is_double)
+                    peventEvent->uiKind = E_MSM_R_DOUBLE;
+                else
+                    peventEvent->uiKind = E_MSM_R_DOWN;
 				wMouseButtons |= MSM_B_RIGHT;
 			} else {
 				assert (FALSE);
 			}
 			peventEvent->wButtons = wMouseButtons;
 			break;
+        }
 
 		case SDL_MOUSEBUTTONUP:
 			if (event.button.button == SDL_BUTTON_LEFT) {
