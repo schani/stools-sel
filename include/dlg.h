@@ -422,6 +422,8 @@ void                dlg_text_field_handle_event      (DLG_ELEMENT*, UTL_EVENT*);
 void                dlg_help_box_handle_event        (DLG_ELEMENT*, UTL_EVENT*);
 void                dlg_editor_handle_event          (DLG_ELEMENT*, UTL_EVENT*);
 
+CHAR*               dlg_editor_get_text              (DLG_ELEMENT *pelement);
+
 DLG_ELEMENT*        dlg_init_push_button             (INT, INT, CHAR*, BOOL, CHAR*, UINT, BOOL, void*);
 
 DLG_ELEMENT*        dlg_init_radio_button            (DLG_BUTTON*, INT, CHAR*, UINT, BOOL, void*);

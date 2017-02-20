@@ -793,6 +793,18 @@ void dlg_editor_handle_event (DLG_ELEMENT *pelementElement, UTL_EVENT *peventEve
     pedit->bDragging = FALSE;
 }
 
+CHAR*
+dlg_editor_get_text (DLG_ELEMENT *pelement)
+{
+    DLG_EDITOR *pedit = pelement->pAddInfo;
+    CHAR *text = utl_alloc(pedit->ulTextLength + 1);
+    size_t first_length = pedit->pcCursor - pedit->pcBuffer;
+    memcpy(text, pedit->pcBuffer, first_length);
+    memcpy(text + first_length, pedit->pcCursor + pedit->ulGapLength, pedit->ulTextLength - first_length);
+    text[pedit->ulTextLength] = 0;
+    return text;
+}
+
 DLG_ELEMENT* dlg_init_editor (INT iX, INT iY, INT iWidth, INT iHeight, ULONG ulBufferLength,
                               CHAR *pcBuffer, BOOL bCanChange, BOOL bBorder, CHAR *pcHelpLine, UINT uiID,
                               BOOL bCanBeActivated, void *pRecipient)
