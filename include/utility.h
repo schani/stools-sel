@@ -215,7 +215,7 @@ CHAR         utl_get_hot_key         (CHAR*);
 INT          utl_hot_strlen          (CHAR*);
 void         utl_get_path            (CHAR*);
 void         utl_set_path            (CHAR*);
-void         utl_split_path          (CHAR *path, CHAR *drive, CHAR *dir, CHAR *name, CHAR *ext);
+void         utl_split_path          (CHAR *path, CHAR *dir, CHAR *name, CHAR *ext);
 BOOL         utl_get_files           (CHAR*, CHAR*, UTL_DIRECTORY_ENTRY*, UINT, UINT, BOOL);
 BOOL         utl_filename_valid      (CHAR*);
 BOOL         utl_get_win_events      (void);

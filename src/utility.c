@@ -47,6 +47,8 @@
 #endif
 #include <unistd.h>
 #include <assert.h>
+#include <glob.h>
+#include <sys/time.h>
 
 BOOL  static int_utl_char_valid      (CHAR);
 BOOL  static int_utl_string_valid    (CHAR*, BOOL);
@@ -1037,131 +1039,76 @@ void utl_set_path (CHAR *pcPath)
 }
 
 void
-utl_split_path (CHAR *path, CHAR *drive, CHAR *dir, CHAR *name, CHAR *ext)
+utl_split_path (CHAR *path, CHAR *dir, CHAR *name, CHAR *ext)
 {
-	assert (FALSE);
+    CHAR *slash = strrchr(path, '/');
+    CHAR *filename;
+    if (slash) {
+        filename = slash + 1;
+        strncpy(dir, path, filename - path);
+        dir[filename - path] = 0;
+    } else {
+        filename = path;
+        dir[0] = 0;
+    }
+    CHAR *dot = strrchr(filename, '.');
+    if (dot) {
+        strncpy(name, filename, dot - filename);
+        name[dot - filename] = 0;
+        strcpy(ext, dot);
+    } else {
+        strcpy(name, filename);
+        ext[0] = 0;
+    }
 }
 
-/*
-BOOL utl_get_files (CHAR *pcPuffer, CHAR *pcMaske, UINT uiBufferLength)
+static void
+glob_files (CHAR *pcMask, BOOL dirs,
+            CHAR *pcBuffer, UTL_DIRECTORY_ENTRY *pdeTable, UINT uiBufferSize, UINT uiTableSize,
+            size_t *buffer_index, size_t *table_index)
 {
-#ifndef _WINNT
-  union  REGS       regs;
-  struct SREGS      sregs;
-  UTL_FILE     far *fileFile;
-  CHAR         far *pcFarMaske,
-               far *pcAllMaske     = "*.*";
-  UCHAR             ucZaehler;
-  UINT              uiEintraege    = 0,
-                    uiMaxEintraege;
+    glob_t results;
+    if (glob(pcMask, GLOB_MARK, NULL, &results))
+        return;
 
-  uiMaxEintraege = (uiBufferLength - 1) / 13;
-  pcFarMaske = (CHAR far*)pcMaske;
-  regs.h.ah = 0x2F;
-  intdosx(&regs, &regs, &sregs);
-  fileFile = (UTL_FILE far*)(((ULONG)sregs.es << 16) + (ULONG)regs.x.bx);
-  regs.h.ah = 0x4e;
-  regs.x.cx = ~0;
-  sregs.ds = FP_SEG(pcAllMaske);
-  regs.x.dx = FP_OFF(pcAllMaske);
-  intdosx(&regs, &regs, &sregs);
-  fileFile->acName[12] = 0;
-  if (!regs.x.cflag)
-  {
-    if (int_utl_fnstrcmp(fileFile->acName, "."))
-    {
-      if (fileFile->ucAttribut == UTL_SUBDIR)
-      {
-        uiEintraege++;
-        for (ucZaehler = 0; ucZaehler < 13; ucZaehler++)
-          pcPuffer[ucZaehler] = utl_upper(fileFile->acName[ucZaehler]);
-        pcPuffer += 13;
-      }
+    for (int i = 0; i < results.gl_matchc; i++) {
+        char *path = results.gl_pathv[i];
+        size_t len = strlen(path);
+        if (len == 0)
+            continue;
+        BOOL is_dir = path[len-1] == '/';
+        if (!!is_dir != !!dirs)
+            continue;
+        
+        if (*buffer_index + len + 1 >= uiBufferSize || *table_index + 1 >= uiTableSize)
+            break;
+        
+        strcpy(pcBuffer + *buffer_index, path);
+        pdeTable[*table_index].bSubDir = is_dir;
+        pdeTable[*table_index].pcName = pcBuffer + *buffer_index;
+        
+        *buffer_index += len + 1;
+        *table_index += 1;
     }
-    do
-    {
-      regs.h.ah = 0x4f;
-      intdos(&regs, &regs);
-      fileFile->acName[12] = 0;
-      if (!regs.x.cflag && (fileFile->ucAttribut == UTL_SUBDIR))
-      {
-        for (ucZaehler = 0; ucZaehler < 13; ucZaehler++)
-          pcPuffer[ucZaehler] = utl_upper(fileFile->acName[ucZaehler]);
-        pcPuffer += 13;
-        uiEintraege++;
-      }
-    } while (!regs.x.cflag && (uiEintraege < uiMaxEintraege));
-  }
-  regs.h.ah = 0x4e;
-  regs.x.cx = ~UTL_SUBDIR;
-  sregs.ds = FP_SEG(pcFarMaske);
-  regs.x.dx = FP_OFF(pcFarMaske);
-  intdosx(&regs, &regs, &sregs);
-  fileFile->acName[12] = 0;
-  if (!regs.x.cflag)
-  {
-    if (int_utl_fnstrcmp(fileFile->acName, "."))
-    {
-      if (fileFile->ucAttribut != UTL_SUBDIR)
-      {
-        uiEintraege++;
-        for (ucZaehler = 0; ucZaehler < 13; ucZaehler++)
-          pcPuffer[ucZaehler] = utl_lower(fileFile->acName[ucZaehler]);
-        pcPuffer += 13;
-      }
-    }
-    do
-    {
-      regs.h.ah = 0x4f;
-      intdos(&regs, &regs);
-      fileFile->acName[12] = 0;
-      if (!regs.x.cflag && (fileFile->ucAttribut != UTL_SUBDIR))
-      {
-        for (ucZaehler = 0; ucZaehler < 13; ucZaehler++)
-          pcPuffer[ucZaehler] = utl_lower(fileFile->acName[ucZaehler]);
-        pcPuffer += 13;
-        uiEintraege++;
-      }
-    } while (!regs.x.cflag && (uiEintraege < uiMaxEintraege));
-    *pcPuffer = 0;
-  }
-  else
-    *pcPuffer = 0;
-  pcPuffer -= (13 * uiEintraege);
-  if (uiEintraege)
-    qsort(pcPuffer, uiEintraege, 13,
-          (int(*)(const void*, const void*))strcmp);
-
-  return TRUE;
-#else
-  WIN32_FIND_DATA ffd;
-  HANDLE          hFind;
-  UINT            uiFree;
-
-  uiFree = uiBufferSize - 1;
-  hFind = FindFirstFile(pcMaske, &ffd);
-  while (hFind != INVALID_HANDLE_VALUE)
-  {
-    if (strlen(ffd.cFileName) + 1 > uiFree)
-    {
-      *pcPuffer = 0;
-
-      return TRUE;
-    }
-    strcpy(pcPuffer, ffd.cFileName);
-    pcPuffer += strlen(pcPuffer) + 1;
-    FindNextFile(hFind, &ffd);
-  }
-  *pcPuffer = 0;
-
-  return TRUE;
-#endif
-}*/
+    
+    globfree(&results);
+}
 
 BOOL utl_get_files (CHAR *pcMask, CHAR *pcBuffer, UTL_DIRECTORY_ENTRY *pdeTable, UINT uiBufferSize,
                     UINT uiTableSize, BOOL bIncludeDirs)
 {
-	assert (FALSE);
+    size_t buffer_index = 0, table_index = 0;
+    
+    if (bIncludeDirs) {
+        glob_files("..", TRUE, pcBuffer, pdeTable, uiBufferSize, uiTableSize, &buffer_index, &table_index);
+        glob_files("*", TRUE, pcBuffer, pdeTable, uiBufferSize, uiTableSize, &buffer_index, &table_index);
+    }
+    glob_files(pcMask, FALSE, pcBuffer, pdeTable, uiBufferSize, uiTableSize, &buffer_index, &table_index);
+    
+    pdeTable[table_index].bSubDir = FALSE;
+    pdeTable[table_index].pcName = NULL;
+    
+    return TRUE;
 #ifdef _WINNT
   UINT            uiBufferFree = uiBufferSize,
                   uiTableUsed  = 0;

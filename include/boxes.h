@@ -34,7 +34,6 @@ typedef struct
 #define BOX_MOUSE_SPEED   5
 #define BOX_MOUSE_CLICK   6
 #define BOX_PALETTE       7
-#define BOX_DRIVE         8
 #define BOX_FILE_NAME     9
 #define BOX_DRIVES       10
 #define BOX_FILES        11
@@ -58,10 +57,6 @@ typedef struct
 #define BOX_INFO          PAL_WIN_INFO
 #define BOX_WARNING       PAL_WIN_WARNING
 #define BOX_ERROR         PAL_WIN_ERROR
-
-#define M_HELP_HELP      150
-#define M_HELP_BACK      151
-#define M_CHANGE_CONTEXT 152
 
 /***************************************************************************
  *                        Funktionsprototypen                              *

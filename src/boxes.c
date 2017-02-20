@@ -40,6 +40,10 @@
 #endif
 #include <unistd.h>
 
+#define M_HELP_HELP      150
+#define M_HELP_BACK      151
+#define M_CHANGE_CONTEXT 152
+
 static void  int_box_file_window  (WINDOW, UTL_EVENT*);
 static void  int_box_color_window (WINDOW, UTL_EVENT*);
 static void  int_box_edit_window  (WINDOW, UTL_EVENT*);
@@ -329,7 +333,6 @@ static void int_box_file_window (WINDOW winWindow, UTL_EVENT *peventEvent)
 {
          BOX_FILE_WIN *pfwin;
          CHAR          acTemp[128],
-                       acDrive[3],
                        acDir[128],
                        acName[64],
                        acExt[32];
@@ -356,17 +359,10 @@ static void int_box_file_window (WINDOW winWindow, UTL_EVENT *peventEvent)
           suiLastButton = ((DLG_ELEMENT*)peventEvent->pFrom)->uiID;
           switch (((DLG_ELEMENT*)peventEvent->pFrom)->uiID)
           {
-            case BOX_DRIVES :
-              box_drives();
-              dlg_text_field_set_values(win_get_element(winWindow, BOX_FILE_NAME), pfwin->pcMask);
-              utl_get_path(pfwin->pcPath);
-              int_box_write_path(winWindow, pfwin->pcPath);
             case BOX_OK :
               if (utl_filename_valid(pfwin->pcFileName))
               {
-                utl_split_path(pfwin->pcFileName, acDrive, acDir, acName, acExt);
-                if (isalpha(acDrive[0]))
-                  utl_set_drive(utl_upper(acDrive[0]) - 'A');
+                utl_split_path(pfwin->pcFileName, acDir, acName, acExt);
                 if (acDir[0])
                 {
                   acDir[strlen(acDir) - 1] = 0;
@@ -415,7 +411,7 @@ static void int_box_file_window (WINDOW winWindow, UTL_EVENT *peventEvent)
             if (utl_filename_valid(pfwin->pcFileName))
             {
               chdir(pfwin->ppcFirstLine[iPos]);
-              utl_split_path(pfwin->pcFileName, acDrive, acDir, acName, acExt);
+              utl_split_path(pfwin->pcFileName, acDir, acName, acExt);
               strcpy(acTemp, acName);
               strcat(acTemp, acExt);
               int_box_files_read(acTemp, pfwin);
@@ -733,72 +729,6 @@ BOOL box_palette (void)
   return TRUE;
 }
 
-BOOL box_drives (void)
-{
-  BOOL         bShorts,
-               bReturnVar = FALSE,
-               bEnd       = FALSE;
-  INT          iCounter,
-               iPos;
-  UCHAR        ucDrive;
-  UINT         uiID;
-  CHAR        *apcFirstLine[27],
-              *pcDrives;
-  WINDOW       winWindow;
-  DLG_ELEMENT *pelement;
-
-  bShorts = utl_short_cuts(FALSE);
-  if (!(winWindow = win_new(22, 6, 36, 13, "standard_dialogue", 0)))
-    return FALSE;
-  if (!win_title(winWindow, " Laufwerkswahl ", TITLE_T_C))
-    return FALSE;
-  if (!(pcDrives = utl_get_drives()))
-    return FALSE;
-  for (iCounter = 0; iCounter < 26 && pcDrives[3 * iCounter]; iCounter++)
-    apcFirstLine[iCounter] = (pcDrives + (3 * iCounter));
-  apcFirstLine[iCounter] = NULL;
-  ucDrive = utl_get_drive();
-  for (iCounter = 0; apcFirstLine[iCounter]; iCounter++)
-    if (*apcFirstLine[iCounter] - 'A' == ucDrive)
-    {
-      ucDrive = (UCHAR)iCounter;
-      break;
-    }
-  pelement = dlg_init_list_box(14, 2, 6, 7, apcFirstLine, TRUE, pcDrive, BOX_DRIVE, TRUE, NULL);
-  win_add_element(winWindow, dlg_init_label(3, 2, "#Laufwerke", pelement, 0));
-  win_add_element(winWindow, pelement);
-  win_add_element(winWindow, dlg_init_act_button(3, 11, "OK", K_ENTER, pcDriveOK, BOX_OK, TRUE, NULL));
-  win_add_element(winWindow, dlg_init_act_button(11, 11, "Abbruch", K_ESC, pcDriveCancel, BOX_CANCEL, TRUE,
-                                                 NULL));
-  win_add_element(winWindow, dlg_init_act_button(24, 11, "Hilfe", K_F1, pcHelp, BOX_HELP, TRUE, NULL));
-  win_add_element(winWindow, dlg_init_border(1, 10, 34, 1, 0));
-  win_cursor(winWindow, TRUE);
-  do
-  {
-    glb_execute(winWindow);
-    win_get_last_button(winWindow, &uiID);
-    switch (uiID)
-    {
-      case BOX_DRIVE :
-      case BOX_OK :
-        dlg_list_box_query_values(win_get_element(winWindow, BOX_DRIVE), &iPos);
-        utl_set_drive(*apcFirstLine[iPos] - 'A');
-        bReturnVar = TRUE;
-      case BOX_CANCEL :
-        bEnd = TRUE;
-        break;
-      case BOX_HELP :
-        box_modal_help(CTX_BOX_LAUFWERKE);
-        break;
-    }
-  } while (!bEnd);
-  if (!win_delete(winWindow))
-    return FALSE;
-  utl_free(pcDrives);
-  utl_short_cuts(bShorts);
-  return bReturnVar;
-}
-
 BOOL box_load_save (CHAR *pcTitle, CHAR *pcMask)
 {
 
@@ -834,8 +764,6 @@ BOOL box_load_save (CHAR *pcTitle, CHAR *pcMask)
   win_add_element(winWindow, pelement);
   win_add_element(winWindow, dlg_init_act_button(3, 16, "OK", K_ENTER, pcFileOK, BOX_OK, TRUE, NULL));
   win_add_element(winWindow, dlg_init_act_button(11, 16, "Abbruch", K_ESC, pcFileCancel, BOX_CANCEL, TRUE,
-                                                 NULL));
-  win_add_element(winWindow, dlg_init_act_button(24, 16, "#Laufwerke", 0, pcFileDrives, BOX_DRIVES, TRUE,
                                                  NULL));
   win_add_element(winWindow, dlg_init_act_button(39, 16, "Hilfe", K_F1, pcHelp, BOX_HELP, TRUE, NULL));
   win_add_element(winWindow, dlg_init_border(1, 15, 49, 1, 0));
