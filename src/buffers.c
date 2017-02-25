@@ -16,7 +16,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <buffers.h>
-#include <assert.h>
+
+#ifndef MIN
+#define MIN(a,b)	((a)<(b)?(a):(b))
+#endif
+#ifndef MAX
+#define MAX(a,b)	((a)>(b)?(a):(b))
+#endif
+
+#define utl_alloc(s)           malloc(s)
+#define utl_realloc(s,n)       realloc(s,n)
 
 /***************************************************************************
  *                       Allgemeine Funktionen                             *
@@ -98,29 +107,26 @@ UCHAR buf_eof (BUFFER *pbufBuffer)
       return(FALSE);
     case BUF_FILE_BUFFER :
       return(feof(BUF_FB));
-    default:
-      assert (FALSE);
-      return FALSE;
   }
+  return 0;
 }
 
 ULONG buf_write (CHAR *pcSource, ULONG ulSize, ULONG ulN,
                  BUFFER *pbufBuffer)
 {
-
-  ULONG ulNs;
-                             
   BUF_SWITCH
   {
     case BUF_MEMORY_BUFFER :
-      if (BUF_MB->ulPos + ulSize * ulN >= BUF_MB->ulPhysLength)
-        if (!utl_realloc(BUF_MB->pcBuffer, BUF_MB->ulPhysLength +=
-            ((ulSize * ulN) / BUF_MEMORY_EXPAND_SIZE + 1) *
-            BUF_MEMORY_EXPAND_SIZE))
+      if (BUF_MB->ulPos + ulSize * ulN >= BUF_MB->ulPhysLength) {
+	BUF_MB->pcBuffer = utl_realloc(BUF_MB->pcBuffer, BUF_MB->ulPhysLength +=
+				       ((ulSize * ulN) / BUF_MEMORY_EXPAND_SIZE + 1) *
+				       BUF_MEMORY_EXPAND_SIZE);
+        if (!BUF_MB->pcBuffer)
           return(0);
+      }
       memcpy(BUF_MB->pcBuffer + BUF_MB->ulPos, pcSource, ulN * ulSize);
       BUF_MB->ulPos += ulN * ulSize;
-      BUF_MB->ulVirtLength = max(BUF_MB->ulVirtLength, BUF_MB->ulPos);
+      BUF_MB->ulVirtLength = MAX(BUF_MB->ulVirtLength, BUF_MB->ulPos);
       return(ulN);
     case BUF_FILE_BUFFER :
       return(fwrite(pcSource, ulSize, ulN, BUF_FB));
@@ -131,13 +137,10 @@ ULONG buf_write (CHAR *pcSource, ULONG ulSize, ULONG ulN,
 ULONG buf_read (CHAR *pcDest, ULONG ulSize, ULONG ulN,
                 BUFFER *pbufBuffer)
 {
-
-  ULONG ulNs;
-           
   BUF_SWITCH
   {
     case BUF_MEMORY_BUFFER :
-      ulN = min((BUF_MB->ulVirtLength - BUF_MB->ulPos) / ulSize, ulN);
+      ulN = MIN((BUF_MB->ulVirtLength - BUF_MB->ulPos) / ulSize, ulN);
       memcpy(pcDest, BUF_MB->pcBuffer + BUF_MB->ulPos, ulN * ulSize);
       BUF_MB->ulPos += ulN * ulSize;
       return(ulN);       
