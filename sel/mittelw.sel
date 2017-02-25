@@ -1,0 +1,22 @@
+global
+  function main () : void
+end
+
+function main () : void
+  
+  i : int;
+  a : int =  0;
+  n : int = -1;
+  
+begin
+  repeat 
+    a = a + (i = ReadInt());
+    n = n + 1;
+  until (i == 0)
+  if (n)
+    WriteInt(a / n);
+  else
+    WriteString("Es wurden keine Zahlen eingegeben!");
+  end
+  WriteString("\n");
+end

@@ -1,0 +1,32 @@
+global
+
+  struct teststru
+    x : int;
+    y : int;
+  end
+
+  function main () : void
+  function test () : teststru
+  
+end
+
+function test () : teststru
+
+  d : teststru;
+
+begin
+  d->x = 3;
+  d->y = 6;
+  return d;
+end
+
+function main () : void
+
+  v : teststru;
+
+begin
+  v = test();
+  WriteInt(v->x);
+  WriteString("\n");
+  WriteInt(v->y);
+end

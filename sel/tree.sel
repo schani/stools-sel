@@ -1,0 +1,87 @@
+// This program demonstrates SEL's ability to handle even complex dynamic
+// data structures such as a binary tree.
+// The program requests the user to input integers and stores them in a
+// sorted binary tree. If the user inputs 0, the program outputs the tree, 
+// beginning with the leftmost (the lowest number) node, ending with the
+// rightmost (the highest number).
+// Note that the program doesn't free the allocated tree, since it is
+// just intended for demonstration purposes.
+//
+// (c) 1993-94 by Schani Electronics
+
+#include "conio.sh"
+#include "memory.sh"
+
+global
+
+  function main () : void
+
+end
+
+local
+
+  struct node
+    i : int;
+    l : *node;
+    r : *node;
+  end
+
+  function Output (*node) : void
+
+end
+
+function Output (n : *node) : void
+begin
+  if (n->l)                  // left branch?
+    Output(n->l);
+  end
+  WriteInt(n->i);            // write node
+  WriteString("\n");
+  if (n->r)                  // right branch?
+    Output(n->r);
+  end
+end
+
+function main () : void
+
+  root  : *node = NULL;
+  n     : *node;
+  i     : int;
+  found : int;
+
+begin
+  WriteString("Enter some numbers != 0 or enter 0 to end.\n");
+  repeat
+    i = ReadInt();
+    if (i != 0)                     // 0 = exit
+      if (root == NULL)             // do we already have a root?
+        n = root = new node;        // if not, make new root
+      else
+        found = 0;
+        n = root;
+        repeat                      // repeat until we've found our node
+          if (i < n->i)             // left branch
+            if (n->l)               // if left branch exists
+              n = n->l;             // traverse
+            else
+              n->l = new node;      // make new left branch
+              n = n->l;
+              found = 1;
+            end
+          else
+            if (n->r)               // in not left branch, then in right
+              n = n->r;             // in right branch exists, traverse
+            else
+              n->r = new node;      // make new right branch
+              n = n->r;
+              found = 1;
+            end
+          end
+        until (found)
+      end
+      n->l = n->r = NULL;           // set left and right branches to NULL
+      n->i = i;
+    end
+  until (i == 0)                    // until exit
+  Output(root);                     // output our tree
+end

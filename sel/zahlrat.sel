@@ -1,0 +1,40 @@
+// SEL-Zahlenraten
+// (c) 1993,94 by Schani Electronics
+//
+// Dieses Programm demonstriert die Verwendung der RunTimeLibrary-Funktionen
+
+#include "stdlib.sh"
+#include "conio.sh"
+#include "memory.sh"
+
+function main () : int
+
+  z : int;
+  i : int;
+  a : int = 1;
+                              
+begin
+  Randomize();
+  WriteString("SEL-Zahlenraten          (c) 1993,94 by Schani Electronics\n\n");
+  WriteString("Freier Speicher: ");
+  WriteInt(MemAvail());
+  WriteString("\n\nObergrenze: ");
+  z = Random(ReadInt() - 1) + 1;
+  while (1)
+    WriteString("Zahl: ");
+    i = ReadInt();
+    if (i == z)
+      WriteString("\nGratulation! Zge: ");
+      WriteInt(a);
+      WriteString("\nFreier Speicher: ");
+      WriteInt(MemAvail());
+      return 1;
+    end
+    if (i > z)
+      WriteString("Zu groá!\n");
+    else
+      WriteString("Zu klein!\n");
+    end
+    a = a + 1;
+  end
+end

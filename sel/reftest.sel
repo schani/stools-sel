@@ -1,0 +1,20 @@
+global
+  function test (int) : void
+  function main ()    : void
+end                         
+
+function test (i : int) : void
+begin
+  i = i + 1;
+end
+
+function main () : void
+
+  i : int = 1;
+
+begin     
+  WriteInt(i);
+  test(i);
+  WriteInt(i);
+end
+  

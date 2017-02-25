@@ -1,0 +1,66 @@
+// This module implements two functions to sort an array of
+// int's. I guess, the algorithms need not be explained. For
+// detailed discussion, see for example "Algorithmen" by Robert
+// Sedgewick or (for very detailed discussion) "The Art of
+// Computer Programming, Volume 3 (Sorting and Searching)" by
+// Donald E. Knuth.
+//
+// (c) 1993-94 by Schani Electronics
+
+global
+  
+  function quicksort  (*int, int, int) : void
+  function bubblesort (*int, int) : void
+  
+end
+
+function quicksort (a : *int, l : int, r : int) : void
+
+  v : int;
+  t : int;
+  i : int;
+  j : int;
+
+begin          
+  if (r > l)
+    v = a[r];
+    i = l - 1;
+    j = r;
+    repeat
+      repeat
+        i = i + 1;
+      until (a[i] >= v)
+      repeat
+        j = j - 1;
+      until (a[j] <= v)
+      t = a[i];
+      a[i] = a[j];
+      a[j] = t;
+    until (j <= i)
+    a[j] = a[i];
+    a[i] = a[r];
+    a[r] = t;
+    quicksort(a, l, i - 1);
+    quicksort(a, i + 1, r);
+  end
+end
+   
+function bubblesort (a : *int, s : int) : void
+
+  e : int;
+  t : int;
+  x : int;
+     
+begin
+  repeat      
+    e = 1;
+    for (x = 0 to s - 2)
+      if (a[x] > a[x + 1])
+        t = a[x];
+        a[x] = a[x + 1];
+        a[x + 1] = t;
+        e = 0;
+      end  
+    end
+  until (e)
+end

@@ -1,0 +1,2695 @@
+% -*- LaTeX -*-
+
+\documentstyle[german,makeidx]{report}
+
+% \documentclass{report}
+% \usepackage{german}
+% \usepackage{makeidx}
+
+\addtolength{\textwidth}{4cm}
+\addtolength{\oddsidemargin}{-1.7cm}
+\addtolength{\evensidemargin}{-1.7cm}
+\addtolength{\topmargin}{-80pt}
+\addtolength{\textheight}{150pt}
+\addtolength{\marginparsep}{-5pt}
+
+% \addtolength{\textwidth}{2cm}
+% \addtolength{\topmargin}{-30pt}
+% \addtolength{\textheight}{60pt}
+% \addtolength{\marginparsep}{-5pt}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\sloppy
+\frenchspacing
+% \pagestyle{headings}
+\makeindex
+
+\input{quickref.inc}
+
+\begin{document}
+
+\begin{titlepage}
+\vspace*{2cm}
+\begin{flushleft}
+\inch SEL\rm \hfill Version 0.3
+\end{flushleft}
+\rule{\textwidth}{2mm}
+\begin{flushright}
+\huge{\bf Kurzreferenz}\\[0.5ex]
+\end{flushright}
+\vspace{13.5cm}
+\begin{flushleft}
+\large \bf Mark Probst\\
+\rule[2mm]{\textwidth}{1mm}
+\end{flushleft}
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+
+\chapter{\protect{"Uber} diesen Text}
+
+Dieser Text hat zum Ziel, die Programmiersprache SEL (Schani
+Electronics Language) in ihrer momentanen Version 0.3
+vollst"andig zu beschreiben. Dabei ist er als Kurzreferenz
+aufgebaut, kann aber auch zur Not verwendet werden, um die
+Sprache SEL kennenzulernen, vor allem von Programmierern, die
+bereits {\sc Pascal}
+\index{Pascal@{\sc Pascal}}
+oder \ind{C}
+kennen, da SEL, verglichen mit diesen Sprachen, kaum etwas Neues
+bietet.
+
+Die einzigen Implementationen von SEL, die zur Zeit verf"ugbar
+sind, sind die beiden \ind{Interpreter} unter MS-DOS und Windows
+NT. Die Funktionsreferenz (Kapitel \ref{funcref}) spiegelt deren
+momentanen Stand in Bezug auf verf"ugbare Funktionen wider.
+
+\section{Typographie}
+\index{Typographie|ii}
+
+Um Mi"sverst"andnisse zu vermeiden, werden in diesem Text
+verschiedene Schriftarten f"ur verschiedene Zwecke verwendet.
+Durch eine {\em kursive Schriftart} werden neue Begriffe
+gekennzeichnet und wichtige Textabschnitte hervorgehoben.
+
+Schl"usselw"orter der Sprache SEL werden in {\bf fetter Schrift}
+geschrieben. Eine Aufstellung aller Schl"usselw"orter finden Sie
+in Kapitel \ref{identifiers}. Operatoren hingegen werden in
+{\tt Schreibmaschinenschrift} geschrieben.
+
+Typen werden nicht nur in fetter Schrift geschrieben, sondern
+zus"atzlich in geschwungene \type{Klammern} gesetzt, um sie von
+Schl"usselw"ortern unterscheiden zu k"onnen.
+
+Bezeichner, Makros, Funktionsnamen und Nonterminals der
+SEL-Grammatik werden ebenfalls in
+{\tt Schreib"-maschi"-nen"-schrift} geschrieben.
+
+Indexeintr"age
+\index{Index|ii}
+\index{Stichwortverzeichnis|see{Index}}
+sind wie folgt zu interpretieren: Kursive
+Eintr"age wie etwa {\em 23} deuten auf einen Haupteintrag, wo die
+meisten Informationen zu dem jeweiligen Thema zu finden sind.
+Unterstrichene Eintr"age wie z.~B. \underline{31} bedeuten, da"s
+auf dieser Seite ein Beispiel zum Thema zu finden ist, das jedoch
+nicht unbedingt n"aher erl"autert wird.
+
+\section{Die Backus-Naur-Form}
+\index{Backus-Naur-Form|ii}
+\index{BNF|see{Backus-Naur-Form}}
+
+Die Backus-Naur-Form (kurz BNF) wird verwendet, um Grammatiken
+darzustellen. Dabei besteht jede \indi{Grammatik} aus mehreren
+Symbolen, die ihrerseits jeweils aus mindestens einer
+\indi{Produktion} bestehen. Symbole werden links angeschrieben.
+Symbole rechts davon, durch einen Doppelpunkt oder ein anderes
+Zeichen vom Grammatiksymbol getrennt, jeweils durch einen
+vertikalen Strich (\fu{|}) voneinander getrennt. Auf die letzte
+Produktion eines jeden Symbols folgt ein Semikolon (\fu{;}).
+
+Produktionen sind Aneinanderreihungen von Terminal- und
+Nichtterminalsymbolen. Nichtterminalsymbole sind jene, die auf
+den linken Seiten stehen. Terminalsymbole sind solche, die in
+Quelltexten der Sprache direkt vorkommen k"onnen, und solche,
+die durch regul"are Ausdr"ucke definiert werden (siehe n"achstes
+Unterkapitel). Erstere werden unter Hochkomma angef"uhrt (wie
+etwa \fu{'new'}), w"ahrend letztere durch Gro"sschreibung
+gekennzeichnet sind.
+
+Ein Satz einer Sprache mu"s nun so konstruiert sein, da"s er
+durch Ersetzen von Nichtterminalsymbolen durch bestimmte Produktionen
+derselben hergeleitet werden kann.
+
+\newpage
+\example
+\begin{verbatim}
+satz:         subjekt praedikat
+            ;
+subjekt:      artikel substantiv
+            ;
+artikel:      `der'
+            | `die'
+            | `das'
+            ;
+substantiv:   `frau'
+            | `mann'
+            | `kind'
+            ;
+pradikat:     `geht'
+            | `schlaeft'
+            | `isst'
+            ;
+\end{verbatim}
+
+Diese Grammatik hat f"unf Nonterminalsymbole und kann einige
+primitive deutsche S"atze herleiten wie etwa "`der mann
+schlaeft"'. Dabei geht man vom Symbol \fu{satz} aus und setzt
+f"ur die Nonterminals \fu{subjekt} und \fu{praedikat} jeweils
+eine ihrer Produktionen ein. F"ur \fu{subjekt} wird \fu{artikel}
+und \fu{substantiv} eingesetzt und f"ur diese wiederum die beiden
+Terminals \fu{`der'} und \fu{`mann'}. Dasselbe geschieht mit
+\fu{pradikat}.
+
+Dieses Beispiel demonstriert nicht nur, wie sich S"atze von einer
+BNF herleiten lassen, sondern auch, da"s diese nur f"ur den
+syntaktischen Teil der Grammatik eingesetzt werden kann. So
+l"a"st sich aus obiger BNF auch der Satz "`der kind isst"'
+herleiten, der semantisch inkorrekt ist. Deshalb wird der
+semantische
+\index{Semantik}
+Teil in der Regel verbal formuliert, wie etwa in
+dieser Kurzreferenz.
+
+Zus"atzlich zu dieser Grundfunktionalit"at beherrscht die BNF
+noch zwei zus"atzliche Hilfsmittel zur Formulierung von
+Grammatiken: Wird ein Teil einer Produktion in geschwungene Klammern
+eingeschlossen (\fu{\{\}}), dann darf dieser Teil im Quelltext
+weggelassen oder beliebig oft aufgef"uhrt werden. Durch die Produktion
+\fu{`a' \{`b'\} `a'} werden also alle S"atze \fu{aa},
+\fu{aba}, \fu{abba}, \fu{abbba}, \ldots\ dargestellt.
+
+Zus"atzlich k"onnen Teile von Produktionen in eckige Klammern
+eingeschlossen werden, was bedeutet, da"s sie optional sind, also
+im Quelltext weggelassen k"onnen, aber auf keinen Fall "ofter als
+einmal auftreten d"urfen. Die Produktion \fu{`a' [`b'] `a'}
+beschreibt also die S"atze \fu{aa} und \fu{aba}.
+
+\section{Regul\protect{"are} Ausdr\protect{"ucke}}
+\index{regul""arer Ausdruck|ii}
+
+Regul"are Ausdr"ucke werden benutzt, um Zeichenfolgen
+wie etwa Bezeichner oder Zahlen zu beschreiben. Dabei werden
+aufeinanderfolgende Zeichen hintereinander angeschrieben.
+Zus"atzlich gibt es Steuerzeichen, mit denen es m"oglich ist, die
+beschriebene Zeichenfolge zu variieren. Es folgt eine
+Aufstellung:
+
+\begin{tabular}{lp{13cm}}
+\fu{()} & Die beiden runden Klammern werden benutzt, um eine
+          Folge von Zeichen zu klammern, sie also nur als ein Zeichen zu
+          behandeln. Das macht es m"oglich, Steuerzeichen wie etwa \fu{+}
+          auf eine ganze Zeichenfolge anstatt nur auf das letzte Zeichen
+          anzuwenden. \\
+\fu{[]} & Die beiden eckigen Klammern werden verwendet, um
+          Zeichen zu gruppieren. Der ganze Klammerausdruck steht
+          f"ur ein beliebiges Zeichen, das innerhalb der Klammer
+          steht. Um auch gr"o"sere Gruppen anschreiben zu
+          k"onnen, ist es m"oglich, innerhalb der Gruppe mittels
+          \fu{-} von einem bestimmten bis zu einem anderen
+          bestimmten Zeichen alle Zeichen einzubinden. So gibt
+          z.~B. \fu{[0-9]} die Gruppe aller Ziffern an. Tritt
+          diese Gruppe irgendwo auf, steht sie f"ur eine
+          beliebige Ziffer. Wird als erstes Zeichen einer Gruppe
+          \fu{\char94} angegeben, umfa"st die Gruppe all jene
+          Zeichen, die nicht innerhalb der Klammern aufgef"uhrt
+          sind. \\
+\end{tabular}          
+
+\begin{tabular}{lp{13cm}}
+\fu{`'} & Sollen Zeichen verwendet werden, die schon als
+          Steuerzeichen vergeben sind, werden sie in einfache
+          Anf"uhrungszeichen eingeschlossen. \\
+\fu{.}  & Der Punkt steht f"ur jedes beliebige Zeichen au"ser dem
+          Zeilenwechsel \fu{\char92 n}. \\
+\fu{|}  & Ein Ausdruck \fu{a|b} kann entweder durch \fu{a} oder
+          durch \fu{b} ersetzt werden. Um zu vermeiden, da"s
+          immer der gesamte Ausdruck mit ODER verkn"upft wird, werden
+          Oder-Ausdr"ucke in Klammern gesetzt. \\
+\fu{?}  & Ein Zeichen oder ein Ausdruck in Klammern, gefolgt von
+          einem \fu{?}, ist optional, darf also auftreten, kann
+          aber auch weggelassen werden. \\
+\fu{+}  & Ein Zeichen oder ein Ausdruck in Klammern, gefolgt von
+          einem \fu{+}, steht f"ur ein oder mehrere Vorkommnisse
+          dieses Zeichens oder Ausdrucks. \\
+\fu{*}  & Der Operator \fu{*} ist mit dem Operator \fu{+}
+          identisch, au"ser in dem Fall, da"s das vorhergehende Zeichen
+          bzw. der in Klammern stehende Ausdruck auch weggelassen
+          werden kann. \\
+\end{tabular}
+
+\example
+\begin{verbatim}
+IDENTIFIER: [a-zA-Z][^\n ]*
+\end{verbatim}
+
+Dieser regul"are Ausdruck beschreibt all jene Bezeichner, die mit
+einem Buchstaben beginnen, auf den beliebige Zeichen
+(au"ser dem Zeilenwechsel \fu{\char92 n} und dem Leerzeichen)
+folgen k"onnen. G"ultige \fu{IDENTIFIER} sind etwa \fu{ax*} und
+\fu{ZX\#\%}.
+
+\begin{verbatim}
+HEX_NUMBER: 0x[0-9a-fA-F]+
+\end{verbatim}
+
+Der Ausdruck \fu{HEX\_NUMBER} beschreibt eine hexadezimale
+Zahlenkonstante,
+\index{Zahl!hexadezimale}
+wie sie etwa in \ind{C} verwendet werden kann. Sie beginnt mit
+den Zeichen \fu{0x}, auf die mindestens eine Hexadezimalziffer
+(Dezimalziffer oder Gro"s- bzw. Kleinbuchstabe von \fu{A} bis
+\fu{F}) folgen mu"s. Zu der unendlich gro"sen Menge der
+beschriebenen Zahlen z"ahlen \fu{0xff} und \fu{0x123}.
+
+\chapter{Sprachreferenz}
+
+Dieses Kapitel ist eine Referenz "uber die komplette Grammatik
+\index{Grammatik!von SEL|ii}
+der Programmiersprache SEL. Der Aufbau ist dabei top-down-orientiert,
+da es meines Erachtens nat"urlicher ist, vom Gro"sen ins Kleine
+zu gehen, als umgekehrt.
+
+Das erste Unterkapitel widmet sich deshalb der groben Struktur
+eines SEL-Programms. Es wird die Modularit"at von SEL
+besprochen sowie der grundlegende Aufbau einer Funktion. Weiters
+wird in diesem Unterkapitel die wichtigste Funktion eines
+SEL-Programms beschrieben, n"amlich die \fu{main}-Funktion.
+
+Das zweite Unterkapitel bespricht die Kontrollstrukturen, also
+die Verzweigungen und Schleifen, die die strukturierte
+Programmiersprache ausmachen.
+
+Das dritte Unterkapitel widmet sich den Ausdr"ucken oder
+{\em expressions}, die den Hauptanteil an einem Programm haben. Zu
+Ausdr"ucken z"ahlen zum Beispiel Zuweisungen, Vergleiche oder
+arithmetische Operationen.
+
+Im vierten Unterkapitel werden die Datentypen besprochen, die
+mehr oder weniger Bestandteile der Ausdr"ucke sind.
+
+\section{Struktur eines Programms}
+SEL ist eine modulare
+\index{Modul}
+Programmiersprache, d.h. ein Programm kann sich (mu"s sich aber
+nicht) aus mehreren Modulen---oder Quelldateien---zusammensetzen.
+Zus"atzlich kann jedes Modul seinen internen Aufbau vor dem Rest
+des Programms sch"utzen, um Implementationsdetails zu verbergen
+(\indi{Kapselung}), damit diese jederzeit ge"andert werden
+k"onnen, ohne da"s der aufrufende Programmteil dazu ver"andert
+werden mu"s. Dies setzt jedoch auch ein vern"unftiges
+"`\ind{Interface}"' (Schnittstelle zwischen dem Modul und dem
+Programm) voraus. Es wird also in der Regel n"otig sein, vor der
+Implementation einen Entwurf des Programms zu machen---einfaches
+"`Drauflosprogrammieren"' wird sich schnell als Sackgasse
+erweisen.
+
+\subsection{Das Modul}
+\index{Modul|ii}
+\fuindexii{module}
+\fuindexii{block}
+\fuindex{function}
+\fuindex{local}
+\fuindex{global}
+
+\begin{verbatim}
+module:        {block}
+             ;
+
+block:         function
+             | local
+             | global
+             ;
+\end{verbatim}
+
+Jedes Modul besteht aus einem oder mehreren Bl"ocken,
+\index{Block|ii}
+die in Funktionen, \rwi{local}- und \rwi{global}-Bl"ocke
+eingeteilt werden (es ist theoretisch auch m"oglich, ein Modul zu
+schreiben, das keinen einzigen Block enth"alt, doch dieses Modul
+h"atte keinen anderen Zweck, als wertvollen Speicherplatz zu
+verschwenden).
+
+Funktionen sind Programmteile---oder Unterprogramme---, die von
+bestimmten Stellen im Programm aufgerufen werden k"onnen. Da SEL
+eine modulare Programmiersprache ist, ist es m"oglich, Funktionen
+zu kapseln, sie also nur in dem Modul verf"ugbar zu machen, in
+dem sie definiert wurden.
+
+Die \rw{local}-Bl"ocke dienen dazu, Variablen,
+\index{Variable!modulglobale}
+Funktionen
+\index{Funktion!modulglobale}
+und Strukturen
+\index{Struktur}
+zu definieren, die nur innerhalb des jeweiligen Moduls
+erreichbar sein sollen.
+
+Die \rw{global}-Bl"ocke dienen einerseits dem Zweck, Variablen,
+\index{Variable!programmglobale}
+Funktionen
+\index{Funktion!programmglobale}
+und Strukturen zu definieren, die auch au"serhalb des Moduls
+verf"ugbar sein sollen, und andererseits jene Variablen,
+Strukturen und Funktionen zu deklarieren, die nicht in diesem
+Modul definiert sind und trotzdem verwendet werden sollen.
+Beachten Sie bitte, da"s diese in einem anderen Modul
+als global definiert sein m"ussen.
+
+\subsection{Funktionen}
+\index{Funktion|ii}
+\index{Block}
+\fuindexii{function}
+\fuindex{type}
+\fuindex{statement}
+\fuindex{IDENTIFIER}
+\rwindex{begin}
+\rwindex{end}
+\fuindexii{formal\protect{\_params}}
+\fuindexii{func\protect{\_var}}
+\fuindex{expr}
+\fuindexii{func\protect{\_proto}}
+\rwindexii{function}
+
+\begin{verbatim}
+function:      `function' IDENTIFIER `(' [formal_params] `)' `:' type
+                 {func_var}
+               `begin'
+                 {statement}
+               `end'
+             ;
+
+formal_params: IDENTIFIER `:' [`&'] type [`,' formal_params]
+             ;
+
+func_var:      IDENTIFIER `:' type [`=' expr] `;'
+             ;
+
+func_proto:    `function' IDENTIFIER
+               `(' [[`&'] type {`,' [`&'] type}] `)' `:' type
+             ;
+\end{verbatim}
+
+Eine Funktion ist ein Unterprogramm,
+\index{Unterprogramm|see{Funktion}}
+also ein Programmteil, der
+von anderen Stellen des Programms aufgerufen werden kann. Dabei
+k"onnen einer Funktion ein oder mehrere \indi{Parameter} (deren
+Typen bei der Deklaration der Funktion festgelegt werden)
+"ubergeben werden. Innerhalb dieser Funktion k"onnen diese
+Parameter als ganz normale Variablen angesprochen werden. Die
+Namen dieser Variablen werden im Funktionskopf angegeben.
+
+Funktionsdeklarationen k"onnen an zweierlei Stellen angetroffen
+werden, n"amlich dort, wo die Funktionen definiert sind, und
+in \rw{local}- und \rw{global}-Bl"ocken, wo allerdings nur der
+Funktionskopf ohne Parameternamen angegeben wird. Zu beachten
+ist, da"s Funktionen im Programm erst nach dem ersten Vorkommen
+ihrer Deklarationen oder Definitionen bekannt sind. Eine Funktion
+kann also nicht aufgerufen werden, wenn sie im Quellcode nicht
+vorher deklariert oder definiert wurde.
+
+Funktionen sind, solange sie nicht explizit in einem
+\rw{global}-Block des jeweiligen Moduls aufgef"uhrt sind,
+gekapselt, also auf das Modul beschr"ankt, in dem sie
+definiert wurden. Trotzdem ist es m"oglich, Funktionen in einem
+\rw{local}-Block des
+Moduls aufzuf"uhren, f"ur den Fall, da"s eine Funktion an einer
+Stelle aufgerufen werden mu"s, die vor ihrer Definition liegt.
+
+Zur Semantik: Dem \rw{function}-Schl"usselwort folgt der Name der
+Funktion, der wie jeder Bezeichner case-sensitiv ist. In Klammern
+gesetzt folgen darauf die Namen und Typen der einzelnen Parameter.
+Innerhalb der Funktion kann auf die Parameter mit Hilfe ihrer
+Namen wie auf normale Variablen zugegriffen werden.
+
+SEL unterst"utzt zwei Arten der Parameter"ubergabe:
+\index{Parameter""ubergabe|ii}
+\index{call-by-value|see{Parameter""ubergabe}}
+\index{call-by-reference|see{Parameter""ubergabe}}
+{\em call-by-value} und {\em call-by-reference}. Ein
+Parameter, der als call-by-value deklariert ist, wird der
+Funktion als Wert "ubergeben, es wird beim Funktionsaufruf also
+zuerst der Wert des Parameters berechnet und dieser dann kopiert.
+Die jeweilige Funktion greift dann auf die Kopie des Parameters
+zu, kann also die Variable, die "ubergeben wurde, nicht
+ver"andern. Von einem als call-by-reference deklarierten Parameter
+(dieser ist daran zu erkennen, da"s seinem Typ im Funktionskopf
+das \fu{\&}-Zeichen
+\index{Referenztyp|ii}
+vorangestellt ist) hingegen wird der Funktion intern die Adresse
+der als Parameter "ubergebenen Variable zug"anglich gemacht,
+wovon die Funktion allerdings nichts merkt. Dies wirkt sich
+dahingehend aus, da"s die Funktion durch "Anderung des Wertes des
+Parameters auch den Wert der Variable ver"andert, die ihr als
+Parameter "ubergeben wurde. Beachten Sie allerdings, da"s es
+nicht m"oglich ist, eine \ind{Konstante} f"ur einen
+call-by-reference-Parameter zu "ubergeben.
+
+Nach der Parameterliste folgt der R"uckgabetyp
+\index{R""uckgabetyp|ii}
+der Funktion. Das ist der Typ, den der Aufrufer der Funktion
+zur"uckgeliefert bekommt. Der R"uckgabewert wird durch die
+\rwi{return}-Anweisung bestimmt. Ist keine R"uckgabe n"otig, kann
+der Typ \tvoid\
+\typeindex{void}
+verwendet werden.
+
+Im Anschlu"s an den R"uckgabetyp k"onnen lokale
+Variablen
+\index{Variable!lokale|ii}
+vereinbart werden. Diese Variablen sind---der Name
+sagt es bereits---nur innerhalb der Funktion verf"ugbar, in der
+sie deklariert wurden. Gleichzeitig k"onnen diesen Variablen
+Werte zugewiesen werden. Geschieht dies nicht, sind die Werte
+dieser Variablen undefiniert. Beachten Sie, da"s Variablen
+auch mit berechneten Werten initialisiert werden k"onnen.
+
+Nach der Vereinbarung der lokalen Variablen folgt in
+\rwi{begin}--\rwi{end}
+eingeschlossen der eigentliche Code der
+Funktion. Von hier aus k"onnen wieder andere Funktionen
+aufgerufen werden, die Funktion kann sich sogar selbst aufrufen
+(\ind{Rekursion}).
+
+\example
+Die Funktion \fuii{Factorial} berechnet die Fakult"at
+\index{Fakult""at|ii}
+ihres Parameters \fu{i}
+(\hbox{$\fu{i}! = \prod_{n=1}^{\fu{\footnotesize i}} n$}).
+Hierzu verwendet sie zwei lokale Variablen \fu{c} und \fu{r}.
+
+\rwindexuu{global}
+\rwindexuu{for}
+\begin{verbatim}
+global
+  function Factorial (int) : int
+end
+
+function Factorial (i : int) : int
+
+  c : int;
+  r : int = 1;
+
+begin
+  for (c = 2 to i)
+    r = r * c;
+  end
+  return r;
+end
+\end{verbatim}
+
+\subsubsection{Die main-Funktion}
+Die wichtigste \ind{Funktion} in einem SEL-Programm ist die Funktion
+\fuii{main}. Sie stellt gewisserma"sen das Hauptprogramm dar und
+ist somit die erste Funktion, die in einem SEL-Programm aufgerufen
+wird. Hat \fu{main} ihre Arbeit beendet, kehrt der Computer zum
+aufrufenden Programm (in der Regel der Kommandozeileninterpreter)
+zur"uck. Dabei kann letzterem ein sogenannter {\em Exit-Code}
+"ubergeben werden. Dieser \indi{Exit-Code} hat den Typ \tint\
+\typeindex{int}
+und wird mit der \rwi{return}-Anweisung zur"uckgegeben. Ist der
+R"uckgabetyp der Funktion \fu{main} \tvoid ,
+\typeindex{void}
+so ist der Exit-Code \fu{0}.
+
+Zu beachten ist, da"s die \fu{main}-Funktion immer als global
+deklariert werden mu"s, unerheblich, in welchem Modul sie
+definiert ist.
+
+\example
+Dieses {\em hello-world}-Programm
+\index{hello-world|uu}
+besteht aus einem
+einzigen Modul und hat die Aufgabe, den String "`\fu{hello, world!}"'
+auszugeben. Zus"atzlich wird der Exit-Code \fu{1} zur"uckgeliefert.
+
+\fuindexuu{WriteString}
+\rwindexuu{global}
+\begin{verbatim}
+#include "conio.sh"
+
+global
+  function main () : int
+end
+
+function main () : int
+begin
+  WriteString("hello, world!\n");
+  return 1;
+end
+\end{verbatim}
+
+\subsubsection{Die return-Anweisung}
+Die \rwii{return}-Anweisung hat den Zweck, aus einer \ind{Funktion} in
+die "ubergeordnete Funktion (bzw. das Betriebssystem im Falle der
+\fu{main}-Funktion) zur"uckzukehren. Ist der R"uckgabetyp der
+jeweiligen Funktion nicht \tvoid ,
+\typeindex{void}
+so mu"s auch ein \ind{Wert}
+zur"uckgegeben werden. Dieser wird der \rw{return}-Anweisung
+nachgestellt. \rw{return} kann an einer beliebigen Stelle
+innerhalb einer Funktion stehen, Schleifen
+\index{Schleife} werden---falls n"otig---abgebrochen.
+
+\example
+Die Funktion \fuii{Square} gibt
+das \ind{Quadrat} eines ihr "ubergebenen \tint\ \fu{i} zur"uck.
+
+\begin{verbatim}
+function Square (i : int) : int
+begin
+  return i * i;
+end
+\end{verbatim}
+
+\subsection{local-Bl\protect{"ocke}}
+\rwindexii{local}
+\rwindex{end}
+\index{Block}
+\fuindexii{local}
+\fuindexii{local\protect{\_decl}}
+\fuindex{struct}
+\fuindex{func\protect{\_proto}}
+\fuindex{var}
+
+\begin{verbatim}
+local:         `local'
+                 {local_decl}
+               `end'
+             ;
+
+local_decl:    struct
+             | func_proto
+             | var
+             ;
+\end{verbatim}
+
+Die \rw{local}-Bl"ocke dienen dazu, Variablen,
+\index{Variable!modulglobale|ii}
+Strukturen
+\index{Struktur}
+und Funktionen
+\index{Funktion!modulglobale|ii}
+zu definieren, die nur in dem jeweiligen Modul
+bekannt sein sollen. Dieses Vorgehen nennt sich \ind{Kapselung} und hat den
+Vorteil, da"s es m"oglich ist, die Implementationsdetails eines
+Moduls vor dem Rest des Programms zu verstecken. Das macht es
+einerseits m"oglich, das Modul anders zu implementieren, ohne
+da"s das Restprogramm in irgendeiner Weise ge"andert werden mu"s
+und andererseits, da"s der Code des Moduls in anderen Programmen
+leichter wiederverwendet werden kann. F"ur eine solche Vorgangsweise
+ist es jedoch unabdingbar, f"ur jedes Modul ein gut "uberdachtes
+\ind{Interface} (Schnittstelle zwischen Modul und Restprogramm) zu
+verwenden.
+
+Variablen, Strukturen und Funktionen sind im Source erst ab der
+Stelle ihrer Deklaration bekannt. Aus diesem Grunde ist es
+ratsam, \rw{local}-Bl"ocke an den Anfang der Datei zu stellen,
+was au"serdem die "Ubersichtlichkeit des Codes erh"oht.
+
+\subsection{global-Bl\protect{"ocke}}
+\rwindexii{global}
+\rwindex{end}
+\index{Block}
+\fuindexii{global}
+\fuindexii{global\protect{\_decl}}
+\fuindex{struct}
+\fuindex{func\protect{\_proto}}
+\fuindex{var}
+\fuindex{extern}
+
+\begin{verbatim}
+global:        `global'
+                 {global_decl}
+               `end'
+             ;
+
+global_decl:   struct
+             | func_proto
+             | var
+             | extern
+             ;
+\end{verbatim}
+
+Die in einem \rw{global}-Block definierten Strukturen,
+\index{Struktur}
+Funktionen
+\index{Funktion!programmglobale|ii}
+und Variablen
+\index{Variable!programmglobale|ii}
+sind dazu bestimmt, auch von anderen
+Modulen verwendet zu werden. Zus"atzlich k"onnen in einem
+\rw{global}-Block Variablen deklariert werden, die in diesem Modul
+verwendet werden sollen, jedoch in einem anderen Modul als global
+definiert worden sind. Variablen, Strukturen und Funktionen sind
+erst ab ihrer Deklaration verf"ugbar, soda"s es am
+praktikabelsten ist, die \rw{global}-Bl"ocke an den Beginn der
+Datei zu setzen oder in einer \ind{Include-Datei} unterzubringen.
+
+\section{Anweisungen}
+\index{Anweisung|ii}
+\fuindexii{statement}
+\fuindex{expr}
+\fuindex{if}
+\fuindex{while}
+\fuindex{for}
+\fuindex{repeat}
+\fuindex{switch}
+\fuindex{prefix}
+\rwindex{break}
+\rwindex{return}
+
+\begin{verbatim}
+statement:     [expr] `;'
+             | if
+             | while
+             | for
+             | repeat
+             | switch
+             | prefix
+             | `break' `;'
+             | `return' [expr] `;'
+             ;
+\end{verbatim}
+
+Anweisungen (oder {\em statements}) k"onnen innerhalb von Funktionen
+\index{Funktion}
+verwendet werden und machen das eigentliche Programm aus.
+Anweisungen k"onnen grunds"atzlich in Ausdr"ucke ({\em expressions}),
+\index{Ausdruck}
+Kontrollanweisungen
+\index{Kontrollanweisung}
+und Schleifen
+\index{Schleife}
+eingeteilt werden. Erstere verrichten die
+eigentliche Arbeit, und die beiden letzteren steuern den Programmflu"s. Wie
+aus der Grammatik ersichtlich ist, kann eine Anweisung auch
+einfach nur ein Semikolon enthalten. Solche Anweisungen haben die
+Bezeichnung {\em \indi{Nullanweisung}} und haben---bis auf die
+Verbesserung der "Ubersichtlichkeit in bestimmten Situationen---%
+keine Aufgabe.
+
+\subsection{Die if-Anweisung}
+\rwindexii{if}
+\fuindexii{if}
+\fuindex{expr}
+\fuindex{statement}
+\rwindexii{else}
+\rwindex{end}
+
+\begin{verbatim}
+if:            `if' `(' expr `)'
+                 {statement}
+               [`else'
+                 {statement}]
+               `end'
+             ;
+\end{verbatim}
+
+Die \rw{if}-Anweisung ist eine Kontrollanweisung und dient der
+bedingten Ausf"uhrung eines Programmteils. Dem \rw{if}
+folgt ein in Klammern eingeschlossener \ind{Ausdruck}, der zuerst
+evaluiert (berechnet) und dann nach \tint\
+\typeindex{int}
+gecastet wird. Ist dieser
+Ausdruck ungleich \fu{0}, werden die darauffolgenden
+Anweisungen ausgef"uhrt. Ist jedoch der Ausdruck \fu{0}, dann
+werden die Anweisungen, die dem \rw{else} folgen, sofern ein
+\rw{else} vorhanden ist, ausgef"uhrt, ansonsten geschieht gar
+nichts.
+
+\example
+Die Funktion \fuii{GetInt} fragt den Benutzer nach einer Zahl.
+Ist die Zahl gr"o"ser oder gleich  \fu{0}, so wird der Text
+"`\fu{Gratulation, die Zahl ist positiv!}"'
+auf dem Bildschirm dargestellt. Andernfalls wird die Zahl ohne
+negatives Vorzeichen ausgegeben.
+
+\fuindexuu{ReadInt}
+\fuindexuu{WriteString}
+\fuindexuu{WriteInt}
+\begin{verbatim}
+function GetInt () : void
+
+  i : int;
+
+begin
+  i = ReadInt();
+  if (i >= 0)
+    WriteString("Gratulation, die Zahl ist positiv!\n");
+  else
+    WriteInt(-i);
+    WriteString("\n");
+  end
+end
+\end{verbatim}
+
+\subsection{Die switch-Anweisung}
+\rwindexii{switch}
+\fuindexii{switch}
+\fuindex{expr}
+\fuindex{statement}
+\rwindex{end}
+\fuindexii{prefix}
+\rwindex{case}
+\fuindex{constant}
+\rwindex{default}
+
+\begin{verbatim}
+switch:        `switch' `(' expr `)'
+                 {statement}
+               `end'
+             ;
+
+prefix:        `case' constant `:'
+             | `default' `:'
+             ;
+\end{verbatim}
+
+Die \rw{switch}-Anweisung wird verwendet, um f"ur mehrere
+verschiedene Werte eines Ausdrucks
+\index{Ausdruck}
+verschiedene Aktionen
+auszuf"uhren. Als erstes wird der Ausdruck evaluiert. Danach
+wird er mit der \ind{Konstante}, die dem ersten im
+\fu{\{statement\}} vorkommenden \rw{case} folgt, verglichen. Ist
+der Vergleich positiv, so werden alle der \rw{case}-Anweisung
+folgenden Anweisungen ausgef"uhrt, solange, bis ein \rwii{break}
+gefunden wird, was den Programflu"s nach dem \rw{end} fortsetzt.
+Ist der Vergleich jedoch negativ, wird das n"achste \rw{case}
+gesucht u.s.w. Wird bei diesem Vorgang ein \rwii{default} gefunden,
+dann wird die Ausf"uhrung {\em in jedem Fall} nach dieser
+Anweisung fortgesetzt. Aus diesem Grunde sollte \rw{default}
+immer am Schlu"s der \rw{case}-Kette stehen.
+Findet sich weder ein \rw{case}, das dem
+Wert des Ausdrucks entspricht, noch ein \rw{default}, geschieht
+nichts und die Ausf"uhrung wird nach dem \rw{end} fortgesetzt.
+
+\example
+Die Funktion \fuii{SimpleMenu} stellt ein Men"u auf
+dem Bildschirm dar und wartet auf eine Eingabe. F"ur die Ziffern
+\fu{`1'} bis \fu{`3'} werden die entsprechenden Funktionen
+\fuii{Choice1} bis \fuii{Choice3}
+\fuindexii{Choice2}
+ausgef"uhrt. Dieser Vorgang
+wiederholt sich so lange, bis der Benutzer \fu{`x'} oder \fu{`X'}
+eingibt, was die Funktion beendet. Bet"atigt der Benutzer eine
+Taste, die nicht verarbeitet werden kann, wird eine
+dementsprechende Meldung ausgegeben. F"ur die Ausgabe des Men"us
+auf dem Bildschirm wird die Funktion \fui{DisplayMenu} verwendet.
+
+\rwindexuu{while}
+\fuindexuu{ReadChar}
+\fuindexuu{WriteString}
+\begin{verbatim}
+function SimpleMenu () : void
+begin
+  while (1)
+    DisplayMenu();
+    switch (ReadChar())
+      case '1' :
+        Choice1();
+        break;
+      case '2' :
+        Choice2();
+        break;
+      case '3' :
+        Choice3();
+        break;
+      case 'x' :
+      case 'X' :
+        return;
+      default :
+        WriteString("Falsche Eingabe!\n");
+    end
+  end
+end
+\end{verbatim}
+        
+\subsection{Die while-Schleife}
+\rwindexii{while}
+\fuindexii{while}
+\fuindex{expr}
+\fuindex{statement}
+\rwindex{end}
+
+\begin{verbatim}
+while:         `while' `(' expr `)'
+                 {statement}
+               `end'
+             ;
+\end{verbatim}
+
+Die \rw{while}-Schleife f"uhrt die zwischen \rw{while} und
+\rw{end} aufgef"uhrten Anweisungen sooft aus, solange der in Klammern
+eingeschlossene \ind{Ausdruck} ungleich \fu{0} ist. Dabei wird wie
+folgt vorgegangen: Als erstes wird der Ausdruck evaluiert und
+nach \tint\
+\typeindex{int}
+gecastet. Ist er
+gleich \fu{0}, so wird die Ausf"uhrung nach dem \rw{end}
+fortgesetzt, andernfalls werden die Anweisungen, die dem Ausdruck
+folgen, ausgef"uhrt. Hierauf wird wieder an den Anfang der
+Schleife gesprungen und der Ausdruck abermals gepr"uft u.s.w.
+Beachten Sie, da"s es au"ser mit Hilfe der \rwi{return}-Anweisung
+nicht m"oglich ist, aus der Schleife auszusteigen, ohne da"s der
+Ausdruck gleich \fu{0} ist.
+
+\example
+Die Funktion \fuii{OutputList} durchl"auft die ihr "ubergebene
+\indu{Liste} des Typs \fu{List}
+\index{List@{\tt List}~(\rw{struct})|ii}
+und gibt dabei alle Datenelemente---in
+diesem Beispiel der Einfachheit halber vom Typ \tint ---aus.
+Anmerkung: Das letzte Element der Liste ist dadurch
+gekennzeichnet, da"s der Zeiger, der auf das n"achste Element
+zeigen sollte, ein \ind{Nullzeiger} ist.
+
+\fuindexuu{WriteInt}
+\rwindexuu{local}
+\begin{verbatim}
+local
+  struct List
+    i    : int;
+    Next : *List;
+  end
+end
+
+function OutputList (l : *List) : void
+begin
+  while (l != 0)
+    WriteInt(l->i);
+    l = l->Next;
+  end
+end
+\end{verbatim}
+
+\subsection{Die repeat-Schleife}
+\rwindexii{repeat}
+\fuindexii{repeat}
+\rwindexii{until}
+\fuindex{statement}
+\fuindex{expr}
+
+\begin{verbatim}
+repeat:        `repeat'
+                 {statement}
+               `until' `(' expr `)'
+             ;
+\end{verbatim}
+
+Die \rw{repeat}-Schleife wiederholt die zwischen \rw{repeat} und
+\rw{until} aufgef"uhrten Anweisungen so lange, bis der auf
+\rw{until} folgende \ind{Ausdruck} ungleich \fu{0} ist. Der Ablauf ist
+hierbei folgenderma"sen: Zun"achst werden die Anweisungen
+ausgef"uhrt, danach wird der Ausdruck evaluiert, nach \tint\
+\typeindex{int}
+gecastet und auf
+Gleichheit mit \fu{0} gepr"uft. Ist diese gegeben, wird zu
+\rw{repeat} zur"uckgesprungen und der Vorgang wiederholt sich.
+Ist der Ausdruck hingegen ungleich \fu{0}, ist die Schleife
+beendet. Beachten Sie bitte, da"s---im Gegensatz zur
+\rwi{while}-Schleife---die Schleife {\em mindestens einmal}
+ausgef"uhrt wird, unerheblich, ob der Ausdruck schon vor der
+Ausf"uhrung ungleich \fu{0} w"are.
+
+\example
+Dieses Beispielprogramm liest so lange Zahlen vom Benutzer ein,
+bis dieser \fu{0} eingibt. Anschlie"send wird der Mittelwert der
+eingelesenen Zahlen ausgegeben. Wurden au"ser der \fu{0} keine
+Zahlen eingegeben, erscheint eine dementsprechende Meldung.
+    
+\rwindexuu{global}
+\fuindexuu{ReadInt}
+\rwindexuu{if}
+\fuindexuu{WriteInt}
+\fuindexuu{WriteString}
+\begin{verbatim}
+#include "conio.sh"
+
+global
+  function main () : void
+end
+
+function main () : void
+
+  i : int;
+  a : int =  0;
+  n : int = -1;
+
+begin
+  repeat
+    a = a + (i = ReadInt());
+    n = n + 1;
+  until (i == 0)
+  if (n)
+    WriteInt(a / n);
+  else
+    WriteString("Es wurden keine Zahlen eingegeben!");
+  end
+  WriteString("\n");
+end
+\end{verbatim}
+
+\subsection{Die for-Schleife}
+\rwindexii{for}
+\fuindexii{for}
+\fuindex{primary}
+\fuindex{expr}
+\rwindexii{to}
+\rwindexii{downto}
+\rwindexii{step}
+\fuindex{statement}
+\rwindex{end}
+
+\begin{verbatim}
+for:           `for' `(' primary `=' expr (`to' | `downto') expr
+               [`step' expr] `)'
+                 {statement}
+               `end'
+             ;
+\end{verbatim}
+
+Die \rw{for}-Schleife ist eine spezielle Schleife, die es
+erlaubt, Anweisungen eine bestimmte Anzahl mal zu wiederholen.
+Hierzu ist nach der "offnenden Klammer die Variable anzugeben,
+die als Z"ahler fungiert. Da hier ein \fu{primary} (siehe Kapitel
+\ref{exprs}) erwartet wird,
+ist es auch m"oglich, Elemente eines Arrays
+\index{Array}
+oder einer \ind{Struktur}
+als Z"ahler zu verwenden. Nach dem Zuweisungsoperator wird der
+Anfangsindex angegeben und danach entweder das Schl"usselwort
+\rw{to} oder \rw{downto}, je nachdem, ob nach oben oder nach
+unten gez"ahlt werden soll. Darauf folgt der Zielindex, also
+jener Wert, den die Indexvariable maximal oder minimal annehmen
+darf. Optional kann noch nach dem Schl"usselwort \rw{step} die
+Schrittweite angeben werden. Zu beachten ist, da"s diese auch
+dann, wenn nach unten gez"ahlt wird, positiv sein mu"s.
+
+Bei der Ausf"uhrung wird folgenderma"sen vorgegangen: Zun"achst
+werden alle Ausdr"ucke
+\index{Ausdruck}
+evaluiert und nach \tint\
+\typeindex{int}
+gecastet. Danach
+wird "uberpr"uft, ob der Wert der Indexvariablen schon au"serhalb
+der zul"assigen Grenze ist. Ist das nicht der Fall, werden die
+Anweisungen das erste Mal ausgef"uhrt und der Z"ahler
+entsprechend erh"oht bzw. erniedrigt. Danach wird wieder
+"uberpr"uft, ob die Anweisungen nocheinmal ausgef"uhrt werden
+sollen u.s.w.
+
+\example
+Die Funktion \fuii{Squares} gibt der Reihe nach die Quadrate
+\index{Quadrat}
+der ganzen Zahlen $i$ f"ur \hbox{$\fu{a} \le i \le \fu{b}$} aus.
+Der Funktion werden die \tint s \fu{a} und \fu{b} "ubergeben.
+
+\fuindexuu{WriteInt}
+\fuindexuu{WriteString}
+\begin{verbatim}
+function Squares (a : int, b : int) : void
+
+  i : int;
+
+begin
+  for (i = a to b)
+    WriteInt(i * i);
+    WriteString("\n");
+  end
+end
+\end{verbatim}
+
+\section{Ausdr\protect{"ucke}}
+\label{exprs}
+\index{Ausdruck|ii}
+\fuindexii{expr}
+\rwindex{delete}
+\fuindexii{primary}
+\fuindex{IDENTIFIER}
+\fuindex{INT\protect{\_CONSTANT}}
+\fuindex{CHAR\protect{\_CONSTANT}}
+\fuindex{FLOAT\protect{\_CONSTANT}}
+\fuindex{STRING\protect{\_CONSTANT}}
+\fuindex{type}
+\rwindex{sizeof}
+\rwindex{new}
+
+\begin{verbatim}
+expr:          expr (`=' | `&&' | `||' | `^^' | `==' | `<' | `>'
+                   | `<=' | `>=' | `!=' | `&' | `|' | `^' | `<<'
+                   | `>>' | `+' | `-' | `*' | `/' | `%') expr
+             | (`!' | `~' | `-' | `*' | `&') expr
+             | `delete' expr
+             | primary
+             ;
+
+primary:       IDENTIFIER
+             | `(' expr `)'
+             | INT_CONSTANT
+             | CHAR_CONSTANT
+             | FLOAT_CONSTANT
+             | STRING_CONSTANT
+             | primary `->' IDENTIFIER
+             | primary `:' type
+             | primary `[' expr `]'
+             | IDENTIFIER `(' [expr {`,' expr}] `)'
+             | `sizeof' type
+             | `new' type
+             ;
+\end{verbatim}
+
+Ausdr"ucke sind sozusagen das "`Herz"' von SEL, denn sie
+erledigen die eigentliche Arbeit, w"ahrend Kontrollanweisungen
+und Schleifen nur kontrollieren, was passieren soll. Ausdr"ucke k"onnen die
+verschiedensten Aufgaben erledigen: Sie k"onnen zum Vergleich
+zweier Werte benutzt werden, zur Wertzuweisung oder zum
+Funktionsaufruf. Die gemeinsamen Merkmale der Ausdr"ucke sind:
+Jeder Ausdruck besitzt sowohl einen \ind{Typ} als auch einen
+\ind{Wert} (bis auf die Ausdr"ucke, die vom Typ \tvoid\
+\typeindex{void}
+sind).
+
+\subsection{Konstanten}
+\index{Konstante}
+\fuindexii{constant}
+\fuindex{INT\protect{\_CONSTANT}}
+\fuindex{CHAR\protect{\_CONSTANT}}
+\fuindex{FLOAT\protect{\_CONSTANT}}
+\fuindex{STRING\protect{\_CONSTANT}}
+
+\begin{verbatim}
+constant:      [`-'] INT_CONSTANT
+             | CHAR_CONSTANT
+             | [`-'] FLOAT_CONSTANT
+             | STRING_CONSTANT
+             ;
+\end{verbatim}
+
+Konstanten in SEL sind im Grunde als Konstanten im
+mathematischen Sinne zu verstehen. Ihre Werte k"onnen im gesamten
+Programm nicht
+ver"andert werden. Im Gegensatz zu anderen Programmiersprachen
+besitzt SEL nicht die F"ahigkeit, Konstanten einen Namen zu geben,
+\index{Konstante!benannte}
+was allerdings durch die \fui{\#define}-Direktive leicht umgangen
+werden kann. Weiters gibt es in SEL keine Konstanten von
+zusammengesetzten Typen,
+\index{Typ!zusammengesetzter}
+da diese F"ahigkeit nur sehr selten ben"otigt wird.
+
+\subsubsection{int-Konstanten}
+\index{Konstante!\tint |ii}
+\typeindex{int}
+\fuindexii{INT\protect{\_CONSTANT}}
+
+\begin{verbatim}
+INT_CONSTANT: [0-9]+
+\end{verbatim}
+
+Eine \tint -Konstante ist eine Folge von Ziffern, die als Zahl
+mit der Basis 10, also als Dezimalzahl
+\index{Zahl!ganze}
+\index{Zahl!dezimale}
+interpretiert werden.
+Laut obiger Definition gibt es jedoch
+keine negativen \tint -Konstanten, was den Grund hat, da"s
+dieser Mechanismus in der Grammatik eingebaut ist. Dies wiederum
+ist darin begr"undet, da"s es andernfalls zu Mi"sverst"andnissen
+bei der Interpretation von Ausdr"ucken kommen w"urde (man denke
+an den Ausdruck \fu{7-4}---er w"urde als Konstante \fu{7} gefolgt
+von der Konstante \fu{-4} gedeutet werden, da die lexikalische
+Analyse "uber keine Informationen "uber den Kontext verf"ugt, in dem
+die Konstante auftritt, mit anderen Worten, sie wei"s nicht, da"s
+auf eine Konstante keine weitere folgen kann).
+
+Voraussichtlich wird SEL in der Version 0.4 um die F"ahigkeit
+erweitert werden, auch hexadezimale
+\index{Zahl!hexadezimale}
+\tint -Konstanten in der Form
+\fu{0(x|X)[0-9a-fA-F]+} zu interpretieren.
+
+\subsubsection{char-Konstanten}
+\index{Konstante!\tchar |ii}
+\typeindex{char}
+\fuindexii{CHAR\protect{\_CONSTANT}}
+
+\begin{verbatim}
+CHAR_CONSTANT: '(.|\.)'
+\end{verbatim}
+
+\tchar -Konstanten repr"asentieren einzelne \ind{Zeichen}.
+Dieses k"onnen entweder "`normale"' Zeichen oder
+Steuerzeichen
+\index{Zeichen!Steuerzeichen}
+sein---letztere werden durch einen vorangestellten
+Back"-slash "`\fu{\char92}"'
+\index{Backslash (\fu{\char92})}
+gekennzeichnet, jedoch als ein einzelnes Zeichen behandelt.
+
+\subsubsection{float-Konstanten}
+\index{Konstante!\tfloat |ii}
+\typeindex{float}
+\fuindexii{FLOAT\protect{\_CONSTANT}}
+
+\begin{verbatim}
+FLOAT_CONSTANT: [0-9]*(`.'[0-9]*)?((e|E)(+|-)?[0-9]+)?
+\end{verbatim}
+
+Eine \tfloat -Konstante repr"asentiert eine positive, rationale
+\index{Zahl!rationale}
+Zahl in \ind{Exponentialschreibweise}, wobei der Exponent auch
+weggelassen werden kann. Leider ist eine Definition als
+regul"arer Ausdruck nicht ohne Probleme m"oglich. So w"are laut
+obiger Definition auch eine leere Eingabe oder ein Dezimalpunkt
+f"ur sich alleine eine \tfloat -Konstante, was nat"urlich nicht
+im Sinn der Sache liegen kann. Die Definition ist also
+dahingehend zu erweitern, da"s in der Mantisse mindestens eine Ziffer
+vorkommen mu"s. Beachten Sie bitte, da"s eine
+\tfloat -Konstante immer positiv sein mu"s, was jedoch aufgrund
+der Grammatik von SEL nicht weiter st"ort.
+
+\subsubsection{String-Konstanten}
+\index{Konstante!String|ii}
+\fuindexii{STRING\protect{\_CONSTANT}}
+
+\begin{verbatim}
+STRING_CONSTANT: "([^"\n]|\.)*"
+\end{verbatim}
+
+Eine String-Konstante ist eine in zwei Anf"uhrungsstriche
+eingeschlossene Zeichenfolge, innerhalb derer
+alle \ind{Zeichen} bis auf die Anf"uhrungsstriche und den
+Zeilenvorschub erlaubt sind. Eine besondere Bedeutung kommt den
+Steuerzeichen
+\index{Zeichen!Steuerzeichen}
+zu, die durch einen vorangestellten Back"-slash
+"`\fu{\char92}"'
+\index{Backslash (\fu{\char92})}
+gekennzeichnet sind. Jede String-Konstante wird
+von SEL automatisch mit einem \indi{Nullzeichen}, also einem Zeichen mit
+dem Wert \fu{0} beendet. Die String-Konstante beansprucht also im
+Speicher um ein Byte mehr, als sie an Zeichen enth"alt.
+
+Eine String-Konstante wird von SEL wie ein Zeiger auf
+\tchar s
+\typeindex{char}
+behandelt. Sie k"onnen diesen Zeiger also dazu
+verwenden, um die Zeichenfolge auszugeben, sollten jedoch den
+Speicherbereich, auf den er verweist, nicht ver"andern.
+
+\subsubsection{Steuerzeichen}
+\label{specialchar}
+\index{Zeichen!Steuerzeichen|ii}
+
+SEL stellt bestimmte Steuerzeichen zur Verf"ugung, die in Strings
+\index{Konstante!String}
+und \tchar -Konstanten
+\index{Konstante!\tchar }
+\typeindex{char}
+benutzt werden k"onnen, um Zeichen
+darzustellen, denen eine bestimmte Bedeutung zukommt, wie etwa
+dem Zeichen f"ur Zeilenvorschub. Steuerzeichen
+sind daran zu erkennen, da"s ihnen ein Back"-slash "`\fu{\char92}"'
+\index{Backslash (\fu{\char92})|ii}
+vorangestellt ist. Trotzdem werden sie von SEL als einzelne
+Zeichen behandelt. Hier eine Zusammenstellung aller in SEL
+vorhandenen Steuerzeichen:
+
+\medskip
+\index{Warnton}
+\index{R""uckschritt}
+\index{Bildvorschub}
+\index{Zeilenvorschub}
+\index{Wagenr""ucklauf}
+\index{Tabulator}
+\begin{tabular}{ll}
+\fu{\char92 a} & Bell (Warnton) \\
+\fu{\char92 b} & Backspace (R"uckschritt) \\
+\fu{\char92 f} & Formfeed (Bildvorschub) \\
+\fu{\char92 n} & New line (Zeilenvorschub) \\
+\fu{\char92 r} & Carriage return (Wagenr"ucklauf) \\
+\fu{\char92 t} & Tab (Tabulator) \\
+\fu{\char92 v} & Vertical tab (vertikaler Tabulator)
+\end{tabular}
+\medskip
+
+Wird hinter den Back"-slash ein Zeichen gesetzt, das in obiger
+Tabelle nicht eingetragen ist, wird von SEL automatisch dieses
+Zeichen verwendet. So ist es zum Beispiel m"oglich, einen
+Back"-slash oder ein Anf"uhrungszeichen innerhalb einer
+String-Konstante einzugeben.
+
+SEL wird in der Version 0.4 aller Voraussicht nach um das
+Steuerzeichen \fu{\char92 x\rm\it hh} erweitert werden, das an seine
+Stelle das Zeichen mit dem in hexadezimaler
+\index{Zahl!hexadezimale}
+Notation angegeben Code {\it hh} stellt.
+
+\subsection{Variablen}
+\index{Variable|ii}
+\fuindexii{var}
+\fuindex{IDENTIFIER}
+\fuindex{type}
+\fuindex{constant}
+\fuindexii{extern}
+\rwindexii{extern}
+
+\begin{verbatim}
+var:           IDENTIFIER `:' type [`=' constant] `;'
+             ;
+
+extern:        `extern' IDENTIFIER `:' type `;'
+             ;
+\end{verbatim}
+
+Variablen sind Speicherbereiche, die
+vom Programm belegt werden und w"ahrend der Ausf"uhrung
+verschiendene Werte
+\index{Wert}
+annehmen k"onnen. Jede Variable besitzt
+einen \ind{Typ}, der sowohl ihre Gr"o"se als auch ihre Repr"asentation
+im Speicher bestimmt. SEL unterscheidet grunds"atzlich zwischen
+drei Typen von Variablen: programmglobale Variablen, modulglobale
+Variablen und lokale Variablen.
+
+Programmglobale Variablen werden in einem \rwi{global}-Block
+definiert und sind im gesamten Programm bekannt. Ein Modul, das
+eine Variable verwenden will, die in einem anderen Modul
+definiert ist, mu"s jedoch, um auf die Variable zugreifen zu
+k"onnen, dies mit einer \rw{extern}-Deklaration bekanntgeben.
+Sie unterscheidet sich von einer Variablendefinition lediglich
+dadurch, da"s ihr das \rw{extern}-Schl"usselwort vorangestellt
+ist und keine Wertzuweisung erlaubt ist. Beachten Sie, da"s es
+unm"oglich ist, innerhalb eines
+Programms zwei programmglobale Variablen desselben Namens zu
+definieren, da dies zu Konflikten f"uhren w"urde.
+
+Modulglobale Variablen werden in einem \rwi{local}-Block eines
+Moduls definiert und sind nur innerhalb dieses Moduls
+bekannt---auf sie kann von anderen Modulen auch nicht durch eine
+\rw{extern}-Deklaration zugegriffen werden. Deshalb ist es auch
+ohne weiteres m"oglich, mehrere modulglobale Variablen gleichen
+Namens zu definieren, soferne dies in jeweils verschiedenen
+Modulen geschieht.
+
+Lokale Variablen sind nur innerhalb der \ind{Funktion} bekannt, in der
+sie definiert wurden. Solche Variablen sind allerdings nicht
+statisch, das hei"st, sie werden beim Aufruf der jeweiligen Funktion
+erzeugt und existieren so lange, bis die Funktion zu ihrem
+Aufrufer zur"uckkehrt. Weiters ist es auch durchaus m"oglich,
+da"s lokale Variablen mehrfach existieren, und zwar dann, wenn
+sich die Funktion selbst aufruft, also rekursiv ist. Bei jedem
+solchen Aufruf werden neue lokale Variablen erzeugt, die zwar
+namensgleich, jedoch von den anderen absolut isoliert sind.
+Unter die lokalen Variablen fallen auch die Funktionsparameter.
+\index{Parameter}
+Sie werden im Funktionskopf definiert und sind auch nur existent,
+solange die Funktion abgearbeitet wird.
+
+Es ist in SEL durchaus m"oglich, modulglobale, programmglobale
+und lokale Variablen desselben Namens zu definieren, wobei
+folgende Regel zu beachten ist: lokale Variablen werden
+modulglobalen Variablen vorgezogen, welche ihrerseits den
+programmglobalen Variablen vorgezogen werden. Existiert also die
+programmglobale Variable \fu{example}, so kann ohne weiteres eine
+modulglobale Variable desselben Namens definiert werden.
+Innerhalb des Moduls, in der letztere definiert wurde, bezieht
+sich \fu{example} nicht auf die programmglobale, sondern auf die
+modulglobale Variable. Definiert weiters eine Funktion innerhalb
+dieses Moduls eine lokale Variable namens \fu{example}, so kann
+diese Funktion nur auf die lokale Variable zugreifen, w"ahrend
+der Rest des Moduls auf die modulglobale Variable zugreift.
+
+\example
+Die Funktion \fuii{Recursive}
+\index{Rekursion|uu}
+gibt die Zahlen \fu{1} bis \fu{10} in
+ihrer nat"urlichen Reihenfolge aus und ruft sich nach der
+Ausgabe jeder Zahl selbst auf, was dazu f"uhrt, da"s f"ur jede
+Zahl zus"atzlich nocheinmal die Zahlen \fu{1} bis \fu{10}
+ausgegeben werden, f"ur die dasselbe gilt. Um zu verhindern, da"s
+die Zahl \fu{1} unendlich oft ausgegeben wird, was zweifellos
+geschehen w"urde, w"urd dieses Verfahren unkontrolliert
+angewendet, wird der Funktion ein Parameter "ubergeben, der
+bestimmt, wie oft sie sich noch selbst aufrufen soll.
+Beachten Sie bei diesem Beispiel, da"s sich die einzelnen Z"ahler
+\fu{i} und die Parameter \fu{depth} der Funktion nicht gegenseitig
+st"oren.
+
+\rwindexuu{for}
+\fuindexuu{WriteInt}
+\fuindexuu{WriteString}
+\begin{verbatim}
+function Recursive (depth : int) : void
+
+  i : int;
+
+begin
+  for (i = 1 to 10)
+    WriteInt(i);
+    WriteString("  ");
+    if (depth > 0)
+      Recursive(depth - 1);
+      WriteString("  ");
+    end
+  end
+end
+\end{verbatim}
+
+\subsection{Funktionen}
+\index{Funktion|ii}
+
+Funktionen sind Unterprogramme, die von verschiedenen Stellen des
+Programms aufgerufen werden k"onnen. Um den Funktionen
+Information mitzugeben, k"onnen ihnen sogenannte {\em \indi{Parameter}}
+"ubergeben werden, deren Typen bei der Funktionsdeklaration
+bestimmt werden m"ussen. Der Aufruf einer Funktion geschieht
+durch Angabe des Funktionsnamens und in Klammern gesetzten
+Parametern,
+\index{Parameter""ubergabe|ii}
+durch Beistriche getrennt. Sind keine Parameter
+erforderlich, m"ussen nur die
+beiden Klammern angegeben werden. Jede Funktion besitzt einen
+R"uckgabetyp, der
+ebenfalls bei der Deklaration festgelegt werden mu"s. Um eine
+Funktion, die keine R"uckgabe vornimmt, zu realisieren, mu"s als
+R"uckgabetyp \tvoid\
+\typeindex{void}
+gew"ahlt werden.
+
+\example
+Dieses Programm benutzt die Funktionen \fuiu{Factorial},
+\fu{WriteString} und \fu{WriteInt}, um die Fakult"aten
+\index{Fakult""at}
+der Zahlen von \fu{1} bis \fu{10} auszugeben.
+
+\rwindexuu{for}
+\rwindexuu{global}
+\fuindexuu{WriteString}
+\fuindexuu{WriteInt}
+\begin{verbatim}
+#include "conio.sh"
+
+global
+  function Factorial (int) : int
+  function main      ()    : void
+end
+
+function main () : void
+
+  i : int;
+
+begin
+  for (i = 1 to 10)
+    WriteString("Fakultaet von ");
+    WriteInt(i);
+    WriteString(" = ");
+    WriteInt(Factorial(i));
+    WriteString("\n");
+  end
+end
+\end{verbatim}
+
+\subsection{Operatoren}
+\index{Operator|ii}
+
+Operatoren werden, wie schon der Name sagt, ben"otigt, um
+bestimmte Operationen auszuf"uhren, wie etwa das Addieren
+von Zahlen oder das Zuweisen von Werten. Grunds"atzlich kann man
+in SEL zwischen {\em un"aren} und {\em bin"aren} Operatoren
+unterscheiden.
+
+Un"are Operatoren stehen vor einem Ausdruck und
+beeinflussen so dessen \ind{Wert}. Ein Beispiel hierf"ur w"are der
+\ind{NOT}-Operator \fu{!}, der den \ind{Ausdruck}, der ihm nachsteht,
+negiert. Un"are Operatoren werden grunds"atzlich von rechts nach
+links ausgewertet, das hei"st, es wird zuerst der Wert des
+Ausdrucks berechnet und danach negiert, nicht zuletzt deshalb,
+weil es nicht anders m"oglich ist.
+
+Bin"are Operatoren beziehen sich auf zwei Operanden, sie werden
+deshalb zwischen diese beiden gestellt. Ein Beispiel f"ur einen
+bin"aren Operator w"are der Additionsoperator \fu{+}. Bin"are
+Operatoren k"onnen weiter unterteilt werden in solche, die von
+rechts nach links und solche, die von links
+nach rechts auswerten.
+\index{Operator!Richtung der Auswertung}
+
+Ersteres bedeutet, da"s zuerst
+der Wert des rechten Operanden berechnet und dann auf den
+linken angewendet wird. Ein Beispiel w"are der Zuweisungsoperator
+\index{Zuweisung}
+\fu{=}. Was unter der obigen Definition gemeint ist, l"a"st sich
+leicht anhand eines Ausdrucks veranschaulichen: \fu{a=b=1}. SEL
+beginnt von links nach rechts zu parsen und bleibt beim ersten
+Operator stehen. Der linke Operand w"are demnach \fu{a}, der
+rechte \fu{b=1}. Nun wird zuerst der rechte Operand ausgewertet.
+SEL stoppt beim zweiten Operator und steht vor den Operanden
+\fu{b} und \fu{1}. Wieder wird der rechte Operand ausgewertet,
+von dem SEL nun wei"s, da"s er den Wert \fu{1} hat. Dieser wird
+nun auf den linken Operanden angewendet, also der Variable \fu{b}
+zugewiesen. Weiters wird nun der Wert des Ausdrucks \fu{b=1}
+ebenfalls auf \fu{1} gesetzt und \fu{a} zugewiesen. Diese Art der
+Auswertung ist zweckm"a"sig, da es so m"oglich ist, mehreren
+Variablen auf einmal den selben Wert zuzuweisen. Um die
+Auswertung deutlich zu machen, kann man den Ausdruck auch als
+\fu{a=(b=1)} anschreiben.
+
+Ein Beispiel f"ur einen Operator, der von links nach rechts
+auswertet, ist der Subtraktionsoperator \fu{-}.
+\index{Subtraktion}
+Dabei wird
+von zwei Operanden zun"achst der linke ausgewertet und dann auf
+den rechten angewendet. Als Beispiel sei der Ausdruck \fu{3-2-1}
+angef"uhrt. W"urde der Operator \fu{-} von rechts nach links
+auswerten, so k"onnte man diesen Ausdruck auch als \fu{3-(2-1)}
+anschreiben, was jedoch zu dem falschen Ergebnis \fu{2} f"uhrte.
+Aus diesem Grunde wertet \fu{-} von links nach rechts aus,
+was den Ausdruck zu \fu{(3-2)-1} macht. Dieser Ausdruck liefert
+das gew"unschte Ergebnis \fu{0}.
+
+Es folgt eine kurze Beschreibung aller Operatoren sowie der
+Typen ihrer Operanden und des Typs des Ergebnisses der Operation.
+Bei den Typen der Operanden ist immer zu beachten, da"s, falls
+diese unterschiedlich sind, SEL immer dem "`gr"o"seren"' Typ den
+Vorrang gibt, wobei \hbox{$ \tchar < \tint < \tfloat $} gilt.
+\typeindex{char}
+\typeindex{int}
+\typeindex{float}
+Der Ausdruck \fu{3 + 4.123} ergibt also einen
+\tfloat\ mit dem Wert \fu{7.123}, wobei allerdings der Ausdruck
+\fu{13 \&\& 5.3} einen \tint\ mit einem Wert ungleich \fu{0}
+ergibt, da der Operator \fu{\&\&} nur mit \tint s arbeitet.
+
+\begin{operator}
+\tchar\ \fu{`+'} \tchar\ & \tchar\ \\
+\tint\ \fu{`+'} \tint\ & \tint\ \\
+\tfloat\ \fu{`+'} \tfloat\ & \tfloat\ \\
+\type{\poi type} \fu{`+'} \tint\ & \type{\poi type}
+\end{operator}
+\index{Addition|ii}
+
+Sind die beiden Operanden des bin"aren \fu{+}-Operators numerisch, werden
+diese addiert. Ist jedoch der linke Operand ein \ind{Zeiger}, ergibt
+die Operation einen Zeiger, der um die Anzahl Elemente erh"oht
+ist, die der rechte Operand angibt. Beachten Sie bitte, da"s die
+Gr"o"se eines Elements nicht unbedingt ein Byte sein mu"s,
+sondern so gro"s ist, wie der Typ, den der Zeiger referenziert. So
+ist es z.~B. leicht m"oglich, ein \ind{Array} zu durchlaufen,
+ohne einen numerischen Z"ahler zu verwenden.
+
+\begin{operator}
+\tchar\ \fu{`-'} \tchar\ & \tchar\ \\
+\tint\ \fu{`-'} \tint\ & \tint\ \\
+\tfloat\ \fu{`-'} \tfloat\ & \tfloat\ \\
+\type{\poi type} \fu{`-'} \tint\ & \type{\poi type}
+\end{operator}
+\index{Subtraktion|ii}
+
+Der bin"are Operator \fu{-} subtrahiert den rechten Operanden vom linken,
+falls beide numerisch sind, andernfalls wird der \ind{Zeiger} um die
+Anzahl Elemente erniedrigt, die vom rechten Operanden angegeben
+wird. Mit Element ist hier der Typ gemeint, den der Zeiger
+referenziert.
+
+\begin{operator}
+\tchar\ \fu{`*'} \tchar\ & \tchar\ \\
+\tint\ \fu{`*'} \tint\ & \tint\ \\
+\tfloat\ \fu{`*'} \tfloat\ & \tfloat\
+\end{operator}
+\index{Multiplikation|ii}
+
+Der bin"are \fu{*}-Operator multipliziert die beiden Operanden.
+
+\begin{operator}
+\tchar\ \fu{`/'} \tchar\ & \tchar\ \\
+\tint\ \fu{`/'} \tint\ & \tint\ \\
+\tfloat\ \fu{`/'} \tfloat\ & \tfloat\
+\end{operator}
+\index{Division|ii}
+\index{Zahl!Bruch}
+
+Der \fu{/}-Operator dividiert den linken durch den rechten
+Operanden. Sind beide Operanden keine \tfloat s, so ist das
+Ergebnis auch kein \tfloat , selbst wenn der Bruch nicht
+ganzzahlig ist.
+
+\begin{operator}
+\tchar\ \fu{`\%'} \tchar\ & \tchar\ \\
+\tint\ \fu{`\%'} \tint\ & \tint\
+\end{operator}
+\index{Division!Rest bei ganzzahliger|ii}
+\index{Modulo|see{Division}}
+
+Der \fu{\%}-Operator berechnet den Rest, der bei einer
+ganzzahligen Division des linken durch den rechten Operanden zu
+verzeichnen w"are. Beachten Sie bitte, da"s dieser Operator {\em
+nicht} mit \tfloat s funktioniert.
+
+\newpage
+\begin{operator}
+\tint\ \fu{`\&\&'} \tint\ & \tint\
+\end{operator}
+\index{AND!logisches|ii}
+\index{UND|see{AND}}
+
+Der \fu{\&\&}-Operator verkn"upft die beiden Operanden mit einem
+logischen Und (AND), das hei"st, der Ausdruck ergibt einen Wert
+ungleich \fu{0}, wenn sowohl der linke als auch der rechte
+Operand ungleich \fu{0} sind, andernfalls ergibt der Ausdruck
+\fu{0}.
+
+\begin{operator}
+\tint\ \fu{`||'} \tint\ & \tint\
+\end{operator}
+\index{OR!logisches|ii}
+\index{ODER|see{OR}}
+
+Der \fu{||}-Operator verkn"upft seine beiden Operanden mit einem
+logischen Oder (OR), was bedeutet, da"s der Ausdruck dann ungleich
+\fu{0} ist, wenn mindestens einer der beiden Operanden ungleich
+\fu{0} ist. Nur wenn sowohl der linke als auch der rechte Operand
+\fu{0} sind, ergibt der Ausdruck \fu{0}.
+
+\begin{operator}
+\tint\ \fu{`\char94\char94'} \tint\ & \tint\
+\end{operator}
+\index{XOR!logisches|ii}
+\index{ODER!exklusives|see{XOR}}
+
+Der \fu{\char94\char94}-Operator verkn"upft die beiden Operanden
+mit einem logischen exklusiven Oder (XOR). Ein Ausdruck
+ergibt also nur dann einen Wert ungleich \fu{0}, wenn genau einer
+der Operanden ungleich \fu{0} ist. Haben hingegen entweder beide
+Operanden den Wert \fu{0} oder sind beide ungleich \fu{0}, so ist der
+Ausdruck gleich \fu{0}.
+
+\begin{operator}
+\tint\ \fu{`\&'} \tint\ & \tint\
+\end{operator}
+\index{AND!bitweises|ii}
+
+Der bin"are \fu{\&}-Operator verkn"upft die beiden Operanden mit
+einem bitweisen Und (AND), was bedeutet, da"s er ein logisches Und auf
+jedes einzelne Bitpaar des linken und rechten Operanden anwendet.
+So ergibt zum Beispiel der Ausdruck \fu{93 \& 45} den Wert
+\fu{13}. Die Funktionsweise l"a"st sich leicht nachvollziehen,
+indem man die bin"are Schreibweise
+\index{Zahl!bin""are}
+verwendet, also \fu{1011101b}
+f"ur \fu{93}, \fu{0101101b} f"ur \fu{45} und \fu{0001101b} f"ur
+\fu{13}. Jene Stellen, die in mindestens einem der
+Operanden den Wert \fu{0} haben, haben auch im Ergebnis den Wert
+\fu{0}. Alle anderen Stellen, also jene, die sowohl im linken
+als auch im rechten Operanden den Wert \fu{1} haben, haben auch
+im Ergebnis den Wert \fu{1}.
+
+\begin{operator}
+\tint\ \fu{`|'} \tint\ & \tint\
+\end{operator}
+\index{OR!bitweises|ii}
+
+Der Operator \fu{|} verkn"upft beide Operanden mit einem
+bitweisen Oder (OR), das hei"st, er wendet auf jedes Bitpaar der
+beiden Operanden ein logisches Oder an. Der Ausdruck \fu{93 | 45}
+ergibt zum Beispiel den Wert 125.
+
+\begin{operator}
+\tint\ \fu{`\char94'} \tint\ & \tint\
+\end{operator}
+\index{XOR!bitweises|ii}
+
+Der Operator \fu{\char94} verkn"upft seine beiden Operanden mit
+einem bitweisen exklusiven Oder (XOR), das hei"st, er wendet auf
+jedes Bitpaar des linken und rechten Operanden jeweils ein
+logisches exklusives Oder an. So ergibt zum Beispiel der Ausdruck
+\fu{93 \char94\ 45} den Wert 112.
+
+\begin{operator}
+\tint\ \fu{`<<'} \tint\ & \tint\
+\end{operator}
+\index{Bitverschiebung!nach links|ii}
+
+Der \fu{<<}-Operator ergibt einen Wert, der dem linken Operanden
+entspricht, wobei jedoch die einzelnen Bits desselben um soviel
+Stellen nach links geschoben werden, wie der rechte Operand
+angibt. W"urde dies in eine Zahl resultieren, die mehr Bits hat,
+als der \tint -Typ zul"a"st, so werden die "`"ubersch"ussigen"'
+Bits abgeschnitten. Ein Beispiel: Der Ausdruck \fu{93 << 3}
+ergibt \fu{744}. Warum dies so ist, l"a"st sich leicht anhand der
+Bin"arschreibweise
+\index{Zahl!bin""are}
+der beiden Zahlen verdeutlichen. Die Zahl
+\fu{93} kann auch als \fu{1011101b} geschrieben werden, die Zahl
+\fu{744} als \fu{1011101000b}. Wie man sieht, wurden also
+lediglich drei Nullstellen am Ende der Zahl eingef"ugt.
+Anmerkung: Aufgrund der Eigenschaften des bin"aren Zahlensystems
+gilt (ohne Ber"ucksichtigung der negativen Zahlen)
+\hbox{$a \>\fu{<<}\> n = a \cdot 2^n.$}
+
+\begin{operator}
+\tint\ \fu{`>>'} \tint\ & \tint\
+\end{operator}
+\index{Bitverschiebung!nach rechts|ii}
+
+Der Operator \fu{>>} ergibt einen Wert, der dem linken Operanden
+entspricht, dessen Bits um soviel Stellen nach rechts ger"uckt
+werden, wie der rechte Operand angibt. Bits, die dabei rechts
+"uber die Einerstelle herausragen w"urden, werden dabei
+abgeschnitten. Die sich dabei ergebende Zahl kann (ohne
+Ber"ucksichtigung der negativen Zahlen) als
+\hbox{$a \>\fu{>>}\> n = \lfloor a / 2^n \rfloor $} angeschrieben werden.
+So ergibt z.~B. der Ausdruck \fu{93 >> 3} den Wert \fu{11}.
+
+\begin{operator}
+\fu{`-'} \tchar\ & \tchar\ \\
+\fu{`-'} \tint\ & \tint\ \\
+\fu{`-'} \tfloat\ & \tfloat\
+\end{operator}
+\index{Negation!numerische|ii}
+\index{Negation!logische|see{NOT}}
+\index{Negation!bitweise|see{NOT}}
+
+Der un"are Operator \fu{-} negiert den Operanden, das
+hei"st, er macht aus einer positiven Zahl eine negative und
+umgekehrt. So ergibt zum Beispiel der Ausdruck \fu{- 93} den Wert
+\fu{-93}.
+
+\begin{operator}
+\fu{`*'} \type{\poi type} & \type{type}
+\end{operator}
+\index{Zeiger!Dereferenzierung|ii}
+
+Der un"are \fu{*}-Operator dereferenziert den Operanden, das
+hei"st, er ergibt jene Variable, auf die der Operand zeigt (ist
+der Operand kein Zeiger, ist die Operation illegal). Angenommen,
+die Variable \fu{p} ist vom Typ \type{\poi int} und wurde mit
+\fu{p = \&i} initialisiert, wobei \fu{i} vom Typ \tint\ ist, so
+ist der Ausdruck \fu{*p} mit dem Ausdruck \fu{i} gleichzusetzen.
+
+\begin{operator}
+\fu{`\&'} \type{type} & \type{\poi type}
+\end{operator}
+\index{Zeiger!Ermittlung|ii}
+\index{Variable!Adresse}
+
+Der un"are \fu{\&}-Operator ergibt einen Zeiger auf seinen
+Operanden, was nat"urlich nur m"oglich ist, wenn dieser keine
+Konstante ist. So ist z.~B. der Ausdruck \fu{\&i} mit dem
+Ausdruck \fu{p} gleichzusetzen, wenn \fu{*p} gleich \fu{i} ist.
+Aus diesem und dem letzten Beispiel wird klar, da"s \fu{\&} das
+Gegenst"uck zum \fu{*}-Operator ist und umgekehrt.
+
+\begin{operator}
+\fu{`!'} \tint\ & \tint\
+\end{operator}
+\index{NOT!logisches|ii}
+
+Der Operator \fu{!} ergibt die logische Negation (NOT) seines
+Operanden, was bedeutet, da"s der Wert gleich \fu{0} ist, falls
+der Operand ungleich \fu{0} ist und umgekehrt. So ergibt z.~B.
+der Ausdruck \fu{!93} den Wert \fu{0}.
+
+\begin{operator}
+\fu{`\char126'} \tint\ & \tint\
+\end{operator}
+\index{NOT!bitweises|ii}
+\index{NOT!numerisches|see{Negation}}
+
+Der Operator \fu{\char126} errechnet die bitweise Negation seines
+Operanden, das hei"st, er wendet auf jedes Bit desselben die
+logische Negation an. Das Ergebnis kann je nach Wortl"ange und
+Darstellung des Typs \tint\ stark differenzieren. Im Regelfall
+kann jedoch mit einer Wortl"ange von 32 Bits und einer
+Einerkomplementdarstellung der negativen Zahlen gerechnet werden.
+So ergibt zum Beispiel der Ausdruck \fu{\char126 93} auf MS-DOS-
+und Windows NT-Rechnern den Wert \fu{-94}.
+
+\begin{operator}
+\tchar\ \fu{`=='} \tchar\ & \tint\ \\
+\tint\ \fu{`=='} \tint\ & \tint\ \\
+\tfloat\ \fu{`=='} \tfloat\ & \tint\
+\end{operator}
+\index{Vergleich|ii}
+
+Der Operator \fu{==} "uberpr"uft die beiden Operanden auf
+Gleichheit, das hei"st, der Ausdruck ergibt einen Wert ungleich
+\fu{0}, falls der linke und der rechte Operand den selben Wert
+haben, andernfalls \fu{0}.
+
+\begin{operator}
+\tchar\ \fu{`<'} \tchar\ & \tint\ \\
+\tint\ \fu{`<'} \tint\ & \tint\ \\
+\tfloat\ \fu{`<'} \tfloat\ & \tint\
+\end{operator}
+
+Der Operator \fu{<} "uberpr"uft, ob der linke Operand kleiner als
+der rechte ist. Falls dies zutrifft, ergibt der Ausdruck einen
+Wert ungleich \fu{0}, ansonsten \fu{0}.
+
+\begin{operator}
+\tchar\ \fu{`>'} \tchar\ & \tint\ \\
+\tint\ \fu{`>'} \tint\ & \tint\ \\
+\tfloat\ \fu{`>'} \tfloat\ & \tint\
+\end{operator}
+
+Der Operator \fu{>} "uberpr"uft, ob der linke Operand gr"o"ser
+ist als der rechte. Trifft das zu, ergibt der Ausdruck einen Wert
+ungleich \fu{0}, andernfalls \fu{0}.
+
+\begin{operator}
+\tchar\ \fu{`<='} \tchar\ & \tint\ \\
+\tint\ \fu{`<='} \tint\ & \tint\ \\
+\tfloat\ \fu{`<='} \tfloat\ & \tint\
+\end{operator}
+
+Der Operator \fu{<=} "uberpr"uft, ob der linke Operand kleiner
+oder gleich dem rechten Operanden ist und ergibt in diesem Fall
+einen Wert ungleich \fu{0}, ansonsten \fu{0}.
+
+\begin{operator}
+\tchar\ \fu{`>='} \tchar\ & \tint\ \\
+\tint\ \fu{`>='} \tint\ & \tint\ \\
+\tfloat\ \fu{`>='} \tfloat\ & \tint\
+\end{operator}
+
+Der Operator \fu{>=} "uberpr"uft, ob der linke Operand gr"o"ser
+oder gleich dem rechten Operanden ist und ergibt in diesem Fall
+einen Wert ungleich \fu{0}, andernfalls \fu{0}.
+
+\begin{operator}
+\tchar\ \fu{`!='} \tchar\ & \tint\ \\
+\tint\ \fu{`!='} \tint\ & \tint\ \\
+\tfloat\ \fu{`!='} \tfloat\ & \tint\
+\end{operator}
+
+Der Operator \fu{!=} "uberpr"uft die beiden Operanden auf
+Ungleichheit und ergibt in diesem Fall einen Wert ungleich \fu{0},
+bei Gleichheit ergibt sich der Wert \fu{0}.
+
+\begin{operator}
+\type{type} \fu{`='} \type{type} & \type{type}
+\end{operator}
+\index{Zuweisung|ii}
+
+Der Operator \fu{=} weist dem linken Operanden den Wert des
+rechten Operanden zu, was aber vorraussetzt, da"s der linke
+Operand keine \ind{Konstante}, also entweder eine \ind{Variable} (auch
+innerhalb einer \ind{Struktur}), ein
+dereferenzierter \ind{Zeiger} oder ein indiziertes \ind{Array} ist. SEL ist
+so konzipiert, da"s auch ganze Arrays oder Strukturen mit einer
+Zuweisung kopiert werden k"onnen. Beachten Sie aber bei der
+Arbeit mit Zeigern, da"s eine Zuweisung nicht bedeutet, da"s die
+Werte, auf die die Zeiger zeigen, sondern die Adressen, auf die
+die Zeiger verweisen, kopiert werden. Zur Veranschaulichung ein
+Beispiel: Angenommen, die Variablen \fu{p} und \fu{q} sind vom
+Typ \type{\poi int} und zeigen auf die \tint s \fu{i} und \fu{j},
+soda"s \fu{*p} gleich \fu{i} und \fu{*q} gleich \fu{j} ist. In
+diesem Fall bewirkt der Ausdruck \fu{p = q} nicht, da"s nun der
+Wert von \fu{i} gleich dem von \fu{j} ist, sondern da"s nun
+\fu{p}, genauso wie \fu{q}, auf \fu{j} zeigt. Ersterer Effekt
+w"are mit dem Ausdruck \fu{*p = *q} zu erzielen.
+
+\begin{operator}
+\type{struct} or \type{\poi struct} \fu{`->'} \fu{IDENTIFIER} & \type{type}
+\end{operator}
+\fuindex{IDENTIFIER}
+\index{Struktur!Zugriff auf Element|ii}
+
+Der Operator \fu{->} wird benutzt, um ein Strukturelement zu
+erreichen. Um dies zu vereinfachen, kann der Operator sowohl
+direkt mit einer Struktur als auch mit einem \ind{Zeiger} auf eine
+Struktur arbeiten. Der rechte Operand gibt den Namen des Elements
+an, auf das zugegriffen werden soll.
+
+\begin{operator}
+\type{\poi type} or \type{\arr{}type} \fu{`['} \fu{expr} \fu{`]'} & \type{type}
+\end{operator}
+\fuindex{expr}
+\index{Array!Zugriff auf Element|ii}
+
+Der \fu{[]}-Operator wird benutzt, um auf ein einzelnes
+Element eines Arrays zuzugreifen, wobei dieses Array auch als
+\ind{Zeiger} dargestellt werden kann. Auf diese Weise kann auch auf
+einen Speicherbereich, der nicht als Array definiert worden ist,
+wie auf ein Array zugegriffen werden. Hierzu wird in eckigen
+Klammern ein Index angegeben, wobei das erste Element des Arrays
+den Index \fu{0} besitzt und negative Indizes nicht erlaubt sind.
+Anmerkung: Der Ausdruck \fu{p[i]} kann auch als \fu{*(p + i)}
+angeschrieben werden, wobei \fu{p} ein Array oder ein Zeiger
+eines beliebigen Typs ist und \fu{i} ein positiver \tint .
+Beachten Sie, da"s SEL keine "Uberpr"ufung des Index vornimmt,
+das hei"st, da"s es m"oglich ist, auf Elemente zuzugreifen, die
+eigentlich nicht mehr zum Array geh"oren, wovon jedoch in den
+meisten F"allen abzuraten ist.
+
+
+\subsubsection{Rangfolge der Operatoren}
+\index{Operator!Rangfolge|ii}
+\index{Operator!Priorit""at|ii}
+
+Um eine unn"otige Klammerung zu vermeiden, besitzen die
+Operatoren in SEL eine Rangfolge. Die arithmetischen Operatoren
+sind an die der Mathematik angelehnt, soda"s zum Beispiel der
+Ausdruck \fu{a+b*c-d} dem Ausdruck \fu{(a+(b*c))-d} gleichkommt,
+was der mathematischen Notation entspricht. Ist allerdings
+gew"unscht, da"s \fu{a+b} mit \fu{c-d} multipliziert wird, mu"s
+die nat"urliche Operatorenrangfolge mittels Klammerung
+umgangen und der Ausdruck zu \fu{(a+b)*(c-d)} umgeformt
+werden.
+
+Die folgende Tabelle ist eine Aufstellung aller Operatoren von
+SEL, wobei Operatoren mit gleicher Priorit"at in jeweils der
+gleichen Zeile stehen. Die Operatoren, die in der Liste weiter
+oben stehen, haben niedrigere Priorit"at, das hei"st, sie binden
+schw"acher. Die rechte Spalte der Tabelle gibt die Richtung
+der Auswertung
+\index{Operator!Richtung der Auswertung|ii}
+an und bezieht sich auf alle Operatoren in der jeweiligen Zeile.
+
+\medskip
+\begin{tabular}{ll}
+\verb?=?, \verb?delete? & von rechts nach links \\
+\verb?&&?, \verb?||?, \verb?^^? & von links nach rechts \\
+\verb?==?, \verb?<?, \verb?>?, \verb?<=?, \verb?>=?, \verb?!=? &
+  von links nach rechts\\
+\verb?&?, \verb?|?, \verb?^?, \verb?<<?, \verb?>>? &
+  von links nach rechts \\
+\verb?+?, \verb?-? & von links nach rechts \\
+\verb?*?, \verb?/?, \verb?%? & von links nach rechts \\
+\verb?!?, \verb?~?, \verb?-? (un"ar), \verb?*? (un"ar), \verb?&? (un"ar) &
+  von rechts nach links \\
+\verb?->?, \verb?:?, \verb?[]? & von links nach rechts \\
+\verb?sizeof?, \verb?new? & ---
+\end{tabular}
+
+\section{Typen}
+\index{Typ|ii}
+\fuindexii{type}
+\rwindex{char}
+\rwindex{int}
+\rwindex{float}
+\rwindex{void}
+\fuindex{array}
+\fuindex{pointer}
+\fuindex{IDENTIFIER}
+
+\begin{verbatim}
+type:          `char'
+             | `int'
+             | `float'
+             | `void'
+             | array
+             | pointer
+             | IDENTIFIER
+             ;
+\end{verbatim}
+
+Typen werden in SEL verwendet, um Werte
+\index{Wert}
+zu klassifizieren. So hat
+z.~B. jeder \ind{Ausdruck}, jede \ind{Variable} und jede \ind{Funktion}
+einen Typ. Die vier Basistypen von SEL k"onnen durch Kombination
+zur Konstruktion weiterer, komplexerer Typen verwendet werden.
+
+\subsection{Basistypen}
+\index{Typ!Basistyp}
+\typeindexii{int}
+\typeindexii{char}
+\typeindexii{float}
+\typeindexii{void}
+
+Die Programmiersprache SEL kennt vier Basistypen, n"amlich
+\tchar , \tint , \tfloat\ und \tvoid . Die ersten beiden Typen,
+\tchar\ und \tint\ sind sogenannte Aufz"ahlungstypen,
+was sich mit den ganzen Zahlen in der Mathematik vergleichen l"a"st.
+
+\tchar\ wird haupts"achlich verwendet, um \indi{Zeichen} zu
+repr"asentieren und hat die Gr"o"se eines Bytes. Obwohl \tchar\
+Zeichen repr"asentiert, k"onnen auf ihn alle arithmetischen
+Operationen angewendet werden, die auch mit \tint\ funktionieren.
+
+Letzterer wird meistens verwendet, um ganzzahlige Berechnungen
+\index{Zahl!ganze|ii}
+auszuf"uhren. Aus diesem Grund mu"s er gen"ugend gro"s
+dimensioniert sein. In der Regel entspricht ein \tint\ 32 Bits,
+was bedeutet, da"s er einen Wertebereich von $-2^{31}$ bis
+$+2^{31}-1$ hat. Au"serdem wird \tint\ in SEL zur boolee'schen
+Arithmetik
+\index{boolee'sche Arithmetik}
+herangezogen, also zur Berechnung von logischen
+Aussagen. In diesem Fall bedeutet ein Wert von \fu{0} die Aussage
+"`logisch falsch"', ein Wert ungleich \fu{0} bedeutet "`logisch
+wahr"'.
+
+Der Typ \tfloat\ repr"asentiert rationale Zahlen
+\index{Zahl!rationale|ii}
+mit begrenzter Genauigkeit. Auf MS-DOS-Rechnern hat er eine Gr"o"se
+von 32 Bits.
+
+Eine besondere Stellung unter den Typen nimmt \tvoid\ ein. Er
+repr"asentiert nichts und es ist auch nicht m"oglich, einem
+\tvoid\ einen Wert zuzuweisen, was auch gar keinen Sinn h"atte.
+\tvoid\ wird z.~B. verwendet, um Funktionen zu
+deklarieren, die keinen R"uckgabewert
+\index{R""uckgabewert}
+haben. Au"serdem kann er
+in einer Funktion verwendet werden, die einen \ind{Zeiger} unbekannten
+Typs verlangt oder zur"uckgibt.
+
+\subsection{Arrays}
+\index{Array|ii}
+\fuindexii{array}
+\fuindex{INT\protect{\_CONSTANT}}
+\fuindex{type}
+
+\begin{verbatim}
+array:         `[' INT_CONSTANT `]' type
+             ;
+\end{verbatim}
+
+Ein Array ist eine Zusammenfassung einer bestimmten Anzahl von
+Variablen gleichen Typs, die im Speicher als eine Folge von
+Variablen
+\index{Variable!Folge|ii}
+repr"asentiert wird, wobei die Variablen mit kleinerem
+Index an einer Stelle geringerer Adresse angesiedelt sind.
+
+In SEL ist es m"oglich, Arrays beliebig zu schachteln, also
+mehrdimensionale Array zu erzeugen. So ist etwa
+\type{\arr{5}\arr{10}int} ein Array, das aus 5 Arrays besteht,
+wobei jedes dieser Arrays aus 10 \tint s besteht. Um auf das
+zweite Element aus dem dritten Array zuzugreifen, wird der
+Ausdruck \fu{a[3][2]} verwendet. Anmerkung: Dieses Array
+beansprucht genausoviel Speicher wie $5 \cdot 10 = 50$ \tint s.
+
+Arrays k"onnen nat"urlich nicht nur aus Elementartypen
+konstruiert werden, sondern aus jedem beliebigen Typ, also z.~B.
+aus Strukturen. Der Nachteil jedoch ist, da"s die
+Gr"o"se des Arrays schon bei der Deklaration feststehen mu"s, sie
+kann also nicht bei Bedarf ge"andert werden. Beachten Sie, da"s
+SEL beim Zugriff auf Array-Elemente nicht "uberpr"uft, ob das
+angegebene Element auch wirklich zum Array geh"ort, also ob das
+Array gen"ugend gro"s dimensioniert ist.
+
+\subsection{Zeiger}
+\index{Zeiger|ii}
+\fuindexii{pointer}
+\fuindex{type}
+
+\begin{verbatim}
+pointer:       `*' type
+             ;
+\end{verbatim}
+
+Ein Zeiger ist eine Variable, die die Adresse
+\index{Variable!Adresse}
+einer anderen
+Variablen enth"alt, die von dem Typ ist, der dem \fu{*} in der
+Typendeklaration folgt, und hat in der Regel dieselbe Gr"o"se wie
+ein \tint . Bis auf die \ind{Zuweisung} sind alle Operationen
+funktionsgleich mit der eines Arrays.
+\index{Zeiger!""Aquivalenz zu Array}
+\index{Array!""Aquivalenz zu Zeiger}
+
+Zeiger k"onnen, wie Arrays,
+beliebig geschachtelt werden, das hei"st, da"s es ohne weiteres
+m"oglich ist, einen Zeiger auf einen Zeiger zu deklarieren und zu
+benutzen. Beachten Sie allerdings, da"s ein zweidimensionales
+Array nicht mit einem Zeiger auf einen Zeiger gleichgesetzt
+werden kann. So ist z.~B. ein Array \type{\arr{10}int} in
+der Verwendung mit einem Zeiger \type{\poi int} gleich (bis auf
+die Ausnahme der Zuweisungsoperation), jedoch ist ein Array
+\type{\arr{5}\arr{10}int} nicht gleich einem Zeiger \type{\poi
+\poi int}, da der Typ, aus dem das Array besteht und auf den der
+Zeiger zeigt, zu diesem Zweck gleich sein m"u"sten. In diesem Fall
+ist jedoch der Typ, aus dem das Array aufgebaut ist, wieder ein
+Array, n"amlich \type{\arr{10}int}. Der Typ, auf den der Zeiger
+zeigt, ist jedoch \type{\poi int}. Um ein zweidimensionales Array
+wie oben angeschrieben als Zeiger zu repr"asentieren, mu"s dieser
+den Typ \type{\poi \arr{10}int} haben.
+
+\subsubsection{Die new- und delete-Operatoren}
+\label{newdelete}
+\rwindexii{new}
+\rwindexii{delete}
+
+Um eine \ind{dynamische Allokation} von Variablen zu erm"oglichen,
+existieren in SEL die Operatoren \rw{new} und \rw{delete}. Es
+folgt eine kurze Beschreibung:
+
+\begin{operator}
+\fu{`new'} \fu{type} & \type{\poi type}
+\end{operator}
+
+Das Ergebnis der \rw{new}-Operation ist ein Zeiger auf eine
+Variable des Typs, der als Operand angegeben wird. Diese Variable
+wird dynamisch allokiert, das hei"st, sie wird dem \indi{Heap}
+entnommen. Ist dieser schon so voll, da"s eine Variable des
+angegebenen Typs keinen Platz mehr finden w"urde, ist das
+Ergebnis ein \ind{Nullzeiger}. Beachten Sie, da"s der Speicherbereich
+so lange belegt bleibt, bis \rw{delete} verwendet wird, um ihn
+freizugeben, da SEL keine "`garbage collection"' benutzt.
+Anmerkung: Um einen Speicherbereich zu allokieren, dessen Gr"o"se
+nicht schon vor der Ausf"uhrung des Programms feststeht, ist die Funktion
+\fui{MemAlloc} zu benutzen. Weiters ist es mittels der Funktion
+\fui{MemReAlloc} m"oglich, einen bereits
+allokierten Block zu vergr"o"sern bzw. zu verkleinern, wobei der
+Inhalt des Blocks unver"andert bleibt (bei einer Verkleinerung
+geht nat"urlich ein Teil des Inhaltes verloren).
+
+\begin{operator}
+\fu{`delete'} \type{\poi type} & \tvoid
+\end{operator}
+
+Der \rw{delete}-Operator gibt einen Speicherblock frei, der
+vorher mit \rw{new} oder \fui{MemAlloc} allokiert wurde. Beachten
+Sie, da"s dem Operator genau der Zeiger als Operand angeben
+werden mu"s, den \rw{new} oder \fu{MemAlloc} (oder im Falle einer
+Ver"anderung der Gr"o"se des Speicherbereichs \fui{MemReAlloc})
+geliefert hat, da sonst die Speicherverwaltung ins Wanken kommen
+kann, was in einem Programmabsturz resultieren k"onnte.
+
+\subsection{Strukturen}
+\index{Struktur|ii}
+\fuindexii{struct}
+\rwindexii{struct}
+\fuindex{IDENTIFIER}
+\fuindex{type}
+\rwindex{end}
+
+\begin{verbatim}
+struct:        `struct' IDENTIFIER
+                 {IDENTIFIER `:' type `;'}
+               `end'
+             ;
+\end{verbatim}
+
+Eine Struktur ist eine Zusammenfassung mehrerer Variablen
+\index{Variable!Zusammenfassung mehrerer|ii}
+beliebigen Typs
+\index{Typ}
+unter einem gemeinsamen Namen. Mittels des
+Operators \fu{->} kann auf ein einzelnes Element der Struktur
+zugegriffen werden.
+\index{Struktur!Zugriff auf Element}
+Dem \rw{struct}-Schl"usselwort folgt der
+zuk"unftige Name der Struktur---bei der Deklaration von Variablen
+wird dieser Name als Typ verwendet. Danach werden die einzelnen
+Elemente der Struktur definiert. Die Namen dieser Elemente d"urfen
+sich ohne weiteres mit anderen Variablennamen des Programms
+decken, da durch den Operator \fu{->} eine eindeutige
+Identifikation gew"ahrt ist, allerdings m"ussen sie innerhalb der
+Struktur eindeutig sein. Die Elemente d"urfen beliebige Typen
+haben, es ist sogar erlaubt, innerhalb einer Struktur einen
+Zeiger auf ebendiese Struktur zu deklarieren, nicht aber ein
+Array aus der Struktur und auch nicht die Struktur selbst, da
+diese Deklarationen die Gr"o"se der Struktur ins Unendliche
+anwachsen lie"sen. Die Gr"o"se einer Struktur ist in der Regel
+gleich der Summe der Gr"o"sen ihrer Elemente.
+
+Beachten Sie, da"s die Definition einer Struktur nur in dem \ind{Modul}
+bekannt ist, in der sie get"atigt wird, selbst, wenn sie
+innerhalb eines \rw{global}-Blocks steht. In der Regel ist es
+deshalb zweckm"a"sig, Strukturen, die von mehreren Modulen
+verwendet werden, in Include-Dateien
+\index{Include-Datei}
+zu definieren und diese in den
+jeweiligen Modulen zu inkludieren.
+
+\example
+Die folgende Struktur ist ein Element einer verketteten \indu{Liste},
+deren Daten die Adressen von Personen sind. Das Element \fu{Next}
+zeigt auf das jeweils n"achste Element der Liste.
+
+\index{Adresse@{\tt Adresse}~(\rw{struct})|ii}
+\begin{verbatim}
+struct Adresse
+  Name    : char[26];
+  Vorname : char[31];
+  PLZ     : int;
+  Stadt   : char[36];
+  Strasse : char[36];
+  Next    : *Adresse;
+end
+\end{verbatim}
+
+\subsection{Zusammengesetzte Datentypen}
+\index{Typ!zusammengesetzter|ii}
+
+Nat"urlich ist es in SEL auch m"oglich, Datentypen aus den oben
+besprochenen zu kombinieren, also zum Beispiel ein Array aus
+Strukturen oder eine Struktur, die Arrays oder Zeiger beinhaltet,
+zu definieren. Zu beachten ist nur, da"s die vorhandene
+Speicherkapazit"at nicht "uberschritten wird. Unter MS-DOS
+kommt weiterhin die 64~KByte-Barriere hinzu, die aus der
+Segmentierung des Speichers im Real-Mode der 80x86-Prozessoren
+resultiert. Deshalb ist es nicht m"oglich, in MS-DOS Variablen zu
+definieren, die gr"o"ser als 64~KByte w"aren (sehr wohl ist es
+m"oglich, Typen dieser Gr"o"se zu definieren, solange keine
+Variablen dieses Typs verwendet werden).
+
+\subsection{Der sizeof-Operator}
+\index{Typ!Gr""o""se}
+\rwindexii{sizeof}
+
+\begin{operator}
+\fu{`sizeof'} \type{type} & \tint\
+\end{operator}
+
+Der \rw{sizeof}-Operator verlangt als einzigen Operanden einen
+Typ und gibt dessen Gr"o"se in Bytes zur"uck. Diese kann f"ur
+ein und denselben Typen je nach Rechner verschieden sein, in der
+Regel ist das jedoch nicht der Fall. Trotzdem sollten sie immer
+\rw{sizeof} verwenden, wenn es um die Gr"o"se eines Typs geht und
+nicht von einer bestimmten Gr"o"se ausgehen. Anmerkung: Der
+einzige Typ, dessen Gr"o"se auf allen Rechnern gleich ist, ist
+\tvoid\
+\typeindex{void}
+(nicht jedoch zum Beispiel \type{\poi void}). Seine
+Gr"o"se betr"agt \fu{0}.
+
+\subsection{Typecasting}
+\index{Typecasting|ii}
+\index{Typ!Umwandlung|see{Typecasting}}
+\fuindex{type}
+
+\begin{operator}
+\type{\_type} \fu{`:'} \fu{type} & \type{type}
+\end{operator}
+
+Um Ausdr"ucke eines Typs in einen anderen umzuwandeln, bietet SEL
+Typecasting. Der Operator \fu{:} wandelt seinen linken Operanden
+in den Typ um, den der rechte Operand angibt. Dabei k"onnen
+folgende Umwandlungen durchgef"uhrt werden:
+
+\medskip
+\begin{tabular}{ll}
+Ausgangstyp & Zieltyp \\[0.5ex]
+\tchar\ & \tint , \tfloat\ \\
+\tint\ & \tchar , \tfloat , \type{\poi type}, \type{\arr{}type} \\
+\tfloat\ & \tchar , \tint\ \\
+\type{\poi type} & \tint , \type{\arr{}type} \\
+\type{\arr{}type} & \tint , \type{\poi type}
+\end{tabular}
+\medskip
+
+Bei der Umwandlung von \tint s
+\typeindex{int}
+in Arrays
+\index{Array}
+und \ind{Zeiger} und
+umgekehrt ist zu beachten, da"s der \tint\ die Speicheradresse
+angibt, auf die der Pointer zeigt, bzw. an der das Array beginnt
+(die Adresse des ersten Arrayelements).
+
+Zus"atzlich zum expliziten Typecasting f"uhrt SEL noch implizites
+Typecasting durch, falls dies n"otig ist. Verlangt also eine
+Funktion einen Parameter vom Typ \tfloat ,
+\typeindex{float}
+und es wird ein \tint\
+"ubergeben, wird dieser automatisch in einen \tfloat\
+umgewandelt. Beim impliziten Typecasting gelten wie beim
+expliziten Typecasting die oben beschriebenen Regeln.
+
+\section{Bezeichner}
+\label{identifiers}
+\index{Bezeichner|ii}
+\fuindexii{IDENTIFIER}
+
+\begin{verbatim}
+IDENTIFIER: [A-Za-z_][A-Za-z0-9_]*
+\end{verbatim}
+
+Bezeichner werden in SEL f"ur Funktions-, Variablen- und
+Strukturnamen
+\index{Funktion!Name|see{Bezeichner}}
+\index{Variable!Name|see{Bezeichner}}
+\index{Struktur!Name|see{Bezeichner}}
+verwendet. Ein Bezeichner mu"s mit einem Buchstaben
+oder einem Unterstrich beginnen, danach folgt eine beliebige
+Anzahl von Buchstaben, Ziffern oder Unterstrichen. So ist z. B.
+\fu{\_xYz1} ein g"ultiger Bezeichner, nicht aber
+\fu{1xy}, da er mit einer Ziffer beginnt. Die Bezeichner in SEL
+sind {\em case-sensitiv}, das hei"st, es wird zwischen Gro"s-
+und Kleinschreibung unterschieden. So ist z. B. \fu{counter} ein
+anderer Bezeichner als \fu{Counter} oder \fu{COUNTER}. Beachten
+Sie aber, da"s sie keines der reservierten W"orter
+\index{reserviertes Wort|ii}
+\index{Schl""usselwort|see{reserviertes Wort}}
+als einen Bezeichner verwenden d"urfen. Der Vollst"andigkeit halber hier
+eine Liste aller reservierten W"orter von SEL:
+
+\medskip
+\begin{tabular}{lllllll}
+\bf begin & \bf break  & \bf case   & \bf char  & \bf default & \bf delete   & \bf downto \\
+\bf else  & \bf end    & \bf extern & \bf float & \bf for     & \bf function & \bf global \\
+\bf if    & \bf int    & \bf local  & \bf new   & \bf repeat  & \bf return   & \bf sizeof \\
+\bf step  & \bf struct & \bf switch & \bf to    & \bf until   & \bf void     & \bf while  \\
+\end{tabular}
+
+\chapter{Der Pr\protect{"aprozessor}}
+\index{Pr""aprozessor|ii}
+
+Bevor ein SEL-Programm interpretiert bzw. compiliert wird, wird
+es durch den Pr"aprozessor bearbeitet. Seine Hauptaufgaben sind
+das Entfernen von Kommentaren, das Einf"ugen von Include-Dateien
+und das Expandieren von Makros.
+
+\section{Kommentare}
+\index{Kommentar|ii}
+
+Kommentare werden in SEL durch das Zeichen \fu{//} eingeleitet
+und dauern bis an das Ende der jeweiligen Zeile an. Sollen also
+l"angere Kommentare in den Quelltext eingef"ugt werden, mu"s am
+Anfang jeder Kommentarzeile \fu{//} stehen. Beachten Sie bitte,
+da"s \fu{//}, eingeschlossen in doppelte Anf"uhrungszeichen, nicht
+den Anfang eines Kommentars, sondern eine String-Konstante
+\index{Konstante!String}
+darstellt.
+
+\example
+\fuindexii{Demo}
+\fuindexuu{WriteInt}
+\fuindexuu{WriteString}
+\begin{verbatim}
+function Demo (void) : void
+begin
+  WriteInt(20);        // Das ist ein Kommentar
+  WriteString("Das // ist keiner\n");
+end
+\end{verbatim}
+
+\section{Die \#define-Direktive}
+\fuindexii{\#define}
+
+Mittels der \fu{\#define}-Direktive ist es in SEL m"oglich,
+Makros
+\index{Makro|ii}
+zu definieren. Ein Beispiel:
+
+\begin{verbatim}
+#define MACRO        3+5
+\end{verbatim}
+
+Tritt nun im nachfolgenden Quellcode irgendwo (au"ser innerhalb
+einer String-Konstanten
+\index{Konstante!String}
+oder eines Kommentars) der Bezeichner
+\fu{MACRO} auf, wird dieser vom Pr"aprozessor durch \fu{3+5}
+ersetzt. Bei Makros wie dem obigen ist zu beachten, da"s ein
+Makro nicht automatisch geklammert wird, d.~h., da"s der Ausdruck
+\fu{MACRO*2} nicht das Ergebnis \fu{16}, sondern \fu{13}
+(\fu{3+5*2}) hat.
+
+Ist ein Makrotext zu lang, um ihn in einer Zeile unterzubringen,
+kann er mit \fu{\char92}
+\index{Backslash (\fu{\char92})|ii}
+abgeteilt werden:
+
+\begin{verbatim}
+#define XYZ          if (x == y)     \
+                       WriteInt(z);  \
+                     end
+\end{verbatim}
+
+Beachten Sie, da"s die \fu{\#define}-Direktive immer am Beginn
+einer Zeile stehen mu"s, und in dieser Zeile au"ser der Direktive, dem
+Makronamen und dem einzusetzenden Text sonst nichts.
+
+Makros mit Parametern, wie etwa in C, sind in der momentanen
+Version von SEL nicht vorhanden, sind jedoch f"ur eine kommende
+Version geplant.
+
+\section{Die \#include-Direktive}
+\index{Include-Datei|ii}
+\fuindexii{\#include}
+
+Mit der \fu{\#include}-Direktive ist es m"oglich, in eine
+Quelldatei eine andere einzuf"ugen. Dabei mu"s auf \fu{\#include}
+ein in Anf"uhrungszeichen gesetzter Dateiname folgen. Ebenso wie
+die \fu{\#define}-Direktive mu"s auch die
+\fu{\#include}-Direktive alleine am Anfang einer Zeile stehen.
+
+\example
+\fuindexuu{WriteString}
+\begin{verbatim}
+#include "conio.sh"
+
+function main () : void
+begin
+  WriteString("Test\n");
+end
+\end{verbatim}
+
+Hier wird an der Stelle der \fu{\#include}-Direktive der Inhalt
+der Datei \fu{`conio.sh'} eingef"ugt. Sollte diese Datei selbst
+\fu{\#include}-Direktiven enthalten, werden auch diese vom
+Pr"aprozessor ausgef"uhrt, es ist also m"oglich,
+\fu{\#include}-Direktiven zu verschachteln.
+
+F"ur alle
+Bibliotheksfunktionen von SEL gibt es Include-Dateien, die
+deren Funktionsdeklarationen enthalten, soda"s diese nicht
+jedesmal von Hand eingef"ugt werden m"ussen. Die Namen dieser
+Dateien sind f"ur jede Funktion in der Funktionsreferenz
+angegeben.
+
+\chapter{Funktionsreferenz}
+\label{funcref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{function}{MemAlloc}
+
+\syntax
+\#include "memory.sh"
+function MemAlloc (s : int) : *void
+\endgroup
+
+\parameters
+\param{s}{\tint} Gr"o"se des zu allokierenden Speicherbereichs \cr
+
+\usage
+Die Funktion \fu{MemAlloc} allokiert
+\index{dynamische Allokation}
+einen Speicherbereich mit
+der Gr"o"se \fu{s} Bytes. Ist eine solche Allokation wegen
+Speichermangels nicht m"oglich, gibt die Funktion einen
+\ind{Nullzeiger} zur"uck. Im Gegensatz zum Operator \rwi{new} ist es mit
+\fu{MemAlloc} auch m"oglich, einen Speicherbereich zu allokieren,
+dessen Gr"o"se erst bei Laufzeit bestimmt wird. Der allokierte
+Speicherbereich sollte, wenn er nicht mehr ben"otigt wird, mit
+der Funktion \fu{MemFree} freigegeben werden.
+
+\fseealso
+\fu{MemFree}, \rw{new} (Kapitel \ref{newdelete})
+\end{function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{function}{MemAvail}
+
+\syntax
+\#include "memory.sh"
+function MemAvail () : int
+\endgroup
+
+\usage
+Die Funktion \fu{MemAvail} gibt die Anzahl der noch freien Bytes
+auf dem \ind{Heap} zur"uck, also jenes Speicherbereichs, der vom
+Operator \rwi{new} (siehe Kapitel \ref{newdelete}) und der
+Funktion \fu{MemAlloc} benutzt wird, um Speicher zu allokieren.
+
+\fseealso
+\fu{MemAlloc}, \rw{new} (Kapitel \ref{newdelete})
+\end{function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
+\begin{function}{MemFree}
+
+\syntax
+\#include "memory.sh"
+function MemFree (p : *void) : void
+\endgroup
+
+\parameters
+\param{p}{\type{\poi void}} freizugebender Speicherblock \cr
+
+\usage
+Die Funktion \fu{MemFree} gibt einen Speicherblock, der mit
+\fu{MemAlloc}, \fu{MemReAlloc} oder \rwi{new} allokiert worden
+ist, frei. Beachten Sie jedoch, da"s Speicherbl"ocke, die mit
+\rw{new} allokiert worden sind, besser mit \rwi{delete}
+freigegeben werden sollten.
+
+\fseealso
+\fu{MemAlloc}, \fu{MemReAlloc}, \rw{delete}, \rw{new} (Kapitel \ref{newdelete})
+\end{function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{function}{MemReAlloc}
+
+\syntax
+\#include "memory.sh"
+function MemReAlloc (p : *void, s : int) : *void
+\endgroup
+
+\parameters
+\param{p}{\type{\poi void}} allokierter Speicherblock \cr
+\param{s}{\tint} neue Gr"o"se \cr
+
+\usage
+Die Funktion \fu{MemReAlloc} "andert die Gr"o"se des
+Speicherblocks \fu{p},
+\index{dynamische Allokation}
+der mit \fu{MemAlloc}, \fu{MemReAlloc}
+oder \rwi{new} allokiert worden sein mu"s, auf die Gr"o"se \fu{s}
+Bytes. Ist \fu{p} ein Nullzeiger, wird ein Speicherbereich der
+Gr"o"se \fu{s} wie mit \fu{MemAlloc} neu angelegt. Ist \fu{s}
+gleich \fu{0}, dann wird der Speicherblock wie mit \fu{MemFree}
+freigegeben. Andernfalls wird seine Gr"o"se ver"andert, wobei
+sein Inhalt soweit wie m"oglich bestehen bleibt. Ist es aus
+Speichermangel nicht m"oglich, die Gr"o"se des Blocks zu "andern,
+gibt die Funktion einen \ind{Nullzeiger} zur"uck, und der alte Block
+bleibt bestehen. Andernfalls gibt die Funktion einen Zeiger auf
+den neuen Block zur"uck.
+
+\fseealso
+\fu{MemAlloc}, \fu{MemFree}, \rw{new} (Kapitel \ref{newdelete})
+\end{function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{function}{Random}
+\index{Zufallszahl|ii}
+
+\syntax
+\#include "stdlib.sh"
+function Random (i : int) : int
+\endgroup
+
+\parameters
+\param{i}{\tint} H"ochstgrenze f"ur die Zufallszahl \cr
+
+\usage
+Die Funktion Random gibt eine Zufallszahl
+$0 \leq x \leq \fu{i}$ zur"uck. Um zu gew"ahrleisten, da"s
+diese Zahl nicht f"ur jeden Aufruf des Programms dieselbe ist,
+mu"s der Zufallszahlengenerator mit der Funktion \fu{Randomize}
+initialisiert werden.
+
+\fseealso
+\fu{Randomize}
+\end{function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
+\begin{function}{Randomize}
+\index{Zufallszahl!Initialisierung des Generators|ii}
+
+\syntax
+\#include "stdlib.sh"
+function Randomize () : void
+\endgroup
+
+\usage
+Die Funktion \fu{Randomize} initialisiert den
+Zufallszahlengenerator von SEL. Hierf"ur wird die aktuelle
+Uhrzeit verwendet. Das garantiert, da"s bei jedem Aufruf des
+Programms eine andere Reihe von Zufallszahlen generiert wird.
+
+\fseealso
+\fu{Random}
+\end{function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{function}{ReadChar}
+\typeindex{char}
+
+\syntax
+\#include "conio.sh"
+function ReadChar () : char
+\endgroup
+
+\usage
+Die Funktion \fu{ReadChar} liest ein einzelnes Zeichen von der
+Systemkonsole ein, ohne es auf dem Bildschirm auszugeben. Dazu
+kann die Funktion \fu{WriteChar} verwendet werden.
+
+\fseealso
+\fu{WriteChar}
+\end{function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{function}{ReadFloat}
+\typeindex{float}
+
+\syntax
+\#include "conio.sh"
+function ReadFloat () : float
+\endgroup
+
+\usage
+\fu{ReadFloat} liest einen \tfloat\ in Dezimal- bzw.
+\indu{Exponentialschreibweise} (z.~B. \fu{1.23E45}) von der
+Systemkonsole ein. Backspaces werden richtig interpretiert,
+soda"s der Anwender eine Korrekturm"oglichkeit hat.
+
+\fseealso
+\fu{WriteFloat}
+\end{function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{function}{ReadInt}
+\typeindex{int}
+
+\syntax
+\#include "conio.sh"
+function ReadInt () : int
+\endgroup
+
+\usage
+\fu{ReadInt} liest einen \tint\ als Dezimalzahl
+\index{Zahl!dezimale}
+von der
+Systemkonsole ein. Dabei werden Backspaces ber"ucksichtigt,
+um dem Anwender eine Korrekturm"oglichkeit zu geben. Zu beachten
+ist allerdings, da"s kein positives Vorzeichen (\fu{+}) angegeben
+werden darf.
+
+\fseealso
+\fu{WriteInt}
+\end{function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
+\begin{function}{ReadString}
+\index{String}
+
+\syntax
+\#include "conio.sh"
+function ReadString (s : *char) : int
+\endgroup
+
+\parameters
+\param{s}{\type{\poi char}} Speicherplatz f"ur den String \cr
+
+\usage
+Die Funktion \fu{ReadString} liest einen nullterminierten String
+von der Systemkonsole in den Speicherbereich, den der Parameter
+\fu{s} angibt, ein. Dieser Speicherbereich mu"s gen"ugend gro"s
+dimensioniert sein, da \fu{ReadString} keinerlei Tests vornimmt,
+ob er f"ur den String ausreichend ist. Die Stringeingabe wird vom
+Anwender durch ein Newline-Zeichen beendet, das jedoch im String
+nicht aufscheint. Die Funktion gibt die Anzahl der gelesenen
+Zeichen, inklusive dem Newline, also mindestens \fu{1}, zur"uck.
+
+\fseealso
+\fu{WriteString}
+\end{function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{function}{WriteChar}
+\typeindex{char}
+
+\syntax
+\#include "conio.sh"
+function WriteChar (c : char) : void
+\endgroup
+
+\parameters
+\param{c}{\tchar} auszugebendes Zeichen \cr
+
+\usage
+Die Funktion \fu{WriteChar} gibt das ihr "ubergebene Zeichen
+\fu{c} auf der Systemkonsole aus, wobei Steuerzeichen (siehe
+Kapitel \ref{specialchar}) ber"ucksichtigt werden.
+
+\fseealso
+\fu{ReadChar}
+\end{function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{function}{WriteFloat}
+\typeindex{float}
+
+\syntax
+\#include "conio.sh"
+function WriteFloat (f : float) : void
+\endgroup
+
+\parameters
+\param{f}{\tfloat} auszugebender Wert \cr
+
+\usage
+Die Funktion \fu{WriteFloat} gibt einen \tfloat\ in passender
+Schreibweise (Dezimal- oder \ind{Exponentialschreibweise}) auf der
+Systemkonsole aus.
+
+\fseealso
+\fu{ReadFloat}
+\end{function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
+\begin{function}{WriteInt}
+\typeindex{int}
+
+\syntax
+\#include "conio.sh"
+function WriteInt (i : int) : void
+\endgroup
+
+\parameters
+\param{i}{\tint} auszugebender Wert \cr
+
+\usage
+Die Funktion \fu{WriteInt} gibt den Parameter \fu{i} als
+Dezimalzahl
+\index{Zahl!dezimale}
+auf der Systemkonsole aus.
+
+\fseealso
+\fu{ReadInt}
+\end{function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{function}{WriteString}
+\index{String}
+
+\syntax
+\#include "conio.sh"
+function WriteString (s : *char) : void
+\endgroup
+
+\parameters
+\param{s}{\type{\poi char}} auszugebender String \cr
+
+\usage
+Die Funktion \fu{WriteString} gibt einen nullterminierten String
+auf der Systemkonsole aus. Steuerzeichen (siehe Kapitel
+\ref{specialchar}) werden dabei interpretiert.
+
+\fseealso
+\fu{ReadString}
+\end{function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\index{Index|ii}
+% \addcontentsline{toc}{chapter}{Index}
+\footnotesize
+\printindex
+
+\end{document}

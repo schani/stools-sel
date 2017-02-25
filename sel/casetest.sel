@@ -1,0 +1,24 @@
+global
+
+  function main () : void
+
+end
+
+function main () : void
+
+  x : int;
+
+begin
+  x = 1;
+  switch (x)
+    case 1 :
+      WriteString("before break...\n");
+      if (x == 1)
+        break;
+      end
+      WriteString("...after break\n");
+      break;
+  end
+  WriteString("...after switch\n");
+  ReadInt();
+end

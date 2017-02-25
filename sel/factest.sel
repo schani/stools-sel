@@ -1,0 +1,29 @@
+#include "conio.sh"
+
+global
+  function main      ()    : void
+  function factorial (int) : int
+end
+
+function factorial (a : int) : int
+
+  i : int = 1;
+
+begin
+  while (a > 1)
+    i = i * a;
+    a = a - 1;
+  end
+
+  return i;
+end
+
+function main () : void
+
+  c : int;
+
+begin
+  for (c = 1 to 1000)
+    WriteInt(factorial(c));
+  end
+end

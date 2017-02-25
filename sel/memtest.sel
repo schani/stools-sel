@@ -1,0 +1,60 @@
+// This program is a simple demonstration of SEL's dynamic memory
+// allocation. It allocates BLOCKS (see below) blocks of memory
+// with random sizes less or equal MAXSIZE + 1 (see below). It
+// also stores pointers to all the allocated blocks in the
+// dynamically allocated array a, which is then used to free all
+// the blocks. If there isn't enough memory to allocate the
+// blocks, a message is output and the program ends. In this
+// case, you can either reduce BLOCKS or MAXSIZE in order to get
+// it running.
+//
+// (c) 1994 by Schani Electronics
+
+#include "conio.sh"
+#include "stdlib.sh"
+#include "memory.sh"
+
+#define BLOCKS           200
+#define MAXSIZE         3999
+
+global
+  
+  function main () : void
+
+end
+
+function main () : void
+
+  a : **void;
+  i : int;
+  d : int;
+  c : int    = 0;
+
+begin
+  Randomize();
+  WriteInt(MemAvail());
+  WriteString(" bytes free.\nAllocating...\n");
+  a = MemAlloc(BLOCKS * sizeof *void);
+  for (i = 0 to BLOCKS - 1)
+    d = Random(MAXSIZE) + 1;
+    if ((a[i] = MemAlloc(d)) == NULL)
+      WriteString("Not enough memory after ");
+      WriteInt(c);
+      WriteString(" bytes have been allocated!\n");
+      return;
+    end
+    c = c + d;
+  end
+  WriteInt(c);
+  WriteString(" bytes allocated!\n");
+  WriteInt(MemAvail());
+  WriteString(" bytes free\n");
+  for (i = 0 to BLOCKS - 1)
+    MemFree(a[i]);
+  end
+  MemFree(a);
+  WriteString("Blocks freed!\n");
+  WriteInt(MemAvail());
+  WriteString(" bytes free\n");
+  ReadChar();
+end

@@ -1,0 +1,154 @@
+// This program is a simple version of the game "Towers of Hanoi".
+// The rules: There are three stacks (displayed on the left, the
+// middle and the right of the screen), which are initially
+// empty, except of the left which contains MAX (see below) discs
+// of different sizes, where smaller discs are located at the top
+// of the stack. The object of the game is to move all the discs
+// from the left stack to one of the others, where only one disc
+// can be moved at the same time and smaller discs must always be
+// located above larger discs. It is possible to move n discs
+// from one stack to another, while using the third stack as a
+// temporary storage, within 2^n-1 moves with the recursive
+// algorithms this program uses.
+//
+// Note: The two functions VioWPCA and VioWWCA are not mentioned
+// in the "SEL-Kurzreferenz" because I still don't know whether
+// to incorporate them (and other Vio... functions) in the
+// standard SEL library. The syntax is as follows:
+//
+// VioWPCA(c : char, a : char)
+//   where c is a character and a is a MS-DOS video attribute
+//   (see, for example "PC-Intern" by Michael Tischer). The
+//   function fills the whole screen with the character c using
+//   the attribute (color) a. It can be used to clear the screen.
+// VioWWCA(x : int, y : int, w : int, h : int, c : char, a : int)
+//   This function fills the rectangular region beginning at
+//   position (x,y), where w is the width of this region and
+//   h is the height, with the character c using the attribute a.
+//   (The upper left corner of the screen has position (1,1) and
+//   the lower right corner has position (80,25)).
+//
+// (c) 1993-94 by Schani Electronics
+
+#include "conio.sh"
+#include "video.sh"
+
+#define MAX       10
+#define LAST      (MAX-1)
+
+global
+
+  function main () : void
+
+  moves  : int = 0;
+  towers : [3][MAX]char;
+  used   : [3]int;
+
+end
+
+function display_towers () : void
+  counter : int;
+begin
+  for (counter = 0 to LAST)
+    VioWWCA(20 - MAX + counter, 24 - counter, (MAX - counter) * 2, 1,
+            219, counter + 1);
+  end
+end
+
+function init_tower (tower : int) : void
+  counter : int;
+begin
+  for (counter = 0 to LAST)
+    if (tower == 0)
+      towers[tower][counter] = 1;
+    else
+      towers[tower][counter] = 0;
+    end
+  end
+  if (tower == 0)
+    used[tower] = MAX;
+  else
+    used[tower] = 0;
+  end
+end
+
+function init () : void
+begin
+  init_tower(0);
+  init_tower(1);
+  init_tower(2);
+  display_towers();
+end
+
+function smallest (tower : int) : int
+  counter : int;
+begin
+  for (counter = LAST downto 0)
+    if (towers[tower][counter])
+      return counter;
+    end
+  end
+  return 0;
+end
+
+function smaller_than (tower : int, item : int) : int
+  counter : int;
+begin
+  for (counter = item + 1 to LAST)
+    if (towers[tower][counter])
+      return counter;
+    end
+  end
+end
+
+function output (tower : int) : void
+  counter : int;
+begin
+  for (counter = 0 to LAST)
+    if (towers[tower][counter])
+      WriteInt(counter);
+      WriteString(" ");
+    end
+  end
+  WriteString("\n");
+end
+
+function move (src : int, dest : int) : void
+  item  : int;
+  width : int;
+begin
+  item = smallest(src);
+  towers[dest][item] = 1;
+  towers[src][item] = 0;
+  used[src] = used[src] - 1;
+  width = MAX - item;
+  VioWWCA(20 * (src + 1) - width,
+          24 - used[src], width * 2, 1, ' ', 7);
+  VioWWCA(20 * (dest + 1) - width,
+          24 - used[dest], width * 2, 1, 219, item + 1);
+  used[dest] = used[dest] + 1;
+  moves = moves + 1;
+  VioRedraw();
+end
+
+function stack (biggest : int, src : int, dest : int) : void
+  smaller : int;
+begin
+  if (biggest < LAST)
+    smaller = smaller_than(src, biggest);
+    stack(smaller, src, 3 - src - dest);
+    move(src, dest);
+    stack(smaller, 3 - src - dest, dest);
+  else
+    move(src, dest);
+  end
+end
+
+function main () : void
+begin
+  VioWPCA(' ', 7);
+  init();
+  stack(0, 0, 1);
+  WriteInt(moves);
+  WriteString(" moves\n");
+end

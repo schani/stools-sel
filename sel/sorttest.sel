@@ -1,0 +1,42 @@
+// This program generates an array of SIZE (see below) random
+// numbers and uses the quicksort function of module "sort.sel"
+// to sort the array in ascending order. When sorting is
+// completed, the array is output.
+// Note: On slower computers decrease SIZE, because sorting takes
+// quite long (well, it's just an interpreter). My 386/25 for
+// examples, takes about 25 seconds to sort an array of 500
+// random numbers.
+// NoteNote: Don't forget that the module "sort.sel" is needed!
+//
+// (c) 1993-94 by Schani Electronics
+     
+#include "conio.sh"
+
+#define SIZE         500
+
+global    
+
+  function quicksort (*int, int, int) : void
+  function main      ()               : int
+  
+end
+
+function main () : void
+
+  a : [SIZE]int;
+  i : int;
+
+begin     
+  Randomize();
+  WriteString("\nInitializing...\n");
+  for (i = 0 to SIZE - 1)
+    a[i] = Random(10000);
+  end
+  WriteString("\nSorting... (take some time)\n");
+  quicksort(a, 0, SIZE - 1);
+  WriteString("\nFinished!\n");
+  for (i = 0 to SIZE - 1)
+    WriteInt(a[i]);
+    WriteString(" ");
+  end
+end

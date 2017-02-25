@@ -1,0 +1,3431 @@
+\documentclass[a4paper]{report}
+\usepackage[germanb]{babel}
+\usepackage[final]{graphicx}
+
+\selectlanguage{austrian}
+
+% \addtolength{\textwidth}{4cm}
+% \addtolength{\oddsidemargin}{-1.7cm}
+% \addtolength{\evensidemargin}{-1.7cm}
+% \addtolength{\topmargin}{-80pt}
+% \addtolength{\textheight}{150pt}
+% \addtolength{\marginparsep}{-5pt}
+
+\makeindex
+\sloppy
+\frenchspacing
+% \pagestyle{headings}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\input{facharb.inc}
+
+\begin{document}
+
+\title{Design einer Programmiersprache\\
+       und theoretische Besprechung\\
+       eines Interpreters anhand der\\
+       Programmiersprache SEL}
+\author{Mark Probst}
+
+\maketitle
+
+\tableofcontents
+
+\chapter{Die Programmiersprache}
+
+Dieses Kapitel hat das Ziel, das Design der Programmiersprache
+SEL, wie in \cite{selkr} beschrieben, zu erkl"aren bzw. zu
+begründen, und zwar in Hinblick auf den Bau eines Interpreters
+und eines Compilers. Aus diesem Grund setze ich eine gewisse
+Kenntnis sowohl einer strukturierten Programmiersprache,
+insbesondere nat"urlich der Sprache SEL, als auch der
+grundlegenden Funktionsweise eines Interpreters bzw. eines
+Compilers beim Leser voraus. Der Leser sollte also zumindest
+\cite{selkr} gelesen haben, da"s, obwohl es als Kurzreferenz
+konzipiert ist, durchaus auch geeignet ist, einen "Uberblick
+"uber die Programmiersprache SEL zu vermitteln.
+
+\section{Der Begriff der Programmiersprache}
+
+Grunds"atzlich kann eine Programmiersprache definiert werden als
+
+\begin{quotation}
+Sprache zur Formulierung von Rechenvorschriften, d. h. von
+Datenstrukturen und Algorithmen, die von einem Computer
+ausgef"uhrt werden k"onnen.\footnote{siehe \cite{duden},
+Seite~544}
+\end{quotation}
+
+Die in dieser Arbeit behandelte Programmiersprache SEL geh"ort
+zur Gruppe der imperativen Programmiersprachen, deren wichtigste
+Untergruppe wohl die der strukturierten Programmiersprachen ist.
+Imperative Programmiersprachen werden im Duden Informatik
+wie folgt definiert:
+
+\begin{quotation}
+Bei diesen Sprachen besteht ein Programm aus einer Folge von
+Befehlen an den Computer, wie z.~B. "`Schreibe in die Variable a
+den Wert 3"', "`Springe an die Stelle x im
+Programm"'.\footnote{siehe \cite{duden}, Seite~545}
+\end{quotation}
+
+Strukturierte Programmiersprachen stellen f"ur den Programmierer
+zus"atzlich Hilfen in Form von Kontrollanweisungen, Schleifen und
+benutzerdefinierten Funktionen zur Verf"ugung. Diese machen
+sowohl das Schreiben der Programme einfacher und schneller wie
+auch die Programmtexte leichter lesbar. Zur Zeit sind sie die am
+meisten verwendete Art der Programmiersprachen.
+
+\section{Ziele f\protect{"ur} das Design von SEL}
+
+Bevor man an die Arbeit an einem so komplexen Projekt wie das Design
+einer Programmiersprache herangeht, sollte man sich im Klaren
+dar"uber sein, welche Ziele man eigentlich verfolgt. So habe ich
+auch an meine zuk"unftige Programmiersprache einige Anforderungen
+gestellt, von denen ich die meisten in der gegenw"artigen Version
+der Sprache verwirklicht sehe.
+
+Die wichtigste Entscheidung bei einem Projekt ist die nach dem
+Zweck desselben. Im Fall von SEL wollte ich weniger eine
+Programmiersprache f"ur das Schreiben von kommerzieller Software
+schaffen, als vielmehr eine kleine, feine Sprache, die ich in
+vielen Situationen benutzen k"onnte. Haupts"achlich schwebte mir
+dabei die Verwendung als Makrosprache in diversen Programmen vor.
+Eine solche Makrosprache sollte vor allem leicht erlernbar sein
+und keine gro"se Umstellung von Seiten des Benutzers verlangen,
+sollte aber andererseits nicht so primitiv aufgebaut sein, da"s
+sie eine vern"unftige Verwendung nicht mehr m"oglich macht, was
+die meisten Makrosprachen leider sind.
+
+Um eine geringe Umstellungszeit m"oglich zu machen, mu"s die
+Programmiersprache an eine bereits bestehende, weit verbreitete
+Sprache angelehnt sein. Im Fall von SEL habe ich mich
+haupts"achlich an C und \pascal\ gehalten, weil mir diese am
+gel"aufigsten und vermutlich die am weitest verbreiteten
+Sprachen sind.
+
+Da ich ein gro"ser Freund von C und ihrer pr"agnanten und kurzen
+Ausdrucksweise bin, habe ich mir zum Ziel gesetzt, auch SEL zu
+einer effizienten, kurzen Ausdrucksweise zu verhelfen. Eine
+Konsequenz aus dieser Entscheidung ist es, anstatt von
+Schl"usselw"ortern, so wie in \pascal , Symbole wie in C zu
+verwenden, soferne dies nicht die "Ubersichtlichkeit und
+Konsistenz innerhalb der Sprache zu sehr gef"ahrdet. Die zweite
+Konsequenz ist es, redundante Sprachteile zu entfernen, solange
+auch das nicht die Lesbarkeit der Programmtexte verletzt.
+
+Ein weiteres wichtiges Kriterium bei einer Makrosprache ist die
+Erweiterungsf"ahigkeit, da Makrosprachen in so verschiedenen
+Anwendungen wie z.~B. Textverarbeitungen und Zeichenprogrammen
+eingesetzt werden, da"s es schlichtweg unm"oglich ist, eine
+Sprache zu konstruieren, die f"ur alle diese Anwendungsgebiete
+passend ist. Diese Erweiterungsf"ahigkeit sollte einerseits durch
+die Erweiterung mit Hilfe von Funktionen wie z.~B.
+f"ur das Zeichnen von Linien oder Kreisen und andererseits durch
+die M"oglichkeit der "Anderung in der Grammatik, wie etwa
+f"ur das flexiblere Handling von Vektoren und Matrizen, gegeben
+sein. Einige Vorschl"age f"ur "Anderungen der letzteren Art sind
+in Kapitel \ref{langext} gegeben.
+
+Zuletzt soll die Programmiersprache SEL so aufgebaut sein, da"s
+es nicht nur m"oglich ist, einen Interpreter, sondern auch mit
+vertretbarem Aufwand einen Compiler zu implementieren. Nicht nur,
+weil das bei einer Programmiersprache immer eine gute Idee ist,
+sondern auch in Hinblick darauf, da"s ich selbst einmal einen
+Compiler schreiben m"ochte.
+
+Als Abschlu"s dieses Unterkapitels seien nochmals alle Forderungen
+kurz zusammengefa"st, um in sp"ateren Abschnitten darauf
+zur"uckgreifen zu k"onnen.
+
+\begin{itemize}
+\item Geringer Sprachumfang, jedoch auch f"ur mittelgro"se
+Programme geeignet
+\item Anlehnung an C und \pascal\
+\item Verwendung von Symbolen anstatt von Schl"usselw"ortern
+(wenn m"oglich)
+\item Vermeidung von Redundanzen
+\item Konsistenz innerhalb der Sprache
+\item Erweiterungsf"ahigkeit
+\item Sowohl f"ur Interpreter als auch f"ur Compiler geeignet
+\end{itemize}
+
+\section{Das Programm}
+
+Das gr"o"ste in sich abgeschlossene Objekt, da"s ein Compiler bzw.
+Interpreter zu behandeln hat, ist das Programm. Uns stellt sich nun die
+Frage, wie dieses Programm aufgebaut sein soll.
+
+Zun"achst ist zu
+entscheiden, ob das Programm in Module eingeteilt werden soll oder
+nicht. Eine solche Einteilung hat den Vorteil, da"s der Programmierer
+Implementationsdetails eines Programmteils oder einer Funktionssammlung
+vom Rest des Programms abschirmen kann und den Anwender dieser
+Funktionssammlung gar nicht erst in Versuchung bringt, in die internen
+Abl"aufe einzugreifen. Nat"urlich ist das nicht der einzige Vorteil
+dieser Technik. So kann es z.~B. bei einer Modularisierung des Programms
+auch kaum zu Namens"uberschneidungen bei Funktionen und Variablen
+kommen. Last but not least wird auch das Programm leichter
+"uberschaubar, weil man sich jeweils nur auf ein Modul konzentrieren
+mu"s. Ich habe mich f"ur eine Modularisierung entschieden. Erstens, weil
+es die M"oglichkeiten des Programmierers um einen nicht zu
+untersch"atzenden Faktor erweitert und zweitens, weil es nicht schwer
+ist, ein solches Modulkonzept in einen Interpreter oder einen Compiler
+einzubauen---jedenfalls nicht das hier verwendete.
+
+In SEL wird ein Modul in mehrere Bl"ocke eingeteilt, die in beliebiger
+Reihenfolge auftreten d"urfen, wobei es drei Arten
+von Bl"ocken zu unterscheiden gibt:
+
+\begin{itemize}
+\item Die \rw{global}-Bl"ocke werden verwendet, um programmglobale Variablen,
+Funktionen oder Datentypen
+zu deklarieren, also solche, die im ganzen Programm bekannt
+sind.
+\item Die \rw{local}-Bl"ocke werden analog zu \rw{global}-Bl"ocken
+verwendet, um
+modulglobale Variablen, Funktionen oder Datentypen zu deklarieren.
+\item Funktionen werden "ahnlich wie in C und \pascal\ definiert.
+\end{itemize}
+
+Der Hauptgrund, warum ich mich f"ur diese Art der Modulstruktur
+entschieden habe ist der, da"s es f"ur einen Interpreter weit
+praktikabler ist, zur Initialisierung der Variablen vor dem Start eines
+Programms einfach nach den Schl"usselw"ortern \rw{global} und
+\rw{local} zu suchen, als zwischen den Funktionsdefinitionen. Dieses
+Problem h"atte nat"urlich auch eine Programmstruktur wie die in \pascal ,
+wo Variablen- und Typendeklarationen ihren festen Platz haben, gel"ost,
+doch erscheint mir dieser Ansatz als zu starr, vermutlich, weil ich die
+Freiheiten von C gewohnt bin.
+
+Noch ein kleines Wort zur allgemeinen Struktur eines Moduls: Wie
+bereits oben erw"ahnt, besteht ein Modul aus einer beliebigen
+Abfolge von Bl"ocken, wobei es durchaus m"oglich ist, da"s
+mehrere Bl"ocke ein und desselben Typs vorkommen. F"ur das
+gesamte Modul gilt jedoch eine Regel: Ein Objekt ist erst ab der
+Zeile bekannt, in der es deklariert wurde, das hei"st, da"s es
+z.~B. nicht m"oglich ist, eine Variable in Zeile 154 zu
+verwenden, wenn sie erst in Zeile 186 deklariert wird.
+Diese Regelung macht es einem Compiler m"oglich, ein Programm in
+einem Durchgang zu "ubersetzen ({\em One-Pass Compiler}). Eine
+Ausnahme bilden die Strukturen (siehe Kapitel \ref{structs}).
+
+\subsection{global-Bl\protect{"ocke}}
+
+Ein \rw{global}-Block\footnote{siehe Anhang \ref{grammar} oder
+\cite{selkr}, Seite 9} wird durch das Schl"usselwort \rw{global}
+eingeleitet und durch \rw{end} beendet. Dazwischen befindet sich
+eine beliebige Abfolge von Variablen-, Funktions- und
+Strukturdeklarationen. Alle in diesem Abschnitt deklarierten
+Objekte sind dazu bestimmt, auch in anderen Modulen des Programms
+verwendet zu werden, was jedoch nicht unbedingt bedeutet, da"s
+sie in diesen auch ohne weiteres verf"ugbar sind. Soll ein
+programmglobales Objekt auch in einem anderen Modul verwendet
+werden, so ist es n"otig, es auch dort zu deklarieren und---im
+Falle von Variablen---als \rw{extern} zu bezeichnen. Der Grund
+f"ur diese Vorgangsweise ist, da"s sich ein Compiler, der die
+Deklarationen aller anderen Module verwenden kann, nicht
+konstruieren l"a"st, ohne nicht ein eigenes Objektformat zu
+benutzen, wie das z.~B. bei Turbo \pascal\ der Fall ist. Das
+Standard-Objektformat von MS-DOS und Windows NT ist dazu nicht in
+der Lage. Au"serdem w"are es erheblich schwerer, Module
+zu schreiben, die gegenseitig voneinander abh"angig sind, soda"s
+ich von dieser L"osung Abstand genommen habe.
+
+Auffallend an den drei Arten der Deklarationen, die innerhalb
+eines \rw{global}-Blocks vorkommen d"urfen, ist, da"s die
+Variablendeklaration als einzige mit einem Semikolon
+abgeschlossen wird, und das, obwohl es ohne Gef"ahrdung der
+Eindeutigkeit m"oglich w"are, dieses wegzulassen. Der Grund
+hierf"ur ist einerseits die Einhaltung der Konsistenz der
+Sprache\footnote{siehe auch Kapitel \ref{funcs}} und andererseits
+die Offenhaltung f"ur Erweiterungen der Sprache. So ist es im
+Moment zwar lediglich m"oglich, eine Variable mit einer \tchar -,
+\tint -, \tfloat - oder Stringkonstante zu initialisieren, jedoch
+ist es durchaus denkbar, dies in zuk"unftigen Versionen auf
+Arrays, Strukturen und Zeiger auszuweiten, wo die Eindeutigkeit
+nicht mehr unbedingt gegeben sein mu"s.
+
+Der Grund, warum Variablen, die in einem anderen Modul definiert
+worden sind und in einem bestimmten Modul verwendet werden, als
+\rw{extern} zu deklarieren sind und dies bei Strukturen und
+Funktionen nicht n"otig ist, ist einfach: Bei einer
+Strukturdeklaration wird dem Compiler bzw. Interpreter lediglich
+"`mitgeteilt"', wie diese aufgebaut ist. Es wird in diesem Fall
+kein vom Programm verwendetes Objekt im Speicher erzeugt. Bei
+einer Variablendefinition hingegen wird dem Compiler sowohl der
+Typ der Variable mitgeteilt als auch der Befehl, sie im Speicher
+zu erzeugen. Ohne Unterscheidung zwischen Variablendefinition und
+\rw{extern}-Deklaration w"u"ste der Compiler nicht, ob er nun
+eine Variable im Speicher zu erzeugen h"atte oder sich lediglich
+vormerken sollte, da"s diese Variable in einem anderen Modul
+existiert und in diesem verwendet wird. Bei Funktionen ist es
+kaum anders: Eine Deklaration innerhalb eines \rw{local}- oder
+\rw{global}-Blocks sagt dem Compiler lediglich, da"s es
+"`irgendwo anders"' eine solche Funktion gibt und da"s sie hier
+verwendet wird. Eine Funktionsdeklaration innerhalb eines
+\rw{global}-Blocks dient weiterhin dazu, zu kennzeichnen, da"s
+diese Funktion, falls sie in diesem Modul implementiert ist, f"ur
+die Verwendung in anderen Modulen bestimmt ist. Eine zweite
+M"oglichkeit, dies zu erzielen, w"are, dem Funktionskopf bei der
+Implementation noch ein spezielles Schl"usselwort hinzuzuf"ugen,
+doch erscheint mir die in SEL verwendete L"osung als die bessere
+und auf jeden Fall als die "ubersichtlichere.
+
+Variablen d"urfen in \rw{local} bzw. \rw{global}-Bl"ocken
+lediglich mit Konstanten, in
+Funktionen hingegen auch mit Ausdr"ucken initialisiert werden.
+Dies ist einerseits der Einfachheit halber so, andererseits, weil
+es immer eine riskante Sache ist, Werte zu berechnen, noch bevor
+die einzelnen Teile des Programms initialisiert sind. Dar"uber hinaus w"are
+es notwendig, eine Regelung zu erstellen, die angibt, welche
+Variablen als erste initialisiert werden und welches Modul einem
+anderen vorangeht. Dieser Aufwand erscheint mir allerdings etwas
+"ubertrieben, nicht zuletzt deshalb, weil eine solche
+Initialisierung leicht in der \fu{main}-Funktion\footnote{siehe
+Kapitel \ref{main}} nachgeholt werden kann.
+
+\subsection{local-Bl\protect{"ocke}}
+
+Ein \rw{local}-Block\footnote{siehe Anhang \ref{grammar} oder
+\cite{selkr}, Seite 9} unterscheidet sich von einem
+\rw{global}-Block, abgesehen davon, da"s er durch ein anderes
+Schl"usselwort eingeleitet wird, dadurch, da"s eine
+\rw{extern}-Deklaration nicht erlaubt ist. Dies ist auch ganz
+verst"andlich, denn es ist ein Widerspruch in sich, eine
+modulglobale Variable, die in einem anderen Modul definiert
+ist, zu verwenden.
+
+Die Tatsache, da"s Funktionen, die nicht explizit in einem
+\rw{global}-Block aufscheinen, automatisch modulglobal sind,
+verleitet zum Schlu"s, da"s Funktionsdeklarationen in
+\rw{local}-Bl"ocken redundant sind. Es k"onnte jedoch ohne
+weiteres die Notwendigkeit entstehen, da"s zwei Funktionen sich
+gegenseitig aufrufen. In diesem Fall w"are jedoch ein
+Aufruf illegal, da Funktionen erst ab dem Punkt ihrer
+Deklaration im Modul bekannt sind. Dieser Konflikt ist sehr
+einfach zu l"osen, indem man eine der Funktionen (oder der
+"Ubersichtlichkeit halber beide) in einem \rw{local}-Block
+deklariert und diese erst nach der anderen implementiert. Ein
+Beispiel: Die Funktion \fu{A} und \fu{B} rufen sich gegenseitig
+auf. Nun wird vor der Implementation die Funktion \fu{A} als
+\rw{local} deklariert, soda"s sie im Rest des Moduls bekannt ist.
+Nun wird die Funktion \fu{B} implementiert. Der Aufruf von \fu{A}
+stellt kein Problem dar, der oben geschilderten Deklaration
+wegen. Die Implementation von \fu{A} ist nun auch kein
+Problem mehr, da an diesem Punkt schon beide Funktionen bekannt
+sind.
+
+\subsection{Funktionen}
+\label{funcs}
+
+Im Gegensatz zu \pascal\ wird in SEL, so wie in C, nicht zwischen
+Funktionen und Prozeduren unterschieden. Dies hat---anders als es
+zu erwarten w"are---fast nur Vorteile. Auf der einen Seite ist es
+m"oglich, Prozeduren durch Funktionen mit dem R"uckgabetyp
+\tvoid \footnote{siehe Kapitel \ref{elemtypes}} nachzubilden,
+andererseits vereinfacht es den Bau eines
+Interpreters bzw. eines Compilers. Der einzige Nachteil ist ein
+geringer Verlust an Lesbarkeit.
+
+Eine Funktion\footnote{siehe Kapitel \ref{exprfuncs} und
+Anhang \ref{grammar} oder
+\cite{selkr}, Seiten 7--9 und 17} gliedert sich augenscheinlich in
+drei gro"se Teile:
+Den Funktionskopf, die Definitionen der direkten
+Funktionsvariablen\footnote{siehe Kapitel \ref{variables}}
+und den Funktionsk"orper.
+
+Der Funktionskopf besteht aus dem Schl"usselwort \rw{function},
+dem Namen der Funktion, einer in Klammern eingeschlossenen Liste
+der Parameter inklusive deren Typen und dem R"uckgabetyp. Der
+Doppelpunkt vor dem Typ soll andeuten, da"s eine Funktion in
+gewisser Weise einer Variablen eines bestimmten Typs "ahnelt.
+Es sei angemerkt, da"s dieser Doppelpunkt ohne weiteres
+ausgelassen werden k"onnte, ohne die Eindeutigkeit der Sprache zu
+gef"ahrden.\footnote{Tats"achlich k"onnte sogar die schlie"sende
+Klammer ausgelassen werden, doch diente das sicherlich nicht der
+Lesbarkeit.}
+
+Bei genauerer Betrachtung des Funktionskopfes und der
+Funktionsdeklaration in einem \rw{global} bzw. \rw{local}-Block
+f"allt auf, da"s in einem Funktionskopf die Namen der
+Parameter aufscheinen, in den beiden letztgenannten Bl"ocken dies
+jedoch nicht der Fall ist. Betrachten wir zur Begr"undung dieser
+Entscheidung einen Interpreter und einen Compiler. Der
+Interpreter kann alle Module des Programms auf einmal betrachten,
+er kennt also die Namen der Parameter auch dann, wenn sie in
+einem anderen Modul erw"ahnt sind als in dem, von dem aus die
+Funktion aufgerufen wird. Ein Compiler jedoch besitzt diesen
+Vorteil nicht: Er beschr"ankt sich jeweils auf ein einzelnes
+Modul. Bei einem Funktionsaufruf ist aber das Einzige, was der
+Compiler zu tun hat, zu "uberpr"ufen, ob die Parameter die
+richtigen Typen haben, um sie dann in der richtigen Reihenfolge
+auf dem Stack abzulegen. Wirkliche Bedeutung haben die Namen der
+Parameter nur f"ur die eigentliche Funktion und insofern stellt
+die Beschr"ankung auf die Typen keine Einschr"ankung dar, es ist
+jedoch durchaus denkbar, da"s es der "Ubersichtlichkeit wegen in
+einer zuk"unftigen Version von SEL m"oglich sein wird, auch die
+Namen anzugeben, wobei diese Informationen aber vom Interpreter
+bzw. Compiler ignoriert werden.
+
+Dem Funktionskopf folgen die Definitionen der direkten
+Funktionsvariablen.
+Diese werden bei jedem Funktionsaufruf neu auf dem Stack angelegt
+und belegen daher bei einer rekursiven Funktion in den
+verschiedenen Instanzen nicht denselben Speicherbereich---erst
+diese Tatsache macht Rekursionen so effektiv. Es ist m"oglich,
+die Variablen mit Werten zu initialisieren, die sich aus Ausdr"ucken ergeben.
+Dies stellt weder einen Compiler noch einen Interpreter vor
+Probleme, soda"s ich hier nicht n"aher darauf eingehen m"ochte.
+Das Semikolon am Ende jeder Variablendefinition w"are nicht
+unbedingt notwendig, ergibt jedoch sowohl in Hinsicht auf die
+"Ubersichtlichkeit als auch auf die Erweiterungsf"ahigkeit der
+Sprache durchaus Sinn.
+
+Der Funktionsk"orper wird durch das Schl"usselwort \rw{begin}
+eingeleitet und durch \rw{end} beendet. Dazwischen befindet sich
+eine beliebige Anzahl von Anweisungen, die bei Aufruf der
+Funktion ausgef"uhrt werden.
+
+\subsubsection{Die main-Funktion}
+\label{main}
+
+Jedes Programm mu"s einen Punkt haben, an dem es beginnt, soda"s
+nicht unkontrolliert irgendwelche Funktionen ausgef"uhrt werden.
+Hierf"ur gibt es grunds"atzlich zwei M"oglichkeiten. Entweder,
+man f"uhrt bestimmte Konstrukte ein, um diesen Hauptteil des
+Programms zu kennzeichnen, so wie es z.~B. in \pascal\
+praktiziert wird, oder man verwendet eine bestimmte Funktion
+dazu, wie in C. Ich habe mich f"ur letzteren
+L"osungsansatz entschieden, weil er es erlaubt, das gesamte
+Programm als eine Art Funktion zu sehen, die vom Anwender
+aufgerufen werden kann. Es wird auch m"oglich, die
+Kommandozeilenparameter als einfache Funktionsparameter zu
+"ubergeben---wenn dies auch in der aktuellen Version von SEL
+noch nicht eingef"uhrt ist. Weiters kann durch dieses Prinzip dem
+Betriebssystem ein Wert zur"uckgegeben werden---der sogenannte
+{\em Exit-Code}. In \pascal\ sind hierf"ur bestimmte Funktionen
+bzw. Prozeduren notwendig.
+
+Der Einfachheit halber und wegen der Verwandschaft mit C wird die
+Hauptfunktion des Programms \fu{main} genannt. Sie nimmt keine
+Parameter an und hat entweder den R"uckgabetyp \tvoid\ oder
+\tint . Ist ersteres der Fall, wird immer der Exit-Code
+\fu{0} zur"uckgegeben, andernfalls wird dieser durch die
+\rw{return}-Anweisung bestimmt.
+
+\section{Anweisungen}
+\label{stmts}
+
+Anweisungen kontrollieren das Geschehen innerhalb eines
+Programms. Sie befehlen\footnote{daher die Bezeichnung
+"`imperative Programmiersprache"'} dem Computer, was er tun soll.
+In SEL wird grunds"atzlich zwischen drei Arten von Anweisungen
+unterschieden: Kontrollanweisungen, Schleifen und Ausdr"ucken.
+W"ahrend die ersten beiden in diesem Unterkapitel besprochen
+werden, widmet sich das gesamte n"achste Unterkapitel den
+Ausdr"ucken. Der Korrektheit wegen sei hier gesagt, da"s es
+eigentlich noch eine vierte Art von Anweisungen gibt: Die {\em
+Nullanweisung}, die jedoch, da sie keinen bestimmten Zweck
+erf"ullt, au"ser vielleicht die Lesbarkeit des Programms zu
+erh"ohen, f"ur unsere Betrachtungen nicht weiter wichtig ist.
+
+Es ist auffallend, da"s SEL keine Anweisungen zur Verf"ugung
+stellt, die in irgendeiner Weise mit der Hardware des Computers
+kommunizieren k"onnen, wie z.~B. Anweisungen zum Einlesen von der
+Tastatur, oder zur Ausgabe von Zeichen auf den Bildschirm oder in
+eine Datei. Die Gr"unde hierf"ur sind vielf"altig. Erstens haben
+wir es uns zum Ziel gesetzt, den Sprachumfang von SEL m"oglichst
+gering zu halten und Ein/Ausgabeanweisungen alleine
+w"urden---sollten sie einigerma"sen vern"unftig sein---die
+Grammatik von SEL betr"achtlich aufbl"ahen. Weiters habe ich SEL
+mit dem Ziel vor Augen entworfen, sie einmal als Makrosprache
+einzusetzen. Makrosprachen allerdings m"ussen in vielen
+verschiedenen Umgebungen sinnvoll einzusetzen sein, wie z.~B. in
+einer Textverarbeitung oder in einem Zeichenprogramm, das unter
+einer graphischen Benutzeroberfl"ache l"auft. Nun sind aber die
+M"oglichkeiten zur Textausgabe in einer graphischen
+Benutzeroberfl"ache grundverschieden zu denen von z.~B. DOS.
+Ausgabeanweisungen zu entwerfen, die f"ur alle diese
+M"oglichkeiten halbwegs geeignet sind, erscheint mir fast
+unm"oglich. Deshalb ist es unumg"anglich, jede Implementation von
+SEL mit verschiedenen Grundfunktionen auszustatten, die auf die
+jeweilige Umgebung zugeschnitten sind. Eine Standardisierung
+dieser Grundfunktionen ist immer eine gute Idee, doch sicher sind
+diese Standardfunktionen nicht "uberall anwendbar.\footnote{Ein
+Beispiel hierf"ur w"are der ANSI-Standard von C, dessen
+Ein/Ausgabefunktionen auf eine textorientierte Oberfl"ache
+zugeschnitten sind. Die \fu{printf}-Funktion z.~B. ist unter der
+graphischen Benutzeroberfl"ache Windows nutzlos.}
+
+\bigskip
+
+An dieser Stelle scheint es mir wichtig, ein Konzept aus anderen
+strukturierten Programmiersprachen zu erw"ahnen. Das
+Blockkonzept\footnote{nicht zu verwechseln mit den Bl"ocken in
+SEL} erm"oglicht es, eine Anweisung entweder als eben nur eine
+Anweisung oder als eine von zwei Schl"usselw"ortern oder Symbolen
+begrenzte, beliebige Abfolge von Anweisungen zu sehen. So verlangt
+eine \rw{if}-Anweisung in C oder \pascal\ nur eine Anweisung als
+Zweig, es ist jedoch kein Problem, mit Hilfe der Blockstruktur
+auch mehrere Anweisungen ausf"uhren zu lassen. Dieses
+Blockkonzept ist in manchen Situationen sehr praktisch, aber es
+bl"aht die Grammatik einer Programmiersprache auch etwas auf und
+macht es so nat"urlich schwerer, einen Interpreter oder Compiler
+zu schreiben. Aus diesem Grund habe ich mich entschieden, es in
+SEL nicht einzubauen. Die Quelltexte sind so zwar etwas l"anger,
+doch es entsteht keine wirkliche Beeintr"achtigung.
+
+\subsection{Kontrollanweisungen}
+
+Kontrollanweisungen haben die Aufgabe, zu kontrollieren, ob und
+was ausgef"uhrt wird. In SEL gibt es drei Anweisungen dieser Art.
+Die \rw{if}-Anweisung "uberpr"uft eine Aussage und f"uhrt, wenn
+sie einen positiven Wahrheitswert ergibt, bestimmte Anweisungen
+aus. Auf Wunsch werden auch Anweisungen ausgef"uhrt, wenn das
+Ergebnis der "Uberpr"ufung negativ ist. Die \rw{switch}-Anweisung
+f"uhrt f"ur bestimmte Werte eines Ausdrucks verschiedene
+Anweisungen aus. Die \rw{return}-Anweisung springt zur
+aufrufenden Funktion zur"uck.
+
+\subsubsection{Die if-Anweisung}
+
+Die \rw{if}-Anweisung\footnote{siehe Anhang \ref{grammar} oder
+\cite{selkr}, Seite 10} wird durch das Schl"usselwort \rw{if}
+eingeleitet, auf welches ein in Klammern eingeschlossener Ausdruck
+folgt. Die Alternative zu dieser L"osung w"are gewesen, den
+Ausdruck sofort auf das \rw{if} folgen zu lassen und durch ein
+bestimmtes Schl"usselwort (z.~B. \rw{then}) oder ein Symbol zu
+beenden. Der Doppelpunkt jedoch w"urde Mehrdeutigkeiten
+hervorrufen und ein Semikolon erscheint mir als unpassend, und da
+wir uns entschienden haben, Symbole zu verwenden, wo nicht
+unbedingt Schl"usselw"orter erforderlich sind, f"allt auch das
+\rw{then} weg. Die einfachste und unauff"alligste L"osung in
+diesem Fall ist die Klammerung.
+
+Auf die schlie"sende Klammer folgt eine beliebige Anzahl von
+Anweisungen, beendet entweder durch \rw{end} oder \rw{else}. Da
+auch \rw{if} eine Anweisung ist, ist es m"oglich, \rw{if}s zu
+verschachteln. Im zweiten Kapitel wird sich zeigen, da"s es f"ur
+einen Interpreter bzw. Compiler kein Problem ist, mit einer
+solchen Schachtelung fertigzuwerden. Folgt auf die Anweisungen ein
+\rw{end}, so ist die \rw{if}-Anweisung beendet. Es w"are
+m"oglich, auch das \rw{end} durch ein Symbol zu ersetzen,
+doch alle sinnvollen Symbole, bis auf die Klammern, sind bereits
+f"ur andere Zwecke vergeben. Nat"urlich k"onnte man auch eine
+schlie"sende Klammer benutzen, doch um ein solches Konstrukt
+sinnvoll zu machen, ben"otigt man auch eine "offnende Klammer.
+Eine runde Klammer w"urde den falschen Eindruck erwecken, eckige
+Klammern sind bereits vergeben, es bleiben die geschwungenen
+Klammern, die auch in C zu diesem Zweck verwendet werden. Da ich
+aber auch in allen anderen F"allen einem \rw{end} bzw. einem
+\rw{begin}-\rw{end} Paar den Vorrang gegeben habe, f"uhrte eine
+Verwendung hier h"ochstens zu einer Verwirrung des Benutzers.
+
+Folgt auf die Anweisungen ein \rw{else}, dann folgen auf
+dieses weitere Anweisungen, durch ein \rw{end} begrenzt.
+Nat"urlich k"onnte man auch anstelle des \rw{else} ein Symbol
+verwenden, doch das w"urde den Zweck der Konstruktion zu sehr
+verschleiern:
+
+\begin{verbatim}
+if x == 1
+{
+  do_what_you_want_to();
+::
+  do_something_else();
+}
+\end{verbatim}
+
+Ich glaube, bei Betrachtung dieses Beispiels zeigt sich, warum
+ich die Schl"usselw"orter den Symbolen vorgezogen habe.
+
+Manche Programmiersprachen, wie z.~B. \modula , stellen
+zus"atzlich zum normalen \rw{else} ein sogenannte \rw{elseif}
+oder auch \rw{elsif} bereit. Es erlaubt, sollte die
+\rw{if}-Bedingung negativ sein, noch eine zweite Bedingung zu
+"uberpr"ufen und, sollte auch diese logisch falsch sein, eine
+dritte u. s. w. Ich habe mich entschieden, ein solches
+\rw{elseif} nicht in SEL einzubauen, aus zwei Gr"unden.
+Erstens l"a"st sich diese \rw{if}-\rw{elseif} Kombination in
+vielen F"allen durch ein besser passendes
+\rw{switch}\footnote{siehe Kapitel \ref{switch}} ersetzen und
+zweitens ist es m"oglich, den \rw{elseif}-Effekt durch ein
+verschachteltes \rw{if} zu erzeugen---\rw{elseif} selbst ist
+nichts anderes als eine Vereinfachung dieser Konstruktion.
+
+\subsubsection{Die switch-Anweisung}
+\label{switch}
+
+Die \rw{switch}-Anweisung\footnote{siehe Anhang \ref{grammar} oder
+\cite{selkr}, Seite 11} erlaubt es, abh"angig vom Wert eines
+Ausdrucks verschiedene Anweisungen auszuf"uhren. Dazu wird
+zun"achst der Ausdruck evaluiert und ein \rw{case} gesucht,
+dessen Wert mit dem des Ausdrucks "aquivalent ist. Ist kein
+passendes \rw{case} vorhanden, wird zu einem evtl. vorhandenen
+\rw{default} gesprungen. Dort wird mit der Ausf"uhrung
+fortgefahren und erst bei einem \rw{break} oder dem zum
+\rw{switch} geh"orenden \rw{end} beendet, also nach dem \rw{end}
+fortgesetzt. Ist erst einmal ein bestimmter \rw{case}- oder
+\rw{default}-Zweig eingeschlagen, werden alle weiteren
+\rw{case}'s und \rw{default}s ignoriert. Das erm"oglicht es, f"ur
+mehrere Werte ein und dieselben Anweisungen auff"uhren zu lassen,
+indem man die einzelnen \rw{case}s hintereinander anreiht.
+
+Die \rw{case}- und \rw{default}-Schl"usselw"orter werden in SEL,
+ebenso wie in C, als Pr"afixe f"ur Anweisungen behandelt: bei
+normaler Ausf"uhrung werden sie einfach ignoriert. Sie sind also
+im Grunde nichts anderes als eine Art Sprunglabel, so wie sie in
+vielen Programmiersprachen f"ur die
+\rw{goto}-Anweisung\footnote{siehe Kapitel \ref{goto}}
+verwendet werden. Eine andere---auf den ersten Blick
+nat"urlichere---L"osung w"are, auf die \rw{switch}-Anweisung eine
+Liste von \rw{case}'s oder \rw{default}s folgen zu lassen, die
+ihrerseits jeweils von Anweisungen gefolgt sind. Um es m"oglich
+zu machen, da"s eine Anweisungsfolge f"ur mehrere verschiedene
+Werte ausgef"uhrt wird, m"u"ste man statt einem \rw{case} jeweils
+mehrere \rw{case}'s erwarten. Welche der beiden L"osungen man
+bevorzugt, ist Geschmackssache. Ich habe mich f"ur die
+Pr"afix-L"osung entschieden, weil ich sie erstens von C gewohnt
+bin und sie zweitens ein wenig leistungsf"ahiger ist.
+
+Das Schl"usselwort \rw{case} vor dem jeweiligen Wert ist
+notwendig, um Zweideutigkeiten in der Sprache zu vermeiden. Um
+dieses Schl"usselwort auslassen zu k"onnen, m"u"sten wir die oben
+besprochene zweite L"osung w"ahlen, jedoch m"u"sten die einzelnen
+Anweisungsfolgen wiederum durch ein anderes Schl"usselwort, z.~B.
+\rw{end} beendet werden, soda"s sich keine wirkliche Ersparnis
+erg"abe.
+
+Auch daf"ur, da"s in \rw{case}-Zweigen nur Konstanten erlaubt
+sind, gibt es Gr"unde. Erstens h"atten wir durch den Doppelpunkt
+Zweideutigkeiten---er w"urde als Typecast\footnote{siehe Kapitel
+\ref{casts}} interpretiert werden---doch dieses Problem ist durch
+Wahl eines anderen Symbols ohne weiteres zu "ubergehen. Der weit
+gewichtigere Grund ist, da"s die f"ur die \rw{switch}-Anweisung
+typische Effizienz verloren ginge: Bis der Interpreter zum
+richtigen Zweig gelangt, m"u"ste er eine Vielzahl von Ausdr"ucken
+auswerten, was sehr viel mehr Zeit in Anspruch nimmt, als der
+simple Vergleich mit einer Konstante. Au"serdem w"urde diese
+Entscheidung das Schreiben eines Compilers etwas verkomplizieren.
+In F"allen, in denen eine solche \rw{switch}-Anweisung n"otig
+w"are, sollte man auf \rw{if}-\rw{else}-Verschachtelungen umsteigen.
+
+\subsubsection{Die return-Anweisung}
+
+Die \rw{return}-Anweisung hat die Aufgabe, zur aufrufenden
+Funktion zur"uckzukehren und evtl. einen Wert zu "ubermitteln,
+den sog. {\em Return-Code}. Eine andere M"oglichkeit w"are, den
+return-code durch eine Zuweisung an eine Variable, die den Namen
+der Funktion hat, zu bestimmen und mittels einer anderen
+Anweisung bei Bedarf zur aufrufenden Funktion zur"uckzuspringen.
+Da man im Normalfall beides an der gleichen Stelle tut, habe ich
+mich f"ur die \rw{return}-L"osung entschieden.
+
+Die einfachste Methode w"are jedoch, "uberhaupt keine Anweisung
+bereitzustellen, mit der in die aufrufende Funktion
+zur"uckgekehrt werden kann und den R"uckgabewert am Ende der
+Funktion festzulegen. F"ur einen rekursiven Interpreter ist dies
+die beste L"osung, doch wie wir im n"achsten Kapitel sehen
+werden, stellt uns auch der \rw{return}-Ansatz vor keine gro"sen
+Probleme.
+
+\subsection{Schleifen}
+
+Schleifen kontrollieren nicht, was, sondern wie oft etwas
+ausgef"uhrt wird. Die drei Arten der Schleifen, die in SEL
+erlaubt sind, entsprechen den in den meisten strukturierten
+Programmiersprachen vorhandenen Schleifen.
+
+\subsubsection{Die repeat-Schleife}
+
+Die \rw{repeat}-Schleife in SEL entspricht der
+\rw{repeat}-Schleife in \pascal , bis auf das Detail, da"s die
+\rw{until}-Bedingung in Klammern zu setzen ist und kein Semikolon
+danach erforderlich ist. Diese Konzeption deckt sich mit den
+restlichen Anweisungen von SEL und wurde daher von mir bevorzugt.
+
+In manchen Programmiersprachen, wie z.~B. C, existiert die
+\rw{repeat}-Schleife in einer abgewandelten Form, n"amlich der
+der \rw{do-while}-Schleife. Der einzige Unterschied
+besteht darin, da"s die \rw{repeat}-Schleife eine
+Abbruchbedingung erwartet, die \rw{do-while}-Schleife jedoch eine
+Fortf"uhrungsbedingung, das hei"st, eine Schleife kann durch die
+andere ersetzt werden, wenn die Bedingung negiert wird. Welche
+Schleife die bessere ist, kommt auf die Situation an, wirkliche
+Vor- oder Nachteile gibt es nicht, die Auswahl ist also reine
+Geschmackssache.
+
+\subsubsection{Die while-Schleife}
+
+Die \rw{while}-Schleife ist eng verwandt mit der
+\rw{repeat}-Schleife. Der einzige Unterschied besteht darin, da"s
+die \rw{repeat}-Schleife mindestens einmal durchlaufen wird, die
+\rw{while}-Schleife jedoch nicht unbedingt. Syntaktisch gesehen
+ist die \rw{while}-Schleife sehr "ahnlich der von C, die
+Unterschiede sind in der in Kapitel \ref{stmts} angesprochenen
+Blockstruktur von C begr"undet. So folgt auf die schlie"sende
+Klammer der Schleifenbedingung in C in der Regel eine "offnende
+geschwungene Klammer, in SEL jedoch ist diese ausgespart, da
+nicht notwendig. Die schlie"sende geschwungene Klammer, die in C
+die Schleife beendet, ist mit dem Schl"usselwort \rw{end} in SEL
+zu vergleichen. Die Gr"unde, warum ich die Konstruktion mittels
+Schl"usselw"ortern vorgezogen habe, ist bereits in vorhergehenden
+Kapiteln er"ortert, ich gehe deshalb hier nicht n"aher darauf
+ein.
+
+\subsubsection{Die for-Schleife}
+
+Die \rw{for}-Schleife in SEL erlaubt es, Anweisungen in einer
+Anzahl, die schon im voraus bekannt ist, zu wiederholen.
+Damit unterscheidet sie sich signifikant von den \rw{while} und
+der \rw{repeat}-Schleifen, bei denen die Anzahl der Wiederholungen
+nicht unbedingt bekannt sind. Das verhilft der
+\rw{for}-Schleife---zumindest auf einem Interpreter---zu einer
+sehr schnellen Ausf"uhrung, da die Bedingungen f"ur die Schleife
+nur einmal berechnet werden m"ussen, w"ahrenddessen dies bei den
+beiden anderen Schleifenarten bei jedem Durchlauf geschehen mu"s.
+
+Dieses eine Merkmal der \rw{for}-Schleife ist vielen
+Programmiersprachen gemeinsam, doch eine bekannte Sprache macht
+eine Ausnahme: C. In C werden nicht eine Z"ahlervariable und
+deren untere und obere Grenzen und evtl. noch die Schrittweite
+angegeben, sondern es werden drei Ausdr"ucke verwendet: Der erste
+wird lediglich beim Start der Schleife evaluiert, der dritte nach
+jedem Durchlauf. Der zweite Ausdruck schlie"slich gibt die
+Bedingung an, bei der die Schleife nochmals ausgef"uhrt werden
+soll---ist sie logisch falsch, wird die Schleife abgebrochen. In
+C ist also eine \rw{for}-Schleife nichts anderes als eine
+erweiterte \rw{while}-Schleife und hat den Vorteil, da"s mit
+ihrer Hilfe auch verkettete Listen und "ahnliches leicht
+durchlaufen werden k"onnen. Auch ein "`klassische"'
+\rw{for}-Schleife l"a"st sich so leicht nachbilden, doch diese
+Art der Schleifenkonstruktion hat f"ur einen Interpreter den
+gro"sen Nachteil, da"s bei jedem Schleifendurchlauf gleich zwei
+Ausdr"ucke evaluiert werden m"ussen.
+
+Ungl"ucklicherweise habe ich diesen Nachteil nicht sofort bemerkt und
+f"uhrte auch in SEL die von C gewohnte \rw{for}-Konstruktion ein. Erst
+sp"ater merkte ich, um wie viel effizienter diese Schleife f"ur einen
+Interpreter w"are, w"urde ich sie "ahnlich wie in \pascal\ aufbauen. Die
+"Anderungen am Interpreter und an der Dokumentation lie"sen sich zum
+Gl"uck in weniger als einer Stunde durchf"uhren, soda"s Verz"ogerungen
+f"ur den Zeitplan dieser Arbeit ausblieben und ich zur Erkenntnis
+gelangte, da"s man aus Fehlern doch am besten lernt.
+
+Noch ein kleines Wort zur Syntax: Die Bedingungen der Schleife sind in
+Klammern gesetzt, weil das in SEL auch bei anderen Anweisungen der Fall
+ist und dadurch die Konsistenz gewahrt wird, und die Grammatik ohne
+Begrenzung nicht eindeutig w"are. Die Z"ahlervariable wird als
+\fu{primary} angegeben, weil es auch m"oglich sein sollte, Array- und
+Strukturelemente als Z"ahler zu benutzen, und nicht als \fu{expr}, weil
+dann der folgende Zuweisungsoperator als ein Teil dieses Ausdrucks
+interpretiert w"urde. Sollte es wirklich notwendig sein, einen \fu{expr}
+zu benutzen, so kann dieser in Klammer gesetzt werden, und entspricht
+damit einem \fu{primary}.\footnote{siehe Anhang \ref{grammar}} Anstatt
+der Schl"usselw"orter \rw{to} bzw. \rw{downto} Symbole zu verwenden,
+w"are erstens un"ubersichtlich und w"urde zweitens---au"ser bei
+Verwendung neuer Symbole---die Eindeutigkeit zunichte machen, weshalb
+ich die oben angesprochenen Schl"usselw"orter verwendete. Gleiches gilt
+f"ur \rw{step}.
+
+\subsection{Die goto-Anweisung}
+\label{goto}
+
+Die "Uberschrift dieses Absatzes mag darauf deuten, da"s es in SEL eine
+\rw{goto}-Anweisung gibt, doch der Schein tr"ugt: Aus Gr"unden, die in
+Kapitel \ref{parser} aufgef"uhrt sind und aus dem Grund, da"s diese
+Anweisung in dem meisten F"allen ohnedies nicht notwendig ist und nur zu
+einem schlechten Programmierstil verf"uhrt, habe ich mich gegen eine
+Einbindung in SEL entschieden.    
+
+\section{Ausdr\protect{"ucke}}
+
+Ausdr"ucke sind ein Konzept, das in fast allen strukturierten
+Programmiersprachen verwendet wird und das nicht ohne Grund: Es
+vereinfacht die Grammatik der Sprache und macht damit das Schreiben
+eines Interpreters bzw. eines Compilers einfacher. Au"serdem erleichtert
+es dem Anwender der Sprache das Schreiben von Programmen sehr und
+unterst"utzt die Lesbarkeit. So k"onnen Ausdr"ucke in vielen
+verschiedenen Situationen verwendet werden: Als Bedingungen in
+Schleifen, als Funktionsaufrufe oder als die rechten Seiten von
+Zuweisungen.\footnote{Tats"achlich ist in SEL sogar die Zuweisung ein
+Ausdruck, im Gegensatz zu \pascal\ oder \modula , doch dazu sp"ater
+mehr.}
+
+Ein Ausdruck in SEL kann "ahnlich einem Ausdruck im
+mathematischen Sinn aufgefa"st werden, er ist eine Verkn"upfung
+von Operanden durch Operatoren. Jeder Operand f"ur sich ist
+selbst ein Ausdruck\footnote{bis auf die Operanden der Operatoren
+\fu{new} und \fu{sizeof}, die Typen sind.} und das Ergebnis der
+Verkn"upfung mit einem Operator ist wieder ein Ausdruck. So ist
+es in SEL m"oglich, Ausdr"ucke beliebig tief zu schachteln. Diese
+Eigenschaften der Ausdr"ucke legen es nahe, einen Ausdruck als
+Baum\footnote{siehe \cite{sedge}, Seiten 57--72} darzustellen.
+Dabei stellt jeder innere Knoten sowie die Wurzel einen Operator
+dar und jedes Blatt einen Wert. Betrachtet man nun jeden
+einzelnen Knoten (und dessen Nachfolger), so gelangt man zum
+Ergebnis, da"s dieser auch wieder ein Ausdruck f"ur sich ist. Ein
+Beispiel f"ur diese Darstellung gibt Sedgewick in \cite{sedge},
+Seite 63, Abbildung 4.4.
+
+Jeder Ausdruck in SEL hat nicht nur einen Wert, sondern auch
+einen Typ\footnote{siehe auch Kapitel \ref{types}}, mit einer Ausnahme:
+Ein Ausdruck des Typs \tvoid\ hat keinen Wert, was auch gar keinen Sinn
+h"atte.
+
+\subsection{Operatoren}
+
+Grunds"atzlich gibt es vier Arten, in SEL Operatoren zu
+klassifizieren\footnote{genauer gesagt vier "`vern"unftige"' Arten}:
+nach der Anzahl ihrer Argumente, nach ihrer funktionellen
+Zugeh"origkeit, nach ihrer Priorit"at und nach ihrem Ergebnistyp.
+
+\paragraph{Klassifikation nach der Anzahl der Argumente}
+
+Auf den ersten Blick gesehen gibt es in SEL nach dem Gesichtspunkt der
+Zahl der Argumente zwei Arten von Operatoren: un"are und bin"are. Zu den
+un"aren z"ahlen z.~B. die Operatoren \fu{+} und \fu{<<}, zu den bin"aren
+z"ahlen \fu{!} und \fu{-}. Der letztgenannte Operator existiert auch in
+einer bin"aren Version, man k"onnte also sagen, da"s es Operatoren gibt,
+die sowohl un"ar als auch bin"ar sind. Ich pers"onlich betrachte diese
+beiden "`Versionen"' als zwei verschiedene Operatoren, da auch ihre
+Funktionen verschieden sind. Betrachtet man Ausdr"ucke in SEL genauer,
+wird man bemerken, da"s ein
+Funktionsaufruf durchaus mehrere Argumente erwarten kann, jedoch stellt
+sich hier die Frage, ob man einen Funktionsaufruf (besser: eine Funktion) als
+Operator auffassen sollte. Ich bin der Meinung, eine Funktion ist
+weniger ein Operator als ein Wert, und habe ihr deshalb ein eigenes
+Unterkapitel gewidmet.\footnote{siehe Kapitel \ref{exprfuncs}}
+
+\paragraph{Klassifikation nach der funktionellen Zugeh"origkeit}
+
+Auf diese Weise kann man die Operatoren von SEL in mehrere
+Gruppen einteilen, wobei die Grenzen eher flie"send sind. Mir
+erscheint folgende Einteilung am vern"unftigsten: arithmetische
+Operatoren wie \fu{+} oder \fu{<<}, logische Operatoren wie
+\fu{\&\&} oder \fu{!}, Vergleichsoperatoren wie \fu{>=} oder
+\fu{==}, Operatoren zur Speicherverwaltung wie \fu{new} oder
+\fu{[]} und als zwei eigene Gruppen der Zuweisungsoperator \fu{=}
+und der Typecasting-Operator \fu{:}. Wie gesagt sind die
+"Uberg"ange zwischen diesen Gruppen sehr flie"send. So k"onnte
+man beispielsweise meinen, der Operator \fu{[]} geh"ore zur
+Gruppe der arithmetischen Operatoren, da er ja in gewisser Weise
+Vektorarithmetik m"oglich macht. Auch w"are es m"oglich, den
+Typecasting-Operator zur Speicherverwaltung z"ahlen, da er auch
+den Speicher modifiziert.
+
+\paragraph{Klassifikation nach der Priorit"at}
+
+Operatoren in SEL besitzen verschiedene
+Priorit"atsstufen\footnote{siehe \cite{selkr}, Seite 21}, um eine
+"uberm"a"sige Klammerung zu vermeiden. Die Priorit"aten in SEL sind
+stark an die von C angelehnt\footnote{siehe \cite{kandr}, Seite 54},
+weichen jedoch teilweise von diesen ab. Meistens im selben Atemzug mit
+der Priorit"at der Operatoren wird die Richtung der Auswertung genannt.
+Diese gibt an, ob der Operator links- oder rechts-assoziativ ist. Ein
+Beispiel f"ur einen rechts-assoziativen Operator ist \fu{=}: Der
+Ausdruck \fu{a=b=0} ist "aquivalent zu \fu{a=(b=0)}. So ist es ohne
+Klammerung m"oglich, mehreren Variablen in einer Anweisung denselben
+Wert zuzuweisen. Ein
+links-assoziativer Operator ist das bin"are \fu{-}. W"are er das nicht,
+w"urde der Ausdruck \fu{5-3-1} nicht zu \fu{(5-3)-1}, sondern zu
+\fu{5-(3-1)} "aquivalent sein und so das falsche Ergebnis, n"amlich
+\fu{3} anstatt \fu{1}, liefern.
+
+\paragraph{Klassifikation nach dem Ergebnistyp}
+
+Diese Einteilung ist wohl die komplizierteste und es w"are wohl besser,
+man w"urde als Kriterium nicht den Ergebnistyp selbst, sondern das, 
+was den Ergebnistyp bestimmt, heranziehen. 
+So sind dies etwa beim Operator \fu{+} die
+Typen seiner Operanden, beim Operator \rw{new} hingegen ist es der Typ,
+mit dem er verbunden wird. Weiters gibt es Operatoren, die immer denselben
+Ergebnistyp haben, wie z.~B. die logischen Operatoren oder der Operator
+\rw{sizeof}. Es gibt sogar einen Operator, dessen Ergebnistyp immer
+\tvoid\ ist, n"amlich \rw{delete}.
+
+\bigskip
+
+In der folgenden Aufstellung der Operatoren verwende ich die
+Klassifikation nach der funktionellen Zugeh"origkeit, weil sie
+f"ur diesen Zweck am geeignetsten ist.
+
+\subsubsection{Arithmetische Operatoren}
+
+SEL bietet neben den numerischen Operatoren, zu denen die vier
+Grundrechnungsoperatoren f"ur Addition, Subtraktion, Multiplikation und
+Division z"ahlen, zus"atzlich der Modulo-Operator, der den Rest bei einer
+ganzzahligen Division ergibt, und der Negationsoperator, der
+einer Umkehr des Vorzeichens gleichkommt, auch
+Operatoren zur Bitmanipulation, n"amlich bitweise Links- und
+Rechtsverschiebung und bitweise Und-, Oder- und
+XOR-Verkn"upfungen. Die bin"aren numerischen Operatoren, also
+\fu{+}, \fu{-}, \fu{*}, \fu{/} und \fu{\%}, besitzen eine
+niedrigere Priorit"at als alle un"aren Operatoren, jedoch eine
+h"ohere Priorit"at als alle anderen bin"aren Operatoren.
+Untereinander sind die Additions- und Subtraktionsoperatoren auf
+derselben Priorit"atsstufe, die um einen Grad niedriger steht,
+als die der anderen numerischen bin"aren Operatoren, in Anlehnung
+an die in der Mathematik "ublichen Notation. Die un"aren
+Operatoren haben deshalb eine h"ohere Priorit"at, weil das
+erstens unseren Erwartungen entspricht---man betrachtet intuitiv einen
+un"aren Operator einem Wert als "`n"aherstehender"', als einen
+bin"aren---und es zweitens in fast allen F"allen praktischer ist.
+So ist z.~B. das Ergebnis des Ausdrucks \fu{-x*y} dem von
+\fu{-(x*y)} "aquivalent. Bes"a"sen aber die bin"aren Operatoren
+eine h"ohere Priorit"at, m"u"ste man anstatt \fu{-x-y} den
+Ausdruck \fu{(-x)-y} schreiben, was etwas unnat"urlich aussieht.
+Hingegen k"onnte man den Ausdruck \fu{-(x+y)} zwar bei anderer
+Operatorenrangfolge ohne Klammern schreiben, doch selbst ohne die
+Rangfolge zu ver"andern, k"onnte man durch "Anderung des \fu{+} in
+ein \fu{-} die Klammerung vermeiden: \fu{-x-y}. Die Rangfolge
+erweist sich also als nat"urlich und praktisch. Die
+Vergleichsoperatoren haben deshalb niedrigere Priorit"at als die
+numerischen Operatoren, weil es kaum vorkommt, da"s man mit
+Vergleichsergebnissen rechnet. F"ur die logischen Operatoren gilt
+dieselbe Begr"undung. Die Festsetzung der Priorit"at der
+Bitmanipulations-Operatoren relativ zu den numerischen Operatoren
+ist eher willk"urlich. Es w"urde kaum ein Vor- oder Nachteil
+entstehen, h"atten die Operatoren zur Bitmanipulation h"ohere
+Priorit"at. Der Grund, warum ich diese Operatoren nicht auf
+dieselbe Priorit"atsstufe gesetzt habe ist der, da"s sie zu
+verschieden sind, als da"s dies dienlich w"are.
+
+Die numerischen Operatoren haben eine besondere Eigenschaft: Sie
+stellen sich auf die Typen ihrer Operanden ein und ver"andern
+diese sogar, wenn n"otig. So stellt sich zum Beispiel die Frage,
+welchen Typ eine Addition eines \tint\ und eines \tfloat\ haben
+sollte. Vern"unftigerweise wandelt der Additionsoperator in
+diesem Fall den \tint\ in einen \tfloat\ um, und f"uhrt erst
+anschlie"send die Addition aus. Auf diese Weise gehen keine
+Nachkommastellen des \tfloat\ verloren. Gleiches passiert mit
+einem \tchar\ und einem \tint : Der \tchar\ wird in den Typ
+\tint\ umgewandelt, da nur so gew"ahrleistet ist, da"s mit dem
+richtigen Wert des \tint\ gearbeitet wird. F"ur die Typen bei
+einer numerischen Operation gilt in SEL also die Regel \hbox{$
+\tchar < \tint < \tfloat $}.\footnote{siehe \cite{selkr}, Seite
+18} Zus"atzlich zu diesen Typen k"onnen die Operatoren \fu{+} und
+\fu{-} auch mit Zeigern operieren, doch dazu mehr in Kapitel
+\ref{memmgrops}.
+
+Die Operatoren zur Bitmanipulation arbeiten in SEL lediglich mit
+dem Typ \tint\, und das aus guten Gr"unden: Erstens ist es f"ur
+einen Computer zwar leicht m"oglich, mit den Bits eines \tfloat\
+zu operieren, doch es ist f"ur einen Menschen ungleich
+schwieriger, diese Bits auch richtig zu interpretieren---auf den
+Wert der Zahl bezogen. Zweitens sind die "ublichen 8 Bit eines
+\tchar\ im Regelfall zu wenig f"ur die Anwendungen der
+Bitmanipulation und drittens vereinfacht es nicht nur den Bau
+eines Interpreters bzw. Compilers, es macht diese auch schneller.
+
+\subsubsection{Logische Operatoren}
+
+Neben den Operatoren zur logischen Und- und Oder-Verkn"upfung
+bietet SEL auch einen Operator zur logischen XOR-Verkn"upfung an.
+Ich habe mich dazu entschieden, weil es leicht in einen
+Interpreter bzw. Compiler einzubauen ist und andererseits der
+Operator in manchen Situationen sehr praktisch ist und logische
+Ausdr"ucke verk"urzen kann. Die logischen Operatoren sind auf der
+zweitniedrigsten Priorit"atsstufe angesiedelt---unter ihnen
+befinden sich lediglich die Operatoren \fu{=} und \fu{delete}.
+Diese Stufe habe ich gew"ahlt, weil logische Operatoren
+haupts"achlich in Schleifen- und \rw{if}-Bedingungen eingesetzt
+werden und es dort am praktischsten ist, wenn sie die niedrigste
+Priorit"at haben. Nur selten ist es notwendig, da"s einer
+Variablen ein logischer Wert zugewiesen wird, doch auch dieser
+Fall ist ohne Klammerung zu bew"altigen, da ja der
+Zuweisungsoperator eine noch niedrigere Priorit"at hat. Der
+einzige Fall, in dem sich diese Rangfolge als unpraktisch
+herausstellen w"urde ist, da"s in einer Schleifen- oder
+\rw{if}-Bedingung ein logischer Wert einer Variablen zugewiesen
+wird und dieser Wahrheitswert mit einem anderen mittels eines
+logischen Operators verkn"upft werden mu"s. Ein Beispiel hierf"ur
+w"are \fu{if (x \&\& (y = z))}. Tats"achlich tritt dieser Fall so
+selten auf---in meiner bislang 4-j"ahrigen C-Laufbahn bin ich
+noch nie in eine solche Situation gelangt---da"s man ihn getrost
+au"ser Acht lassen kann.
+
+Der logische Negationsoperator \fu{!} liegt auf derselben
+Priorit"atsstufe wie die Operatoren zur bitweisen und
+arithmetischen Negation und die beiden Operatoren \fu{*} und
+\fu{\&}, die im Kapitel \ref{memmgrops} besprochen werden, welche
+um eine Stufe tiefer liegt als die der Operatoren \fu{->}, \fu{:}
+und \fu{[]}. Um das zu begr"unden, betrachten wir den Ausdruck
+\fu{!x->y}. Offenbar wird hier versucht, aus der Struktur \fu{x}
+auf das Element \fu{y} zuzugreifen und dieses zu negieren. H"atte
+der Operator \fu{!} eine h"ohere Priorit"at als \fu{->}, so
+w"urde sich die Negation auf die Struktur beziehen, und es ist
+nicht m"oglich, eine Struktur zu negieren.
+
+Logische Operatoren arbeiten in SEL nur mit dem Typ \tint .
+Zwar w"urde es auch gen"ugen, den Typ \tchar\ zu diesem Zweck
+heranzuziehen, doch da in kaum einer Anwendung Wahrheitswerte
+gespeichert werden und \tint\ normalerweise der Gr"o"se des
+Maschinenwortes des jeweiligen Prozessors entspricht, und daher
+schneller zu bearbeiten ist, als ein \tchar , ist er die bessere
+Wahl. Sollte es jedoch n"otig sein, Wahrheitswerte abzuspeichern,
+kann das ohne weiteres mit Hilfe von \tchar s geschehen, die durch
+ein Typecasting entstanden sind, oder aber durch Bitfelder, was
+noch speicherplatzsparender ist.
+
+\subsubsection{Vergleichsoperatoren}
+
+SEL bietet insgesamt sechs Vergleichsoperatoren an. Diese sind um
+eine Priorit"atsstufe h"oher als die logischen Operatoren
+angesiedelt, da sie meistens in Schleifen- und
+\rw{if}-Bedingungen eingesetzt werden und dort diese Rangfolge
+von Vorteil ist. So wird es wahrscheinlich oft vorkommen, da"s
+"uberpr"uft werden soll, ob zwei Werte zwei anderen Werten
+entsprechen, aber eher selten wird man "uberpr"ufen wollen, ob
+die Oder-Verkn"upfungen jeweils zweier Werte dieselben Ergebnisse
+haben.
+
+Vergleichsoperatoren k"onnen in SEL lediglich Werte der Typen
+\tchar , \tint\ und \tfloat\ vergleichen, wobei das im vorletzten
+Unterkapitel vorgestellte "`Gr"o"senverh"altnis"' gilt. Es ist
+hingegen nicht m"oglich, z.~B. Strings miteinander zu
+vergleichen, weil das, um es vern"unftig zu machen, eine
+Ver"anderung im Typkonzept von SEL mit sich z"oge und au"serdem
+sehr gut von einer Funktion erledigt werden kann---SEL stellt
+alle n"otigen Konstrukte hierf"ur bereit.
+
+\subsubsection{Speicherverwaltungsoperatoren}
+\label{memmgrops}
+
+Unter den Begriff "`Speicherverwaltungsoperatoren"' fallen all
+jene Operatoren, die mit Zeigern, Arrays und Strukturen arbeiten.
+Dazu z"ahlen nicht nur die Operatoren zur Ermittlung der
+Speicheradresse einer Variablen und zur Dereferenzierung eines
+Operators, \fu{\&} und \fu{*}, zum Zugriff auf ein Array- bzw.
+Strukturelement, \fu{[]} und \fu{->}, sondern auch die Operatoren
+zum Allokieren und Freigeben von Speicher, \fu{new} und
+\fu{delete}, und der Operator zum Ermitteln der Gr"o"se eines
+Typen, \fu{sizeof}. Au"serdem fallen unter diesen Begriff die
+beiden bin"aren Operatoren \fu{+} und \fu{-}, mit denen
+zus"atzlich zur numerischen Arithmetik auch Zeigerarithmetik
+betrieben werden kann.
+
+Die h"ochste Priorit"atsstufe aller Operatoren haben \fu{new} und
+\fu{sizeof}, auf der n"achsten Stufe liegen \fu{->} und \fu{[]}.
+Es h"atte keinen Sinn, diese Rangfolge zu "andern, denn die
+Operanden von \fu{new} und \fu{sizeof} sind keine Ausdr"ucke,
+sondern Typen, und es ist nicht m"oglich, den Operator \fu{->}
+oder \fu{[]} auf einen Typ anzuwenden, soda"s dies schon von Haus
+aus unterbunden werden sollte. Die beiden un"aren Operatoren
+\fu{*} und \fu{\&} liegen um eine Priorit"atsstufe tiefer,
+gemeinsam mit allen anderen un"aren Operatoren. Eine andere Stufe
+f"ur diese Operatoren w"are nicht angebracht, aus Gr"unden, die
+ich schon genannt habe.
+
+Ein in gewisser Hinsicht au"sergew"ohnlicher Operator---gemessen
+an seinen Gegenst"ucken aus C und \pascal ---ist der Operator
+\fu{->}. Er wird benutzt, um auf Elemente einer Struktur
+zuzugreifen. Derselbe Operator wird in C und \pascal\ durch den
+Punkt (\fu{.}) symbolisiert. In C jedoch gibt es zus"atzlich den
+Operator~\fu{->}. Er wird benutzt, um auf Elemente aus einem
+Zeiger auf eine Struktur zuzugreifen---in \pascal\ mu"s hierf"ur
+zuerst der Zeiger dereferenziert werden. Der SEL-Operator ist nun
+insofern au"senstehend, als er die Funktionalit"at des
+Punktoperators und des Pfeiloperators aus C vereinigt. So
+erm"oglicht er es, angewendet auf eine Struktur, auf ein Element
+daraus zuzugreifen. Angewendet auf einen Zeiger auf eine Struktur
+dereferenziert er ersteren und greift dann erst auf das jeweilige
+Element zu. Diese Vereinigung macht insofern Sinn, als da"s
+keine Funktionalit"at verlorengeht, denn der Punktoperator
+hat, angewendet auf einen Zeiger, keine Funktion. Auch das Design
+eines Interpreters bzw. eines Compilers wird dadurch nicht
+erschwert, denn diese wissen, wenn sie auf den Pfeiloperator
+treffen, mit welchem Typ gearbeitet wird. Ein Compiler m"u"ste
+also nur, tr"afe er auf einen Pfeiloperator, dessen linker Operand
+ein Zeiger ist, den Code zur Dereferenzierung einbauen.
+
+\subsubsection{Der Zuweisungsoperator}
+
+Der Zuweisungsoperator von SEL ist ein Sonderfall unter den
+Operatoren, aus mehreren Gr"unden. Der erste Grund ist, da"s es
+in manchen Programmiersprachen, darunter auch \pascal , gar
+keinen Zuweisungsoperator in diesem Sinne gibt. In \pascal\ ist
+eine Zuweisung eine Anweisung und kein Ausdruck. Das macht es in
+\pascal\ auf der einen Seite schwerer, den Zuweisungsoperator
+vom Compiler bzw. Interpreter unentdeckt mit dem
+Vergleichsoperator zu verwechseln, denn der Zuweisungsoperator
+ist in Ausdr"ucken nicht erlaubt und Ausdr"ucke sind in \pascal\
+keine g"ultigen Anweisungen. Andererseits jedoch ist es nicht
+m"oglich, mehreren Variablen in einer Anweisung denselben Wert
+zuzuweisen, wie man es von C oder auch aus der Mathematik gewohnt
+ist (\fu{x=y=0}). Au"serdem ist es nicht m"oglich, z.~B. in einer
+\rw{if}-Anweisung gleichzeitig eine Zuweisung vorzunehmen und den
+Wert der zuzuweisenden Variablen zu "uberpr"ufen (z.~B.
+\hbox{\fu{if ((x=y) == 3)}}). Manche legen das sogar als Vorteil
+aus, weil es eine unsch"one Programmierung erschwert, und
+insofern gebe ich ihnen Recht, doch ich pers"onlich finde solche
+Konstrukte in manchen Situationen doch sehr praktisch, und da der
+Aufwand f"ur einen Zuweisungsoperator etwa dem einer
+Zuweisungsanweisung gleichkommt, oder sogar noch geringer ist,
+habe ich ihn in SEL eingebaut.
+
+Der zweite Grund f"ur die Besonderheit des \fu{=}-Operators ist,
+da"s er mit allen Typen zusammenarbeitet. Anders als der
+Vergleichsoperator, der auf die Grundtypen beschr"ankt ist, kann
+der Zuweisunsoperator eine Variable jeden beliebigen Typs einer
+anderen zuweisen---Typgleichheit vorausgesetzt. Ich habe diese
+"`Allm"achtigkeit"' des Operators deswegen in SEL erm"oglicht, weil
+es leicht ist, das in einen Interpreter einzubauen---im Fall der
+Konzeption, die wir im zweiten Kapitel besprechen werden, sogar
+noch leichter, als sich auf die Grundtypen zu beschr"anken. Auch
+f"ur einen Compiler ist das nicht weiter schwer: Den Code f"ur die
+Grundtypen kann der Compiler direkt einf"ugen, f"ur Strukturen
+oder Arrays k"onnte eine Funktion aus der Laufzeitumgebung
+aufgerufen werden. Hier dr"angt sich nat"urlich die Frage auf,
+warum ich dieses Konzept nicht auf den Vergleichsoperator
+\fu{==} ausgeweitet habe. Die Antwort ist einfach: H"atte ich das
+getan, w"are es unausweichlich gewesen, das auch f"ur die
+Operatoren \fu{<}, \fu{>}, \fu{<=}, \fu{>=} und \fu{!=} zu tun.
+Mit letzterem h"atte ich keine Probleme gehabt, doch wann ist
+eine Struktur, die die Adresse einer Person enth"alt, gr"o"ser
+als eine andere desselben Typs? Byte-f"ur-Byte-Vergleich w"are
+hier sicher nicht angebracht.\footnote{In C++ kann dieses Problem
+gel"ost werden, weil es dort m"oglich ist, Operatoren zu
+"uberladen, d. h., da"s der Benutzer imstande ist, eine Funktion
+zu schreiben, die zwei Strukturen (beispielsweise des Typs
+\fu{Adresse}) vergleicht, die dann anstatt des
+Vergleichsoperators aufgerufen wird.}
+
+\subsubsection{Der Typecasting-Operator}
+
+Der Typecasting-Operator \fu{:} wird benutzt, um einen Wert
+explizit in einen anderen Typ umzuwandeln. Er wird genauer in
+Kapitel \ref{casts} beschrieben. Seine Priorit"at ist mit der der
+beiden Operatoren \fu{->} und \fu{[]} "aquivalent, erstens, weil
+er ein un"arer Operator ist und zweitens, weil es eher selten
+vorkommt, da"s gr"o"sere Ausdr"ucke gecastet werden m"ussen. Wenn
+n"otig, wird dies sowieso von SEL "ubernommen.
+
+\subsection{Konstanten}
+\label{const}
+
+Grunds"atzlich gibt es in SEL vier verschiedene Arten von
+Konstanten: \tchar -Konstanten, \tint -Konstanten,
+\tfloat -Konstanten und String-Konstanten. Eine \tchar -Konstante
+ist ein unter einfache Anf"uhrungsstriche gesetztes Zeichen bzw.
+Steuerzeichen und hat---es ist nicht anders zu erwarten---den Typ
+\tchar . Eine \tint -Konstante ist eine simple Abfolge von
+Ziffern. Zahlenkonstanten im lexikalischen Sinn sind in SEL immer
+positiv---negative Zahlen macht erst der un"are Operator \fu{-}
+m"oglich, und insofern ergibt sich daraus kein Nachteil. Der
+Grund, warum ich Konstanten nicht auch auf negative Zahlen
+ausgeweitet habe ist der, da"s sich die lexikalische
+Analyse\footnote{siehe Kapitel \ref{scanner}}
+dadurch sehr erschweren w"urde. Nehmen wir als Beispiel den
+Ausdruck \fu{7-4}. Der Scanner erkennt als erstes die
+\tint -Konstante \fu{7}. Danach m"u"ste ein Operator folgen oder
+der Ausdruck zu Ende sein, was aber der Scanner nicht wissen
+kann, da er vom Parser in dieser Hinsicht abgekapselt ist. Aus
+diesem Grund w"urde er anstatt den Operator \fu{-} zu erkennen
+eine weitere \tint -Konstante, n"amlich \fu{-4} lesen, was
+nat"urlich falsch ist. Das Gesagte gilt auch f"ur
+\tfloat -Konstanten.
+
+String-Konstanten sind in gewisser Hinsicht etwas Besonderes,
+n"amlich in Anbetracht der Tatsache, da"s es einen Stringtyp in
+SEL gar nicht gibt. Normalerweise werden Strings als Arrays von
+\tchar s behandelt, die durch ein Byte mit dem Wert \fu{0}
+abgeschlossen sind, es w"are allerdings nicht schwer, Funktionen
+zu programmieren, die \pascal -Strings verarbeiten. Da jedoch die
+erstere Stringart die verbreitetere ist, wollen wir bei dieser
+bleiben. Wie wir wissen, kann ein Array in SEL in vielen
+Situationen wie ein Zeiger behandelt werden. Was also w"are
+falsch daran, einen String als Pointer-Konstante zu sehen?
+Tats"achlich wird das nicht nur in SEL, sondern auch in C so
+praktiziert, von wo ich dieses Konzept "`importiert"' habe. Dieser
+Pointer zeigt auf einen Speicherbereich, in dem der eigentliche
+String gespeichert ist. Nat"urlich mu"s dieser Speicherbereich
+w"ahrend der gesamten Programmausf"uhrung an derselben
+Speicheradresse bleiben, und nicht irgendeiner L"oschaktion zum
+Opfer fallen, soda"s die Pointerkonstante im ganzen
+Programm zu jeder Zeit "`aktuell"' ist.\footnote{In Wirklichkeit
+mu"s der String nicht w"ahrend der gesamten Programmausf"uhrung
+im Speicher sein, sondern erst nach seinem ersten Auftreten im
+Code, doch der Einfachheit halber wird er die ganze Zeit im
+Speicher gehalten.}
+
+\subsection{Variablen}
+\label{variables}
+
+In SEL k"onnen zwei Arten von Variablen unterschieden werden, die
+ihrerseits in jeweils zwei Untertypen unterteilt werden k"onnen.
+Lokale Variablen sind nur innerhalb einer bestimmten Funktion
+bekannt und existieren f"ur jede Instanz dieser Funktion
+getrennt.\footnote{Mehrere Instanzen einer Funktion sind dann
+m"oglich, wenn sich diese direkt oder indirekt selbst aufruft.}
+Die Gruppe der lokalen Variablen werden weiter unterteilt in
+Parameter und direkte Funktionsvariablen.\footnote{Eine bessere
+Bezeichnung als "`direkte Funktionsvariablen"' habe ich nicht
+gefunden.} Die Werte der Parameter werden von der aufrufenden
+Funktion bestimmt, wohingegen die direkten Funktionsvariablen der
+Funktion alleine unterstehen. Lokale Variablen werden auf dem
+Stack gespeichert. Wird eine Funktion aufgerufen, werden die
+Parameter von der aufrufenden Funktion auf den Stack gelegt und
+anschlie"send zum Code der Funktion
+gesprungen.\footnote{Nat"urlich wird auch die R"ucksprungadresse
+auf dem Stack gespeichert} Die Funktion ihrerseits legt die
+direkten Funktionsvariablen auf den Stack und f"uhrt dann ihre
+Anweisungen aus. Wird sie beendet, entfernt sie sowohl
+direkte Funktionsvariablen als auch Parameter vom Stack
+und springt dann zur aufrufenden Funktion zur"uck. Das Konzept,
+den Stack als Speicher f"ur lokale Variablen zu benutzen macht
+es m"oglich, da"s bei einer rekursiven Funktion jede Instanz ihre
+eigenen Variablen zur Verf"ugung hat.
+
+Globale Variablen werden in SEL unterteilt in modulglobale und
+programmglobale Variablen. Erstere sind nur in der Quelldatei
+(Modul) bekannt, in der sie definiert sind, wohingegen letztere
+auch in anderen Modulen benutzt werden k"onnen. Sowohl modul- als
+auch programmglobale Variablen werden im statischen Speicher
+aufbewahrt. Daf"ur, da"s modulglobale Variablen nur in ihrem
+jeweiligen Modul referenziert werden, haben der Interpreter bzw.
+der Compiler oder der Linker zu sorgen.
+
+Ich glaube, "uber die Verwendung von Variablen in Ausdr"ucken
+mu"s ich hier nicht viele Worte verlieren: das geschieht ganz
+einfach---wie in fast allen Programmiersprachen "ublich---durch
+die Benutzung des Variablennamens.
+
+\subsection{Funktionen}
+\label{exprfuncs}
+
+Die Aufrufkonvention f"ur Funktionen ist einfach: Der
+Funktionsname gefolgt von in Klammern gesetzten Parametern,
+jeweils durch einen Beistrich getrennt, bilden einen Funktionsaufruf.
+Hat die Funktion keine Parameter, sind trotzdem "offnende und
+schlie"sende Klammern anzugeben, aus mehreren Gr"unden. Erstens
+kann der Interpreter bzw. Compiler daran ohne nachzusehen
+erkennen, da"s es sich um einen Funktionsaufruf handelt und nicht
+um die Verwendung einer Variablen. Zweitens ist dies in Hinblick
+auf die evtl. Erweiterung der Sprache durch
+Funktionszeiger\footnote{siehe Kapitel \ref{langext}}, also
+Zeigervariablen, die die Adressen von Funktionen aufnehmen,
+n"otig. In diesem Fall signalisiert das Klammerpaar, da"s wir
+vorhaben, diese Funktion aufzurufen und nicht, sie als Zeiger zu
+verwenden.
+
+Die Anzahl und die Typen der Funktionsparameter sind nat"urlich
+einzuhalten. Die Regelung bei letzteren ist nicht so streng:
+Stimmen die Typen nicht "uberein, versucht SEL mittels impliziten
+Typecastings\footnote{siehe Kapitel \ref{casts}}, diese in die
+richtigen umzuwandeln, was jedoch nicht unbedingt gelingen mu"s,
+da sich der Interpreter bzw. der Compiler an bestimmte Regeln zur
+Typumwandlung halten mu"s.
+
+\section{Typen}
+\label{types}
+
+In diesem Abschnitt m"ochte ich das Typkonzept von SEL erkl"aren.
+Zun"achst stellt sich beim Design einer Programmiersprache die
+Frage, welches Typkonzept "uberhaupt zur Anwendung kommen soll.
+So gibt es z.~B. in \basic\ einige wenige Typen, aus denen der
+Benutzer ausw"ahlen kann, es ist dort jedoch nicht m"oglich,
+selber Typen zu definieren. Zwar k"onnen Arrays definiert werden,
+doch ist ein Array in \basic\ nichts anderes als eine Menge von
+Variablen, deren Namen sich jeweils durch eine Nummer
+unterscheiden---ein Array als Ganzes zu behandeln, ist in \basic\
+nicht m"oglich.
+
+Dann gibt es Programmiersprachen---\dbase\ ist
+ein Beispiel hierf"ur---in denen Variablen zwar einen bestimmten
+Typ haben, dieser sich aber jederzeit "andern kann. Dort ist es
+z.~B. m"oglich, einer Variablen einen numerischen Wert zuzuweisen
+und mit ihr Berechnungen anzustellen. Sp"ater kann man ihr bei
+Bedarf einen String zuweisen und diesen am Bildschirm ausgeben.
+Zwar bietet dieses Konzept auf den ersten Blick f"ur den Benutzer
+Vorteile\footnote{Auch diese Vorteile sind nur scheinbar, denn
+sie verf"uhren zu einem sehr schmutzigen Programmierstil} und es
+ist f"ur eine reine Interpretersprache eine gute Wahl, doch einem
+Compiler macht ein solches Konzept gro"se Probleme: In
+Programmiersprachen wie C oder \pascal\ haben Variablen einen
+vorgegebenen, konstanten Typ. Vom Compiler werden diese Variablen
+an eine bestimmte Speicheradresse gelegt, die sich im Laufe des
+Programms nicht ver"andert, was ohne weiteres m"oglich ist, da
+sich ja die Speicheranforderungen der Variablen auch nicht
+ver"andern. K"onnen sich aber die Typen der Variablen "andern,
+"andern sich auch die Gr"o"sen der Variablen, d. h., da"s es
+nicht m"oglich ist, sie an eine konstante Stelle im Speicher zu
+setzen. W"ahrend ein C-Compiler, wenn er die Variable zu
+referenzieren hat, ganz einfach ihre Speicheradresse einf"ugen
+kann, mu"s ein compiliertes \dbase -Programm eine Tabelle
+verwalten, in der alle Variablen und deren momentane Adressen und
+Typen verzeichnet sind. Wird nun der Ausdruck \fu{x+1}
+abgearbeitet, mu"s zun"achst in der Tabelle nachgesehen werden,
+an welcher Adresse sich die Variable \fu{x} befindet. Zus"atzlich
+mu"s auch gepr"uft werden, welchen Typ diese hat, da z.~B. eine
+ganzzahlige Addition einen anderen Code verlangt, als eine
+Addition mit Gleitkommazahlen. Erst jetzt kann die Addition
+ausgef"uhrt werden. Es ist also nur verst"andlich, da"s Compiler
+f"ur eine solche Sprache einen Code erzeugen, der zehnmal
+langsamer\footnote{Die Zahl 10 mag wie eine "Ubertreibung
+klingen, tats"achlich ist es nicht selten, da"s solche Codes noch
+um einiges langsamer sind. So ben"otigt z.~B. ein Programm, da"s
+einen QuickSort-Algorithmus ausf"uhrt in Clipper (einem
+\dbase -Compiler) sage und schreibe 120 mal l"anger als ein
+vergleichbares Programm in C} ist als der eines C- oder
+\pascal -Compilers.
+
+Eine weitere wichtige Kategorie ist die der typenlosen
+Programmiersprachen---AWK f"allt teilweise darunter. Dort ist es
+m"oglich, einer Variablen einen String zuzuweisen, der eine Zahl
+enth"alt und in der n"achsten Zeile mit dieser Variable zu
+rechnen als w"are sie numerischen Typs. Dieses Konzept ist
+insofern unpraktisch, als man f"ur verschiedene Typen (obwohl
+es diese eigentlich nicht gibt) auch verschiedene Operanden
+braucht. Bei einem Ausdruck \fu{x+y} w"are also nicht klar, ob
+die beiden Strings zu konkatenieren sind oder ob deren numerische
+Werte addiert werden sollen. Auch in Bezug auf den Bau eines
+Compilers ist dieses Konzept von Nachteil, aus "ahnlichen
+wie im vorigen Absatz dargelegten Gr"unden.
+
+Manche alte Programmiersprachen stellen als einzigen Typ das
+Maschinenwort zur Verf"ugung, was einerseits die Gefahr birgt,
+da"s in einer solchen Sprache geschriebene Programme sehr vom
+Prozessor abh"angig sind und andererseits den Nachteil hat, da"s
+viele Aufgaben, die der Interpreter bzw. Compiler ohne 
+Effizienzverluste "ubernehmen k"onnte, vom Programmierer 
+bestritten werden m"ussen.
+
+Wie sich aus den vorigen Abs"atzen leicht herauslesen l"a"st,
+habe ich mich f"ur das Typkonzept entschieden, das auch in C
+oder \pascal\ verwendet wird. Dort mu"s jede Variable vor ihrer
+Verwendung definiert werden, wobei gleichzeitig ihr Typ
+festgelegt wird, der sich im Laufe des Programms nicht "andert.
+Au"serdem ist es dem Benutzer m"oglich, aus den Basistypen der
+Programmiersprache eigene Typen herzuleiten, wenn auch nicht
+unbeschr"ankt.
+
+\subsection{Elementare Typen}
+\label{elemtypes}
+
+Wie bereits gesagt, ben"otigt man zur Konstruktion von
+komplizierteren Typen eine Menge an Basistypen, mit denen man
+mittels der Konstrukte, die SEL bereitstellt, arbeiten kann.
+Programmiersprachen wie C oder \pascal\ bieten eine relativ
+gro"se Zahl solcher Basistypen an. So gibt es in C zwei
+verschiedene Typen, die ein einzelnes Zeichen repr"asentieren,
+drei Grundtypen f"ur ganze Zahlen, wobei von jedem dieser Typen
+ein vorzeichenloser sowie ein vorzeichenbehafteter Typ
+exisitiert, und mehrere Gleitkomma-Typen. Die Vielfalt in
+\pascal\ ist "ahnlich gro"s, wobei zus"atzlich noch ein Typ f"ur
+logische Werte exisitiert (\type{boolean}). Ich habe mich
+entschieden, in SEL nur vier Elementartypen aufzunehmen:
+\tchar , \tint , \tfloat\ und \tvoid .
+
+Der Typ \tchar\ repr"asentiert ein einzelnes Zeichen und nimmt
+dementsprechend nur ein Byte ein. Arrays aus \tchar s k"onnen
+z.~B. als Strings interpretiert werden.
+
+Ein \tint\ repr"asentiert eine ganze Zahl mit Vorzeichen und hat
+in der Regel die Gr"o"se eines Maschinenwortes.\footnote{Eine
+Ausnahme bildet MS-DOS, wo ein Maschinenwort nur 16 Bits lang
+ist, d.~h. der Wertbereich w"urde von etwa -32000 bis 32000
+reichen, was zwar f"ur viele Anwendungen reicht, aber ungen"ugend
+ist, da es ja nur einen Typ f"ur ganze Zahlen gibt. Auf MS-DOS
+Maschinen ist deshalb die Gr"o"se eines \tint\ zwei
+Maschinenworte, also 32 Bits.} Zus"atzlich hat \tint\ die
+Aufgabe, logische Werte zu repr"asentieren, wobei der Wert \fu{0}
+einem "`logisch falsch"' und ein Wert ungleich \fu{0} "`logisch
+wahr"' entspricht. Unter anderem hat diese Konzeption den
+Vorteil, da"s ein Ausdruck des Typs \tint\ nicht nur den Wert des
+\tint\ wiederspiegelt, sondern auch die Aussage, ob dieser
+ungleich \fu{0} ist oder nicht. So ist es z.~B. m"oglich, mit
+einer sehr kurzen \rw{if}-Anweisung zu pr"ufen, ob ein Zeiger ein
+Nullzeiger ist. W"ahrend hierf"ur in \pascal\ die Anweisung
+\fu{if p <> nil then} benutzt wird, kann in SEL einfach
+\fu{if (p)} geschrieben werden. Zieht man es aus Gr"unden der
+"Ubersichtlichkeit vor, trotzdem einen boolee'schen Typ zu haben,
+kann man diesen in SEL problemlos mit den Direktiven
+
+\begin{verbatim}
+#define boolean        int
+#define false          0
+#define true           1
+\end{verbatim}
+
+\noindent simulieren.\footnote{Die Betonung liegt auf "`simulieren"',
+da wir uns mit diesen Direktiven keinen eigenen Typ schaffen sondern
+lediglich \fu{boolean} zu einem Pseudonym f"ur \rw{int} machen.}
+
+Der Typ \tfloat\ repr"asentiert eine vorzeichenbehaftete
+Gleitkommazahl. Ihre Gr"o"se im Speicher h"angt vom jeweiligen
+Prozessor ab.
+
+Einen Spezialfall unter den Typen stellt \tvoid\ dar: Er
+repr"asentiert gar nichts! F"ur sein Dasein sprechen zwei
+Gr"unde. Erstens macht er es m"oglich, Funktionen ohne
+R"uckgabewert zu konstruieren, also Konstrukte, die mit den
+Prozeduren in \pascal\ oder \modula\ vergleichbar sind. Au"serdem
+ist er der Grundtyp f"ur typenlose Zeiger, also Zeiger, die auf
+etwas nicht Bestimmtes zeigen. Verwendung finden solche Zeiger
+z.~B. in Funktionen zur Speicherallokation. Diese geben einen
+Zeiger auf einen Speicherbereich bestimmter Gr"o"se zur"uck,
+wobei aber nicht bekannt ist, f"ur welchen Typ dieser Bereich
+reserviert wird.
+
+\subsection{Arrays}
+
+Ein Array ist ein Zusammenschlu"s mehrerer Variablen desselben
+Typs, die im Speicher sinnvollerweise aufeinander folgen. Ich
+habe diesen Typ in SEL aufgenommen, weil er erstens nicht schwer
+zu implementieren und zweitens in sehr vielen Situationen
+unverzichtbar ist. Auffallend an der Schreibweise des Arraytyps
+ist, da"s die Dimension des Arrays dem Grundtyp nicht nach- sondern
+vorgestellt sind. Gem"a"s unserem Grundsatz, Symbole anstatt
+Schl"usselw"ortern zu verwenden, wo es nicht st"ort, habe ich hier
+auf Ausschm"uckungen wie das in \pascal\ verwendete \fu{array
+... of ...} verzichtet und statt dessen eine in eckige Klammern
+geschlossene Array-Dimension benutzt. Auf ein Angeben der
+Grenzen, wie in \pascal\ "ublich, habe ich verzichtet, das erste
+Element besitzt den Index \fu{0}. Diese Vereinfachung hat zwei
+Gr"unde: Einerseits ist es nicht schwer, auf speziell indizierte
+Arrays zu verzichten, andererseits w"urde sich das auf die
+Konsistenz in Bezug auf die Verwendung von Zeigern anstatt Arrays
+auswirken: Angenommen, wir h"atten ein Array \fu{a : [5..10]int}.
+In SEL ist es nun m"oglich, dieses Array als Zeigervariable zu
+betrachten und so zu behandeln, d. h., wir k"onnten mit ihm
+Zeigerarithmetik betreiben. Per definitionem ist ein Zeiger
+\fu{p} gleich \fu{p + 0}, was bedeutet, da"s wir mit \fu{*(a + 0)} auf das
+erste Element des Arrays zugreifen k"onnen. Wir k"onnen auf
+dieses Element auch direkt "uber das Array zugreifen, also mit
+\fu{a[5]}. Ich denke, hier zeigt sich schon, worauf ich
+hinauswill: Die Zahlen, die zur Indizierung verwendet werden,
+stimmen nicht "uberein. Um das zu umgehen, m"u"ste man entweder
+auf die Gleichsetzung von Array und Zeiger verzichten, was ich
+nicht wollte, oder auch in die Zeiger eine komplizierte
+Nummerierung einbauen, was mir und sicher auch dem Benutzer der
+Programmiersprache zu umst"andlich ist.
+
+Zur"uck zu der Dimension des Arrays, die, wie oben erw"ahnt, dem
+Grundtyp vorangestellt ist. Der Grund hierf"ur ist in erster
+Linie beim Typecasting\footnote{siehe Kapitel \ref{casts}}
+von SEL zu suchen. Nehmen wir als Beispiel den Ausdruck
+\fu{a : *int[10]}. Hier w"are es unklar, ob die eckige Klammer noch
+zum Typ geh"ort, oder ob versucht wird, auf das zehnte Element
+des Zeigers (der als Array behandelt wird) zuzugreifen.
+Nat"urlich kann auch dieses Problem durch Klammerung umgangen
+werden, doch warum etwas komplizierter machen, als es ist? Die
+vorangestellte Arraydimension in SEL hat n"amlich noch einen
+Vorteil: Es ist ohne eine Rangordnung oder Klammerung m"oglich,
+einen Typ eindeutig zu bestimmen. Als Beispiel soll der C-Typ
+\fu{*int[10]} dienen. Ohne den beiden Operatoren eine
+unterschiedliche Priorit"at zuzuweisen, ist es unm"oglich zu
+sagen, ob der Typ nun \fu{*(int[10])} oder \fu{(*int)[10]} ist.
+In SEL ist die Sache eindeutig: \fu{[10]*int} kann nur als Array
+aus zehn Zeigern auf \tint\ gedeutet werden.
+
+\subsection{Zeiger}
+
+Zeiger stellen ein wichtiges Konstrukt dar, mit dessen Hilfe es
+m"oglich ist, sehr komplexe, verkettete und verzweigte
+Datenstrukturen zu bilden, die ohne sie nur sehr schwer zu
+verwirklichen w"aren. Der Bau eines Interpreters oder gar eines
+Compilers z.~B. w"are ohne die Verwendung von Zeigern kaum zu
+bewerkstelligen. Aus diesem Grund habe ich Zeiger in SEL
+eingebaut, was f"ur eine Interpretersprache eigentlich sehr
+ungew"ohnlich ist.
+
+Sehr eng in Verbindung mit Zeigern steht in SEL der Operator
+\fu{*}, der einerseits in der Typdefinition eines Zeigers
+verwendet wird und andererseits benutzt wird, einen Zeiger zu
+dereferenzieren. Letzteres geschieht, indem dem Zeiger der
+Sternoperator vorangestellt wird, anders als in \pascal , wo der
+Dereferenzierungsoperator als Suffix verwendet wird. Der Grund,
+warum in SEL der Operator vorangestellt wird, ist die Tatsache,
+da"s er dasselbe Symbol hat wie der Multiplikationsoperator, und
+der Parser\footnote{siehe Kapitel \ref{parser}} nicht w"u"ste,
+wie etwa der Ausdruck \fu{p * - x} gemeint ist. Einerseits k"onnte es
+die Differenz zwischen der Variablen, auf die \fu{p} zeigt und
+\fu{x} sein, andererseits aber auch \fu{p} multipliziert mit
+\fu{-x}. Nat"urlich h"atte ich auch ein anderes Symbol f"ur die
+Dereferenzierung verwenden k"onnen, doch das wollte ich nicht,
+weil ich den Operator \fu{*} von C gewohnt bin, au"serdem fand
+ich es schon immer ein wenig verwirrend, da"s bei der
+Typdeklaration der Operator vorangestellt, bei der
+Dereferenzierung aber nachgestellt sein mu"s.
+
+Der zweite wichtige Operator in Verbindung mit Zeigern ist
+\fu{\&}. Wird er einer Variablen vorangestellt, dann ergibt er
+einen Zeiger auf diese Variable. Mit seiner Hilfe ist es also
+m"oglich, einen Zeiger auf eine bestimmte Variable zeigen zu
+lassen. Verst"andlicherweise ist es nicht m"oglich, \fu{\&} in
+Verbindung mit einer Konstante zu benutzen, denn eine Konstante
+hat keinen bestimmten Platz im Speicher, sie wird vom Interpreter
+direkt in einen Wert umgewandelt und von einem Compiler direkt in
+den Code eingef"ugt. Zu verwechseln ist dies jedoch nicht mit den
+String-Konstanten\footnote{siehe Kapitel \ref{const}}, die
+eigentlich nicht konstante Strings sind, sondern konstante Zeiger
+auf einen String, der an einer bestimmten Stelle im Speicher
+liegt. Doch zur"uck zum Operator \fu{\&}: Sein zweiter
+Verwendungszweck ist die Kennzeichnung eines Parameters einer
+Funktion, der {\em Call-By-Reference} "ubergeben werden soll. In
+\pascal\ z.~B. "ubernimmt diese Aufgabe das Schl"usselwort
+\rw{var}, in C gibt es etwas Derartiges nicht, erst in C++ wurden
+Referenzparameter eingef"uhrt. Auch dort werden sie mit \fu{\&}
+gekennzeichnet. In einer Programmiersprache, in der Zeiger zur
+Verf"ugung stehen, sind Referenzparameter nicht zwingend
+notwendig: Es k"onnten Zeiger auf die betreffenden Variablen
+"ubergeben werden, wie es in C auch praktiziert wird. Ich habe
+mich aus zwei Gr"unden entschlossen, Referenzparameter doch in
+SEL aufzunehmen. Erstens k"onnen sie in manchen Situationen
+Programme um sehr viel "ubersichtlicher und leichter wartbar
+machen. Zweitens, und das war f"ur mich wohl der gewichtigere
+Grund, arbeitet der im n"achsten Kapitel theoretisch beschriebene
+Interpreter intern ohnedies mit Referenzen, soda"s es keine
+Schwierigkeit war, Referenzparameter einzubauen.
+
+\subsubsection{Dynamische Variablen}
+
+Eng verbunden mit den Zeigern ist das Konzept der dynamischen
+Variablen. Dynamisch deshalb, weil sie erzeugt werden k"onnen,
+wenn man sie braucht und aus dem Speicher entfernt, wenn sie
+"uberfl"ussig werden. Statische Variablen belegen
+Speicherbereiche, die vom Compiler bzw. Interpreter im voraus
+bestimmt werden, wohingegen der Speicherbereich f"ur eine
+dynamische Variable erst w"ahrend der Programmausf"uhrung
+bestimmt werden kann. Das impliziert nat"urlich, da"s dem
+Benutzer geeignete Mittel in die Hand gegeben werden m"ussen, um
+dynamische Variablen zu erzeugen. Grunds"atzlich gibt es hierf"ur
+zwei M"oglichkeiten. Entweder, man baut das Konzept der
+dynamischen Speicherverwaltung nicht fest in die
+Programmiersprache ein, sondern "uberl"a"st es dem Benutzer bzw.
+dem Designer der Laufzeitbibliothek, geeignete Funktionen zu
+implementieren, wie es in C der Fall ist, oder man
+ber"ucksichtigt dynamische Speicherverwaltung schon beim Design
+der Programmiersprache und stellt Konstrukte zur Verf"ugung, um
+dynamische Variablen zu erzeugen, wie z.~B. in C++.
+
+Ich habe mich f"ur den zweiten L"osungsansatz entschieden, weil
+ich finde, da"s das Konzept der dynamischen Speicherverwaltung zu
+wichtig ist, um es beim Design einer Programmiersprache nicht
+miteinzubeziehen. Ein daraus resultierender Vorteil ist, da"s
+Programme leichter lesbar werden und es leicher ist, sauberer zu
+programmieren, als z.~B. in C.\footnote{Was nicht hei"sen will,
+da"s es in C nicht m"oglich ist, sauber zu programmieren, es ist
+nur nicht so leicht wie etwa in C++} Angelehnt an das Vorbild C++
+werden in SEL zur dynamischen Speicherverwaltung die beiden
+un"aren Operatoren \rw{new} und \rw{delete}\footnote{siehe
+Kapitel \ref{memmgrops}} verwendet. Der Operand von \rw{new} ist ein
+Typ, also im Gegensatz zu denen der meisten anderen Operatoren
+kein Ausdruck. Der Ergebnistyp ist ein Zeiger auf den
+"ubergebenen Typ, der auf den neu allokierten Speicherbereich
+zeigt. Dieser Bereich kann nun so lange wie n"otig benutzt
+werden. Wird er nicht mehr verwendet, sollte er mit dem Operator
+\rw{delete} freigegeben werden, um sp"ater anderen dynamischen
+Variablen zur Verf"ugung zu stehen. Der Grund, warum ich aus
+\rw{new} und \rw{delete} keine Anweisungen gemacht
+habe---besonders bei \rw{delete} w"urde sich das anbieten---ist,
+da"s alle anderen Anweisungen in SEL zur Flu"skontrolle im
+Programm verwendet werden, soda"s dies gewisserma"sen ein Bruch
+in der Konsistenz der Sprache w"are.
+
+\subsection{Strukturen}
+\label{structs}
+
+Eine Struktur\footnote{Der Name "`Struktur"' stammt von C, in
+\pascal\ wird f"ur dasselbe der Name "`Record"' verwendet} ist
+der Zusammenschlu"s mehrerer Variablen, auch verschiedenen Typs,
+unter einem Namen. Sie bilden zusammen mit Zeigern und
+dynamischen Variablen die Basis f"ur weit komplexere, verzweigte
+und verkettete Datenstrukturen. "Uber ihre Definition m"ochte ich
+nicht viele Worte verlieren, da sie einfach und zweckm"a"sig ist
+und es au"serdem nicht viele andere M"oglichkeiten gibt,
+Strukturen zu definieren.  Was jedoch viel interessanter ist, ist
+die Benutzung von Zeigern auf eine Struktur in der Struktur
+selbst. Ein Beispiel:
+
+\begin{verbatim}
+struct List
+  i    : int;
+  Next : *List;
+end
+\end{verbatim}
+
+Diese Struktur ist eine m"ogliche Definition einer einfach
+verketteten Liste. Neben einem oder mehreren Werten (in diesem
+Fall ein \tint ) enth"alt sie einen Zeiger auf eine Struktur
+ihres eigenen Typs. Einen Interpreter oder Compiler, der mit nur
+einem Pass arbeitet und diese Struktur akzeptiert, zu schreiben,
+ist noch leicht: Man k"onnte sich schon beim Lesen des auf das
+Schl"usselwort \rw{struct} folgenden Bezeichners \fu{List}
+notieren, da"s es diesen Typ von Struktur gibt. Beim Zeiger
+\fu{Next} kann diese Notiz benutzt werden, um seinen Typ
+festzulegen. Beim Lesen des Schl"usselwortes \rw{end} wird die
+Notitz anschlie"send zu einer kompletten Definition erg"anzt. Was
+tun wir jedoch, wenn es zwei Strukturen gibt, die jeweils einen
+Zeiger auf die andere Struktur enthalten, wie es nicht selten
+vorkommt? Eine der beiden Strukturen mu"s zuerst gelesen werden,
+und dort treffen wir auf einen unbekannten Typen. In C wird dieses
+Problem dadurch gel"ost, da"s man dem Compiler vor der Definition
+der beiden Strukturen einen Hinweis darauf gibt, da"s diese
+Strukturen irgendwo einmal definiert werden, soda"s er schon vor
+der Definition seine Notiz machen kann. In SEL jedoch k"onnen wir
+dieses Problem weit einfacher l"osen: Da es nicht m"oglich ist,
+einem Typ in SEL einen anderen Namen zu geben, steht, wenn ein
+unbekannter Typ gelesen wird, zweifelsfrei fest, da"s es sich
+dabei um eine Struktur handeln mu"s, soda"s unser Compiler bzw.
+Interpreter bereits hier die Notiz vornehmen kann.
+
+\subsection{Typecasting}
+\label{casts}
+
+Bei einer Gegen"uberstellung der Typkonzepte von C und \pascal\
+f"allt auf, da"s \pascal\ in der Typ"uberpr"ufung weit strenger
+ist als C. So ist es in C ohne weiteres m"oglich, einem \tchar\
+einen numerischen Wert zuzuweisen, wohingegen in \pascal\ zu
+diesem Zweck ein eigener Typ existiert. In der Sprache \pascal\
+ist eine Umwandlung eines Typs in einen anderen gar nicht
+vorgesehen,\footnote{au"ser in F"allen, wo die beiden Typen zur
+gleichen Gruppe geh"oren, wie z.~B. \tint\ und \type{longint}} in
+C wird sie in vielen F"allen sogar vom Compiler "ubernommen, an
+anderen Stellen kann sie der Benutzer mittels Typecasting
+durchf"uhren. Der Grund, warum ich in SEL ein flexibles
+Typkonzept eingebaut und nicht die strenge "Uberpr"ufung von
+\pascal\ "ubernommen habe, ist, da"s es bei vier Basistypen sehr
+schwer ist, ohne Typumwandlung auszukommen. Au"serdem k"onnen
+Programme durch implizites Typecasting um einiges k"urzer und
+"ubersichtlicher werden, man denke nur an die Umwandlung zwischen
+\tchar\ und \tint , wof"ur in \pascal\ eigene Funktionen
+notwendig sind.
+
+Um aber nicht in einem vollst"andigen Chaos zu enden, darf nicht
+wahllos jeder Typ implizit in jeden anderen Typen umgewandelt
+werden, nur damit im Programm ohne Fehlermeldung fortgefahren
+werden kann. Die Regeln, die in SEL f"ur implizites sowie
+explizites Typecasting gelten, sind in \cite{selkr}, Seite 24
+zusammengefa"st.
+
+Der Grund, warum ich nicht das in C "ubliche Typecasting, einem
+Ausdruck den neuen Typ in Klammern voranzustellen, "ubernommen
+habe, ist der, da"s ich einfach etwas Neues ausprobieren wollte,
+und das Typecasting mittels des \fu{:}-Operators exzellent zu den
+"ubrigen Konstrukten in SEL (Variablen- und Strukturdefinition,
+Parameterdefinition in Funktionen u.~s.~w.) pa"st. Es zeigt sich,
+da"s Programme bei richtiger Verwendung des Typecasting-Operators
+weit "ubersichtlicher sind als in C, meine Wahl hat sich also in
+keiner Weise als Fehlgriff erwiesen.
+
+\subsection{Mengen, Listen, B\protect{"aume} etc.}
+
+Komplexere Typen, wie z.~B. Mengen, Listen oder B"aume sind in
+SEL nicht vorhanden, aus guten Gr"unden. Mengen einerseits
+werden relativ selten verwendet und lassen sich leicht
+vermeiden. Au"serdem sind sie sehr leicht mit den Mitteln von
+SEL zu implementieren, soda"s das Einbeziehen in SEL nur
+"au"serst wenig Sinn h"atte. Listen und B"aume hingegen werden
+zwar oft verwendet, sind allerdings so komplex und existieren in
+einer derartig gro"sen Anzahl von Variationen, da"s es mit
+einfachen Mitteln kaum m"oglich ist, sie vern"unftig zu
+unterst"utzen.
+
+\section{Bezeichner und Schl\protect{"usselw\protect{"orter}}}
+
+Wie in vielen Programmiersprachen "ublich, sind auch in SEL
+Schl"usselw"orter reserviert, d.~h., sie k"onnen nicht als
+Bezeichner verwendet werden, aus zwei Gr"unden. Erstens wird
+dadurch die Programmierung eines Interpreters bzw. Compilers
+erheblich erschwert, und zweitens w"aren dadurch sehr
+verwirrende Konstruktionen wie z.~B.
+
+\begin{verbatim}
+for (for = to to step step end)
+  ...
+end
+\end{verbatim}
+
+\noindent m"oglich, was nicht im Sinn des Designers sein kann.
+
+Schl"usselw"orter und Bezeichner sind in SEL case-sensitiv,
+d.~h., da"s zwei W"orter, die sich nur dadurch unterscheiden,
+da"s ein oder mehrere Buchstaben statt gro"s klein geschrieben
+sind oder umgekehrt, als unterschiedlich betrachtet werden. Das
+hat drei Vorteile: Erstens wird dadurch die Entwicklung der
+lexikalischen Analyse\footnote{siehe Kapitel \ref{scanner}}
+ein wenig einfacher, zweitens k"onnen dadurch verschiedene Arten
+von Bezeichnern (Bezeichner f"ur Funktionen, Variablen, Makros
+u.~s.~w.) durch verschiedene Schreibweise gekennzeichnet werden.
+Drittens wird durch eine vorgegebene Schreibweise bei
+unerfahrenen oder schlampigen Programmierern die
+"Ubersichtlichkeit der Quelltexte gesteigert.
+
+Die Syntax der Bezeichner ist relativ simpel: Sie bestehen aus
+einem Buchstaben oder Unterstrich, gefolgt von einer beliebigen
+Anzahl von Buchstaben, Ziffern oder Unterstrichen. Der Grund,
+warum Bezeichner nicht mit Ziffern beginnen d"urfen ist der, da"s
+dadurch eine Eindeutigkeit der Sprache nicht mehr gew"ahrleistet
+w"are. So k"onnte z.~B. \fu{12to} einerseits als Zahl \fu{12}
+gefolgt vom Schl"usselwort \rw{to}, andererseits aber auch als
+Bezeichner gedeutet werden. Dieser Konflikt lie"se sich zwar
+durch Verwendung von Leerzeichen vermeiden, w"urde aber die
+lexikalische Analyse ungleich schwerer machen. Warum ich nicht
+auch andere Symbole in Bezeichnern erlaubt habe, ist einfach: Je
+weniger Symbole in Bezeichnern verwendet werden d"urfen, desto mehr
+hat man f"ur andere Zwecke frei.
+                            
+\section{Weiterf\protect{"uhrende} Projekte}
+\label{langext}
+
+Keine Programmiersprache ist perfekt, und schon gar nicht SEL,
+f"ur dessen jetzige Form ich bewu"st die Versionsnummer 0.3
+gew"ahlt habe. Leider war es mir aus Zeit- und Platzgr"unden
+nicht m"oglich, auch nur einen Teil der von mir geplanten
+Erweiterungen in diese Arbeit einzubringen, soda"s ich sie in
+diesem Kapitel kurz zusammenfassen m"ochte, einerseits, um zu
+zeigen, was SEL noch alles fehlt und andererseits, um den Leser
+anzuregen, sich mit der Materie eingehender auseinanderzusetzen.
+
+\begin{description}
+\item[Zeiger auf Funktionen] stellen ein sehr praktisches
+Sprachkonzept dar. Sie erm"oglichen es z.~B., in einer
+graphischen Benutzeroberfl"ache, wie etwa Windows NT oder meinen
+Schani-Tools, jedem Bildschirmfenster eine Funktion zuzuweisen,
+die die Verwaltung desselben "ubernimmt. Sprachlich gesehen liegt
+die einzige Schwierigkeit bei der Typangabe eines solchen
+Funktionszeigers, denn der Aufruf einer Funktion durch einen
+Zeiger kann genauso wie bei einer "`richtigen"' Funktion durch
+den Namen der Zeigervariablen, gefolgt von einer in Klammern
+gesetzten Parameterliste erfolgen, und die Adresse einer Funktion
+kann mittels deren Namen, ohne nachfolgende Parameterliste in
+Klammern, ermittelt werden. Doch auch der Typ f"ur einen
+Funktionszeiger kann relativ leicht ohne Zweideutigkeiten in die
+Grammatik eingebaut werden. So k"onnte etwa \fu{char(int,float)}
+f"ur einen Zeiger auf eine Funktion, die einen \tint\ und einen
+\tfloat\ als Parameter erwartet und einen \tchar\ zur"uckliefert,
+stehen.\footnote{Tats"achlich f"uhrt eine Erweiterung wie oben
+beschrieben zu einem kleinen Konflikt in der Grammatik, der
+jedoch leicht beseitigt werden kann.}
+
+\item[Variante Strukturen] sind Strukturen, die zwar mehrere
+Elemente haben, diese jedoch denselben Speicherbereich
+einnehmen. So etwas ist immer dann von Vorteil, wenn eine
+Struktur ben"otigt wird, die Objekte beschreibt, die zwar in
+gewisser Hinsicht "ahnlich sind, jedoch andere Parameter haben.
+Ein Beispiel hierf"ur ist die in Kapitel \ref{intexprs}
+besprochene Datenstruktur f"ur SEL-Ausdr"ucke.
+
+\item[Makros mit Parametern] w"urden, wenn sie so flexibel
+aufgebaut sind, da"s neue Befehle durch sie
+"`vorget"auscht"' werden k"onnen, perfekt in eine Makrosprache
+passen. Ein gutes Beispiel f"ur solche Makros sind die sog. User
+Defines Commands (UDC's) von Clipper.
+
+\item[Objektorientierte Programmierung] ist zwar ein edles Ziel,
+jedoch nicht leicht zu verwirklichen.
+\end{description}
+
+\chapter{Der Interpreter}
+
+Das Ziel dieses zweiten Kapitels ist es, f"ur die im ersten
+Kapitel erkl"arte Programmiersprache SEL einen Interpreter zu
+entwerfen. Der Titel dieser Arbeit deutet darauf hin, da"s dieser
+Entwurf theoretisch ist, also in dieser Arbeit keine
+Implementation eines Interpreters zu finden ist. Die Gr"unde
+hierf"ur sind verschieden. Schon lange bevor ich "uberhaupt die
+Idee zu dieser Fachbereichsarbeit hatte, wollte ich einen
+Interpreter schreiben. Als ich mit Herrn Prof. Freiler "uber das
+Thema dieser Arbeit diskutierte, legte er mir die Beschr"ankung
+auf, da"s, wenn das Thema dieser Arbeit ein Programm w"are,
+dieses in \pascal\ geschrieben sein m"u"ste. Da ich aber den
+Interpreter in erster Linie f"ur mich und nicht f"ur diese Arbeit
+programmieren wollte, hatte ich vor, ihn in C zu schreiben. Aus
+diesem Grund einigte ich mich mit Herrn Prof. Freiler darauf,
+da"s ich den Interpreter nur theoretisch, also unabh"angig von
+irgendeiner Implementation, behandeln w"urde. Im Nachhinein
+betrachtet bin ich froh "uber diese Entscheidung, da es kaum
+m"oglich gewesen w"are, in einer im Umfang derma"sen beschr"ankten
+Arbeit einen ganzen Interpreter und eine angemessene Erkl"arung
+dazu unterzubringen.
+
+Doch auch mit der Beschr"ankung auf eine theoretische Abhandlung
+ist der Umfang dieser Arbeit zu gering, um ausf"uhrlich auf alle
+Details einzugehen. Aus diesem Grund m"ochte ich im Gegensatz 
+zum ersten Kapitel, in dem ich alle meine Entscheidungen 
+begr"undet und evtl. auch andere L"osungsans"atze beschrieben 
+habe, in diesem nur den Entwurf pr"asentieren und lediglich in
+einigen seltenen F"allen andere m"ogliche L"osungen diskutieren.
+
+Dieses Kapitel beschreibt alle wichtigen Algorithmen und
+Datenstrukturen des Interpreters, geht jedoch nicht n"aher auf
+grundlegende Datenstrukturen wie etwa dynamische Listen ein.
+Sollte der Leser mit diesen Strukturen nicht vertraut sein,
+empfehle ich ihm die Lekt"ure von \cite{sedge}, Kapitel 3--5 und
+16.
+
+\section{Der Begriff des Interpreters}
+\label{whatisit}
+
+Um ein Programm einer h"oheren Programmiersprache auf einem
+Computer auszuf"uhren, kann man sich zweier verschiedener
+Werkzeuge bedienen: Interpreter und Compiler. Der Begriff
+"`Compiler"' wird vom Duden Informatik wie folgt definiert:
+
+\begin{quotation}
+Programm, das Programme aus einer Programmiersprache A in eine
+Programmiersprache B "ubersetzt.\footnote{siehe \cite{duden},
+Seite 745}
+\end{quotation}
+
+Das bedeutet, da"s ein Compiler ein Programm gar nicht direkt
+ausf"uhrt, sondern es lediglich in eine andere Programmiersprache
+"ubersetzt. In der Regel ist diese Sprache eine Assemler- oder
+Maschinensprache, die direkt vom Computer "`verstanden"' wird. Im
+Gegensatz dazu ist ein Interpreter
+
+\begin{quotation}
+Ein Programm, welches ein Programm einer anderen
+Programmiersprache nach den notwendigen syntaktischen
+"Uberpr"ufungen sofort ausf"uhrt. Im Gegensatz zu einem
+"Ubersetzer\footnote{andere Bezeichnung f"ur Compiler} mu"s das
+Quellprogramm nicht erst in eine andere Programmiersprache
+"ubersetzt werden, sondern der Interpreter analysiert
+nacheinander jede Anweisung und Deklaration des Quellprogramms
+und f"uhrt diese unmittelbar aus.\footnote{siehe \cite{duden},
+Seite 322}
+\end{quotation}
+
+In der Praxis jedoch wird kaum ein Interpreter ein Programm
+ausf"uhren, ohne es vorher in eine geeignetere Form umgewandelt
+zu haben. Man kann sich leicht vorstellen, da"s ein Interpreter,
+der etwa bei einem Funktionsaufruf alle Module nach der Deklaration
+dieser Funktion durchsuchen mu"s, zu langsam ist, um sinnvoll
+eingesetzt werden zu k"onnen. Auch das wiederholte Lesen und
+Erkennen der Schl"usselw"orter, die im Quelltext verwendet
+werden, ist zu zeitaufwendig, als da"s es w"ahrend der
+Ausf"uhrung des Programms durchgef"uhrt werden k"onnte. In den
+folgenden Kapiteln werden wir deshalb besprechen, wie sich ein
+Interpreter die Arbeit so einteilen kann, da"s eine m"oglichst
+hohe Ausf"uhrungsgeschwindigkeit erreicht wird.
+
+Ich m"ochte anmerken, da"s das in diesem Kapitel besprochene
+Design f"ur einen Interpreter zwar theoretisch, jedoch keineswegs
+realit"atsfern ist. Ich habe selbst einen SEL-Interpreter auf
+diese Weise implementiert.
+
+\section{Einsatzgebiete eines Interpreters}
+
+Wenn man bedenkt, da"s die Ausf"uhrung eines Programms durch
+einen Interpreter oft mehrere hundert Male l"anger dauert als die
+eines mit einem Compiler erzeugten Maschinenspracheprogramms, fragt
+man sich, welchen Zweck ein Interpreter eigentlich erf"ullen
+kann. Ein Haupteinsatzgebiet f"ur Interpreter sind Computer, die
+f"ur die sinnvolle Verwendung eines Compilers zu langsam sind
+und/oder zu wenig Speicher bieten. Beispiele hierf"ur sind alte
+Home-Computer wie z.~B. der Commodore~C-64 aber auch
+Taschenrechner wie etwa der Texas Instruments~TI-85 oder der
+Hewlett Packard~HP-48. Oft werden Interpreter auch zum
+Entwickeln von Programmen eingesetzt, da sie den Vorteil haben,
+Programme ohne Zeitverz"ogerung ausf"uhren zu k"onnen. Ein
+anderes wichtiges Einsatzgebiet f"ur Interpreter ist die
+Steuerung von Me"sger"aten und Robotern. Dort stellt die langsamere
+Ausf"uhrung von Programmen kaum einen Nachteil dar, andererseits
+ist es ein gro"ser Vorteil, da"s Programme ge"andert werden
+k"onnen und sofort wieder einsatzbereit sind.
+
+\section{Bestandteile eines Interpreters}
+
+Bevor wir uns daranmachen, uns dar"uber zu unterhalten, wie der
+Interpreter aussehen und welche Leistung er bieten soll, m"ussen
+wir "uber den groben Aufbau eines Interpreters Bescheid wissen.
+Wie bereits oben erw"ahnt wird in der Praxis das Quellprogramm
+vor dem Interpretieren in eine f"ur den Interpreter geeignete
+Form umgewandelt ({\em Tokenizing}). Dieser Vorgang wird in der
+Regel von der lexikalischen Analyse erledigt. Dabei wird der
+Quellcode sequentiell abgearbeitet und Schl"usselw"orter und
+Bezeichner codiert. Zus"atzlich werden die Positionen von wichtigen
+Schl"usselw"ortern wie z.~B. \rw{function}, \rw{global} und
+\rw{local} gespeichert. Im Fall von SEL wird gleichzeitig
+zur lexikalischen Analyse der Pr"aprozessor ausgef"uhrt. Er hat die
+Aufgabe, Include-Dateien einzubinden und Makros in den
+Programmtext einzuf"ugen.
+
+Im Anschlu"s an die lexikalische Analyse und das Tokenizing kann
+mit der Ausf"uhrung des Programms begonnen werden. Bei einer
+Programmiersprache wie SEL m"ussen zuerst nat"urlich spezielle
+Initialisierungen vorgenommen werden, n"amlich das Einrichten der
+modul- und programmglobalen Variablen und das Analysieren der
+Funktionsk"opfe. Zus"atlich speichert der Interpreter die
+Stellen, an denen die jeweiligen Funktionen beginnen, soda"s
+nicht das gesamte Programm durchsucht werden mu"s. Jetzt wird das
+Programm durch einen Aufruf der \fu{main}-Funktion gestartet. Die
+einzelnen Anweisungen und Ausdr"ucke werden vom Parser analysiert
+und sofort ausgef"uhrt. Dabei mu"s nat"urlich auf spezielle
+Routinen, die z.~B. f"ur die Verwaltung der Variablen und
+"ahnliches verantwortlich sind, zur"uckgegriffen werden.
+
+Zusammenfassend l"a"st sich also sagen, da"s ein Interpreter aus
+drei wichtigen Teilen besteht: Der lexikalischen Analyse, die das
+Tokenizing vornimmt, dem Parser, der das Programm syntaktisch
+analysiert und den Verwaltungsroutinen, die die Hintergrundarbeit
+leisten.
+
+\section{Zielsetzung f\protect{"ur} das Design}
+\label{intgoals}
+
+Wie schon im ersten Kapitel erw"ahnt, ist SEL mit dem Ziel, sie
+als Makrosprache zu verwenden, entworfen worden. Es w"are also
+angebracht, den Interpreter von Beginn an so zu entwerfen, da"s
+er nicht ein eigenst"andiges Programm darstellt, sondern eher
+eine Art Modul, das man in andere Programme aufnehmen kann. Das
+setzt nat"urlich voraus, da"s er nicht eine Unmenge an Speicher
+verbraucht und auch, da"s er den Speicher, den er verbraucht,
+nach der Ausf"uhrung des SEL-Programms wieder freigibt, soda"s er
+wieder dem Hauptprogramm zur Verf"ugung steht.
+
+Der Interpreter sollte nat"urlich, um ohne Bedenken in einem
+Programm eingesetzt werden zu k"onnen, Programmierfehler so
+schnell wie m"oglich erkennen k"onnen, den Ausf"uhrungsproze"s
+angemessen stoppen, allen Speicher, den das SEL-Programm
+angefordert hat, und auch den, den der Interpreter im Zuge der
+Ausf"uhrung des Programms benutzt hat, freigeben und den
+Fehler dem Hauptprogramm melden.
+
+Wie auch die Programmiersprache SEL sollte auch der Interpreter
+erweiterungsf"ahig sein, d.~h., er sollte dem Hauptprogramm
+erlauben, bestimmte Funktionen auch SEL-Programmen zug"anglich zu
+machen, wie beispielsweise f"ur das Zeichnen einer Linie in einem
+Zeichenprogramm.
+
+Da ich mich in letzter Zeit mit dem Multitasking-Betriebssystem
+Windows NT auseinandergesetzt habe, wollte ich auch meinen
+Interpreter multitaskingf"ahig machen, soda"s es in einem
+Programm m"oglich ist, mehrere SEL-Programme gleichzeitig
+auszuf"uhren. Um mich nicht falsch zu verstehen: Das Multitasking
+wird in keiner Weise vom Interpreter in die Hand genommen,
+sondern obliegt einzig und allein dem Betriebssystem. Der
+Interpreter allerdings mu"s so entworfen werden, da"s er das
+Multitasking nicht erschwert oder gar unm"oglich macht, was, wie
+sich zeigen wird, nicht sehr schwer ist.
+
+Im Laufe dieses Kapitels werde ich auf einige, aber nicht auf alle
+Forderungen dieses Unterkapitels eingehen, weil sie zu trivial
+sind. So ist z.~B. die Freigabe des benutzten Speichers nur eine
+Formsache und mu"s nicht extra von mir erl"autert werden.
+
+\section{Die lexikalische Analyse}
+\label{scanner}
+
+Die lexikalische Analyse hat die Aufgabe, den Zeichenstrom des
+Quelltextes in einen Tokenstrom zu verwandeln. Als Token
+bezeichnet man die kleinste Einheit, die vom Parser bearbeitet
+wird. Token sind z.~B. die Schl"usselw"orter, Bezeichner,
+Konstanten u.~s.~w. Der Grund, warum man die Erkennung von
+Schl"usselw"ortern etc. nicht auch dem Parser "uberl"a"st, was
+durchaus m"oglich w"are, ist der, da"s ein Parser diese Aufgabe
+bei weitem nicht so schnell ausf"uhren kann wie ein eigens daf"ur
+angefertigter {\em Scanner}.\footnote{Begriff f"ur ein Programm
+oder einen Programmteil, der die lexikalische Analyse
+durchf"uhrt} Au"serdem wird der Bau eines Parsers wesentlich
+vereinfacht, wenn man einen Scanner verwendet.
+
+Um die Arbeitsweise eines Scanners zu beschreiben, m"ochte ich
+zun"achst ein Beispiel heranziehen. Nehmen wir an, der Scanner
+h"atte den Zeichenstrom \fu{for (x=1 to 10)} zu bearbeiten. Er
+untersucht nun das erste Zeichen und merkt, da es sich um einen
+Buchstaben handelt, da"s er es entweder mit einem Bezeichner oder
+mit einem Schl"usselwort zu tun hat. Die einfachste Methode,
+dieses Token zu analysieren ist, so lange Buchstaben, Ziffern und
+Unterstriche zu lesen, bis er an einem Zeichen ankommt, das
+nicht mehr aus einer der genannten Kategorien stammt. Der
+Scanner w"urde also zuerst das \fu{f}, dann das \fu{o} und
+anschlie"send das \fu{r} lesen. Da das n"achste Zeichen weder
+Buchstabe, Ziffer noch Unterstrich ist, stoppt er hier. Die
+einfachste Methode, herauszufinden, ob man es hier mit einem
+Schl"usselwort oder einem Bezeichner zu tun hat, ist, eine
+Tabelle anzulegen, die alle Schl"usselw"orter der Sprache
+umfa"st. Findet der Scanner das Wort in der Tabelle, ist es ein
+Schl"usselwort, andernfalls ein Bezeichner. Das n"achste Zeichen
+ist ein Leerzeichen. In einer formlosen Programmiersprache wie
+SEL werden Leerzeichen und Tabulatoren "ubersprungen, soda"s der
+Scanner nichts anderes zu tun hat, als zum n"achsten Zeichen
+vorzur"ucken. Zwar sind Zeilenumbr"uche f"ur den Parser nicht
+relevant, doch f"ur den Pr"aprozessor sind sie wichtig, soda"s
+sie gemeldet werden sollten.
+
+Da es nur ein Symbol in SEL gibt,
+das mit einer "offnenden, runden Klammer beginnt, n"amlich dieses
+selbst, wei"s der Scanner sofort, mit welchen Token er es zu tun
+hat und kann vorr"ucken. Interessant wird es nun bei der Analyse
+des Symbols \fu{=}, denn hier kann der Scanner nicht sofort davon
+ausgehen, da"s es sich um den Zuweisungsoperator handelt, da es
+noch ein anderes Symbol, n"amlich \fu{==} gibt, das mit einem
+\fu{=} anf"angt. So mu"s der Scanner auch hier das n"achste
+Zeichen betrachten um entscheiden zu k"onnen, welches Symbol er
+vor sich hat.
+
+Wie dieses Beispiel zeigt, ist es f"ur einen
+Scanner vital zu wissen, welches Zeichen als n"achstes vorliegt,
+wobei er sich dieses aber auch f"ur das n"achste Token aufheben
+k"onnen mu"s. Die L"osung ist einfach: Man arbeitet mit einem
+Zeichen im voraus, d.~h. es wird immer das kommende Zeichen
+betrachtet, nicht das aktuelle. Wird es akzeptiert, liest man das
+n"achste Zeichen ein, wenn nicht, kehrt man mit dem erkannten
+Token zur aufrufenden Funktion (in Falle von SEL der
+Pr"aprozessor) zur"uck. Beim n"achsten Aufruf des Scanners wird
+mit dem vorher zur"uckgestellten Zeichen weitergearbeitet.
+
+Um den Proze"s der lexikalischen Analyse zus"atzlich zu
+beschleunigen, sollte die Eingabe gepuffert werden. Dabei wird
+ein Teil der Eingabe in einen Zwischenspeicher (Puffer) gelesen,
+um von dort aus vom Scanner abgearbeitet zu werden. Wird das Ende
+des Puffers erreicht, mu"s abermals ein Teil der Eingabe gelesen
+werden, so lange, bis das Ende der Datei erreicht ist. In diesem
+Fall sollte der Scanner der "ubergeordneten Funktion Bescheid
+geben.
+
+Bei bestimmten Tokentypen gen"ugt es nicht, zu melden, da"s
+dieses Token erkannt wurde, sondern es mu"s auch ein Attribut
+zur"uckgeliefert werden, im Falle eines Bezeichners sein Name, im
+Fall einer \tint -Konstante ihr Wert u.~s.~w., es sollte also
+f"ur ein Token eine geeignete Datenstruktur verwendet werden, in
+der alle n"otigen Attribute Platz finden. F"ur unseren
+Interpreter k"onnte diese Struktur etwa so aussehen:
+
+\newpage
+\begin{verbatim}
+struct Token
+  iType  : int;
+  pcName : *char;
+  cChar  : char;
+  iInt   : int;
+  fFloat : float;
+end
+\end{verbatim}
+
+Ist das Token ein Bezeichner, enth"alt \fu{pcName}
+dessen Namen, im Falle einer \tchar -Konstanten enth"alt
+\fu{cChar} ihren Wert u.~s.~w.
+
+\subsection{Der Pr\protect{"aprozessor}}
+
+Der Pr"aprozessor ist in gewisser Weise eine Zwischenstation von
+Scanner und Parser. In SEL hat er die Aufgabe, den Inhalt von
+Include-Dateien in den Programmtext einzuf"ugen, Kommentare zu
+entfernen und Makros zu bearbeiten.
+
+Das Entfernen von Kommentaren ist im Grunde kein Problem. Wird
+vom Scanner das Symbol \fu{//} erkannt, dann werden so lange
+Token gelesen, bis ein Zeilenumbruch gemeldet wird, wonach der
+Kommentar beendet ist. Zus"atzlich zu den Kommentaren sollten
+auch alle Zeilenumbr"uche herausgefiltert werden, da sie den
+Parser st"oren w"urden.
+
+Etwas komplizierter ist das Einf"ugen von Include-Dateien. Da es
+m"oglich sein sollte, Include-Dateien zu verschachteln, gibt es
+zwei M"oglichkeiten zur Implementation. Entweder, der
+Pr"aprozessor arbeitet rekursiv, soda"s er sich selbst nochmals
+aufruft, wenn eine Include-Datei zu bearbeiten ist, oder aber er
+benutzt einen Stack zur Zwischenspeicherung der einzelnen
+Include-Level, was am Ende eigentlich auf dasselbe hinausl"auft.
+Ein kleines Problem ergibt sich mit dem Puffer f"ur den
+Scanner: Wenn der Pr"aprozessor nur einen einzigen Puffer f"ur alle
+Include-Level zusammen benutzt, mu"s er beim Eintritt in eine
+Include-Datei geleert und mit
+der Eingabe aus der Include-Datei gef"ullt werden. Ist diese zu Ende,
+mu"s der Puffer abermals geleert werden und mit dem
+"ubergeordneten Level gef"ullt werden. Das Problem dabei ist,
+da"s man in der Datei dabei ein wenig zur"ucksetzen mu"s, weil
+ein Teil des Puffers gel"oscht wurde. Ist das aus
+irgendwelchen Gr"unden nicht m"oglich oder zu ineffizient,
+mu"s man f"ur jeden einzelnen Include-Level einen Puffer
+benutzen, was nat"urlich mehr Speicher verbraucht.
+
+Zum Bearbeiten von Makros mu"s eine Datenstruktur
+angelegt werden, in der alle Makros aufgezeichnet und auch schnell wieder
+gefunden werden k"onnen. Ein bin"arer Baum und eine Hash-Tabelle
+bieten sich hierzu an. F"ur jeden einzelnen Eintrag in dieser
+Struktur mu"s zus"atzlich noch gespeichert werden, durch welchen
+Text er zu ersetzen ist. Da der Pr"aprozessor auf den Scanner
+aufbaut, ist es einfacher und effizienter, nicht den Zeichenstrom
+zu speichern, sondern den Tokenstrom, der vom Scanner geliefert
+wird. Dazu verwendet man am einfachsten eine einfach verkettete
+Liste aus Token:
+
+\begin{verbatim}
+struct TokenList
+  tokToken : Token;
+  Next     : *TokenList;
+end
+\end{verbatim}
+
+Trifft der Pr"aprozessor nun auf einen Bezeichner, mu"s er zun"achst
+"uberpr"ufen, ob nicht vielleicht ein Makro unter diesem Namen
+exisitiert. Dazu sucht er
+nach ihm in der Datenstruktur. Ist er dort vorhanden,
+setzt der Pr"aprozessor anstatt seiner die Tokenliste ein,
+andernfalls wird er wie ein normaler Bezeichner behandelt.
+
+Nachdem es m"oglich sein soll, innerhalb eines Makros ein anderes
+zu benutzen, m"ussen wir noch etwas einbauen. Die einfachste
+L"osung ist, da"s wir zum Einf"ugen eines Tokens in unseren
+Zwischencode eine eigene Funktion verwenden, die, falls sie auf
+einen Bezeichner trifft, der als Makro definiert ist, sich f"ur
+jedes der Token aus der Liste selbst wieder aufruft. Dadurch ist
+garantiert, da"s, falls in dieser Liste ein Makro auftaucht,
+auch dieses entsprechend behandelt wird.
+                              
+\subsection{Der Zwischencode}
+\label{tokencode}
+
+Wie schon oben erw"ahnt, verwenden wir eine Art Zwischencode, um
+dem Interpreter eine schnelle Ausf"uhrung zu erm"oglichen. Dabei
+werden Schl"usselw"orter und Symbole mit einer eindeutigen Nummer
+codiert, soda"s der Tokentyp sofort ersichtlich ist. Bei
+bestimmten Tokentypen m"ussen zus"atzliche Informationen
+gespeichert werden, wie z.~B. bei Konstanten oder Bezeichnern.
+
+Um die Gr"o"se des Zwischencodes nicht zu sehr aufzubl"ahen,
+werden auch die Namen der Bezeichner mit einer Nummer
+codiert. Dazu wird eine Tabelle aller im Modul vorkommenden
+Bezeichner angelegt und jedem Eintrag eine eindeutige Nummer
+zugewiesen. Diese Nummer wird anschlie"send im Zwischencode
+verwendet, um Bezeichner zu charakterisieren. Zu beachten ist,
+da"s nat"urlich auch der Parser "uber diese Tabelle verf"ugen
+mu"s, da er sonst nur die Nummern der Bezeichner wei"s. Wird
+allerdings in allen Modulen des Programms dieselbe Tabelle
+verwendet, so kann der Interpreter das Programm auch ohne das
+Wissen um die Namen der Bezeichner ausf"uhren.
+
+Eine besondere Hilfeleistung erstattet der Zwischencode dem
+Interpreter bei Schleifen und Kontrollanweisungen: F"ur jedes \rw{if}
+wird zus"atzlich die Position im Zwischencode abgespeichert, an der das
+zugeh"orige \rw{end} bzw. \rw{else} steht. Das hat den Vorteil,
+da"s der Interpreter, wenn er z~B. auf eine \rw{if}-Anweisung
+trifft, deren Bedingung logisch falsch ist, ohne lange zu suchen
+zum zugeh"origen \rw{end} bzw. \rw{else} springen kann, was
+verst"andlicherweise die Ausf"uhrungsgeschwindigkeit erheblich
+steigert, besonders bei Schleifen.
+
+Wie bereits erw"ahnt, werden dem Interpreter zus"atzlich die
+Position aller Vorkommnisse der Schl"usselw"orter \rw{global},
+\rw{local} und \rw{function} mitgeteilt, soda"s er ohne zu suchen die
+Initialisierung der programm- und modulglobalen Variablen und der
+Funktionsk"opfe vornehmen kann.
+
+Neben der erheblichen Geschwindigkeitssteigerung, die der
+Zwischencode erm"oglicht, hat er noch den Vorteil, da"s er
+weniger Speicherplatz als der Quellcode ben"otigt, bei etwas
+gr"osseren Programmen etwa die H"alfte, was besonders unter
+MS-DOS entgegenkommend ist.
+
+Ich m"ochte hier kurz noch darauf eingehen, wie die oben
+angesprochenen Verweise von Anweisungen auf die zugeh"origen
+\rw{end}s bzw. \rw{else}s erzeugt werden k"onnen. Diese auf den
+ersten Blick umst"andliche Aufgabe l"a"st sich relativ leicht
+l"osen, indem man einen Stack zur Speicherung der
+Verschachtelungen der Anweisungen verwendet. Trifft der Scanner z.~B.
+auf ein \rw{if}, dann pusht er die Position, an der er sich
+gerade im Zwischencode befindet, auf den Stack und l"a"st Platz
+f"ur den sp"ater folgenden Verweis frei. Als n"achstes trifft
+er z.~B. auf ein \rw{for} und tut dasselbe. Irgendwann mu"s
+er jedoch zu dem \rw{end} gelangen, da"s die jeweils letzte
+Anweisung schlie"st. In diesem Fall speichert er das \rw{end} im
+Zwischencode, poppt vom Stack die Position der letzten
+Anweisung und f"ugt an dieser Stelle die Position ein, an der
+er soeben das \rw{end} gespeichert hat. Diese Technik wird
+"ubrigens {\em Backpatching} genannt und oft im Compilerbau
+eingesetzt.\footnote{Tats"achlich ist unser Scanner, der
+einen SEL-Quelltext in Zwischencode umwandelt, streng gesehen
+auch ein Compiler.}
+
+\bigskip
+
+Eine effiziente und einfache Darstellung des Zwischencodes ist
+die Verwendung jeweils eines Bytes f"ur ein Token, wobei bei
+bestimmten Tokentypen, wie z.~B. dem \rw{if}-Token, ein
+zus"atzlicher Verweis auf ein anderes Token eingebaut wird. Wie
+viele Bytes f"ur diesen Verweis verwendet werden, h"angt von den
+Anforderungen an den Interpreter ab. Ich verwende hierzu in
+meinem Interpreter 32 Bits, soda"s der Zwischencode theoretisch
+bis zu 4 GByte gro"s sein kann, was sicherlich f"ur alle Anwendungen
+mehr als ausreichend ist. F"ur die meisten
+Anwendungen w"urden auch 16 Bits reichen, da Module in der Regel
+sowieso klein gehalten werden. Bei anderen Token wie etwa einer
+String-Konstante mu"s au"ser dem Tokentyp noch ein Wert
+gespeichert werden, wie in diesem Fall der String.
+
+\section{Der Parser}
+\label{parser}
+
+Der wohl komplizierteste Teil des Interpreters ist der
+Parser. Er hat zur Aufgabe, aus dem Tokenstrom des Zwischencodes
+die einzelnen Anweisungen zu erkennen. Sehr wichtig f"ur den Bau
+eines Parsers ist die Grammatik, denn sie gibt an, was der Parser
+eigentlich erkennen soll. Aus verschiedenen Gr"unden werden wir
+Parser schreiben, die Teile der Sprache SEL erkennen k"onnen,
+n"amlich Typen, Ausdr"ucke und Folgen von Anweisungen. Die Parser
+f"ur Funktionsk"opfe und \rw{global}- bzw. \rw{local}-Bl"ocke
+sind trivial, soda"s ich hier nicht speziell auf sie eingehen
+werde. Ein Grund f"ur diese Trennung ist, da"s der
+SEL-Interpreter vor allem f"ur die Verwendung in anderen
+Programmen gedacht ist und dort ist es in vielen Situationen von
+Vorteil, wenn der Benutzer Ausdr"ucke eingeben kann, z.~B. als
+Filterbedingung in einer Datenbank.
+                              
+\subsection{Der Typen-Parser}
+
+Beim Design eines Parsers ist es zun"achst wichtig, "uber die
+Grammatik Bescheid zu wissen, die der Parser erkennen soll. In
+diesem Unterkapitel besch"aftigen wir uns mit einem sehr
+einfachen Teil der Grammatik von SEL, n"amlich den Typen. Das
+gibt uns die M"oglichkeit, uns "uber die verschiedenen Arten von
+Parsern und "uber die Zusammenh"ange zwischen Grammatik und
+Parser zu informieren. Der "Ubersichtlichkeit halber sei an
+dieser Stelle die Grammatik dargestellt:
+
+\begin{verbatim}
+type:          `char'
+             | `int'
+             | `float'
+             | `void'
+             | `[' INT_CONSTANT `]' type
+             | `*' type
+             | IDENTIFIER
+             ;
+\end{verbatim}
+
+Diese Grammatik hat sieben Produktionen, das Startsymbol
+ist \fu{type}.
+
+\subsubsection{Top-Down und Bottom-Up Parser}
+\label{topdbotu}
+
+Im Interpreter- und Compilerbau werden haupts"achlich zwei
+verschiedene Arten von Parsern verwendet: Top-Down und Bottom-Up
+Parser. W"ahrend Top-Down Parser beim Startsymbol beginnen und
+immer weiter hinabsteigen, bis sie auf die Token treffen, fangen
+Bottom-Up Parser bei den Token an und arbeiten sich bis zum
+Startsymbol hinauf. Das l"a"st sich am besten
+verdeutlichen, indem man versucht, einen Parse-Tree zu
+konstruieren, also einen Baum, der f"ur einen g"ultigen
+Ausdruck der Sprache, in diesem Fall etwa \fu{*[10]Test}, den
+Weg vom Startsymbol bis hinunter zu den einzelnen Token,
+verdeutlicht. Der Parse-Tree f"ur den Beispieltyp ist in
+Abbildung \ref{parsetree} dargestellt.
+
+\begin{figure}
+
+\centerline{\includegraphics[height=4cm]{partree1.eps}}
+
+\caption{Der Parse-Tree f"ur \fu{*[10]Test}}
+\label{parsetree}
+\end{figure}
+
+Die Wurzel des Baumes ist immer das Startsymbol, in diesem Fall
+also \fu{type}. Dieser \fu{type} kann auf der ersten Ebene
+zerlegt werden in das Sternsymbol und einen zweiten \fu{type},
+gem"a"s der Produktion \fu{`*' type}. Dieser zweite \fu{type}
+kann zelegt werden in eine "offnende und eine schlie"sende
+Klammer und eine \fu{INT\_CONSTANT} dazwischen, gefolgt von noch
+einem \fu{type}. Dieser wiederum ist ein \fu{IDENTIFIER}, n"amlich
+\fu{Test}.
+
+Nun zu den Vorgehensweisen der beiden Parsertypen. Ein Bottom-Up
+Parser arbeitet sich wie gesagt von den einzelnen Token zum
+Startsymbol hinauf. Dazu benutzt er einen Stapel, auf dem er zwei
+verschiedene Aktionen durchf"uhren kann: {\em Shift} und
+{\em Reduce}. Aus diesem Grund werden Bottom-Up Parser auch oft
+als Shift-Reduce Parser bezeichnet. Die Analyse des
+Beispieltyps f"uhrt der Parser so durch: Zun"achst liest er den
+Stern, den er shiftet. Auch die beiden Klammern und die
+\fu{INT\_CONSTANT} werden von ihm geshiftet. Nun liest er einen
+Bezeichner und entscheidet, diesen zu einem Typen zu reducen,
+gem"a"s der Produktion \fu{IDENTIFIER}. M"u"ste er einen
+Parse-Tree erstellen, h"atte er an dieser Stelle einen Baum
+mit der Wurzel 3\footnote{siehe Abbildung \ref{parsetree}}
+erzeugt. Auf
+dem Stack des Parsers liegen nun die Token \fu{`*'}, \fu{`['},
+\fu{INT\_CONSTANT}, \fu{`]'} und das Nonterminal \fu{type}, in der
+angegebenen Reihenfolge. An dieser Stelle entscheidet der Parser,
+die letzten vier Symbole zu reducen. Um einen Parse-Tree zu
+erhalten, m"u"ste er nun Baum 3 verwenden, um den gr"o"seren
+Baum 2 zu konstruieren. Zuletzt w"urde der Parser nochmals
+reducen und den Baum 1 erstellen. Der Parser hat nun
+seine Analyse beendet, da das einzige, was auf seinem Stack
+liegt, das Startsymbol ist. Die Hauptaufgabe bei der Erstellung
+eines Bottom-Up Parsers ist, zu entscheiden, wann er zu shiften
+und wann zu reducen hat. Dies ist eine schwere Aufgabe und wird
+in der Praxis von einem Parser-Generator (auch Compiler-Compiler
+genannt) wie etwa YACC erledigt. Da wir jedoch unseren Parser
+selbst programmieren wollen, beschr"anken wir uns auf die
+wesentlich einfacheren Top-Down Parser.
+
+Ein Top-Down Parser geht bei der Analyse von \fu{*[10]Test}
+folgenderma"sen vor: Er erkennt das Sternsymbol und wei"s nun,
+da"s er nach der Produktion \fu{`*' type} vorzugehen hat. An
+dieser Stelle w"urde er den Baum 1 erzeugen. Er liest nun den
+Stern ein und mu"s nun einen weiteren Typ analysieren. Hier wird
+klar, da"s ein Top-Down Parser in der Regel rekursiv
+implementiert wird. Zwar ist es m"oglich, diese Rekursion mit
+einem Stack zu beseitigen, doch ein solcher Parser ist schwerer
+zu programmieren und zu warten, soda"s ich eine rekursive
+Implementation gew"ahlt habe.
+
+Der Parser ruft sich nun selbst auf und erkennt anhand der
+"offnenden eckigen Klammer, da"s er die Produktion
+\fu{`[' INT\_CONSTANT `]' type} w"ahlen mu"s und erzeugt
+gleichzeitig Baum 2. Nacheinander liest er nun die drei folgenden
+Token und ruft sich abermals selbst auf. Nun wendet er die
+Produktion \fu{IDENTIFIER} an und erstellt Baum 3. Damit ist die
+Analyse beendet.
+
+\subsubsection{Look-Aheads}
+
+Wie sich in diesem Beispiel gezeigt hat, ist es f"ur einen Parser wichtig, zu
+wissen, welches Token er als n"achstes zu bearbeiten hat, denn
+danach hat er zu entscheiden, welche Produktion er ausw"ahlt. Zu
+diesem Zweck verwendet man sog. {\em Look-Aheads}. F"ur einen
+SEL-Parser und f"ur fast alle Programmiersprachen ist ein Look-Ahead
+v"ollig ausreichend, es gen"ugt also, ein Token
+vorauszusehen. Die Implementation eines Look-Ahead ist simpel:
+Anstatt nur des aktuellen Tokens verwendet der Parser zus"atzlich das
+Look-Ahead. Soll nun das aktuelle Token "ubersprungen werden,
+weist er einfach den Wert des Look-Aheads dem aktuellen Token
+zu und liest einen neuen Look-Ahead aus dem Zwischencode ein.
+
+\subsubsection{Die Konstruktion des Parsers}
+
+Mit diesen Informationen ist es nun ein Leichtes, einen
+rekursiven Top-Down Parser f"ur Typen zu bauen. Er besteht aus
+einer einzigen Funktion, die durch Betrachten des Look-Ahead
+entscheidet, was passieren soll. Ist der Look-Ahead eines der
+Token \fu{`char'}, \fu{`int'}, \fu{`float'}, \fu{`void'} oder
+\fu{IDENTIFIER}, mu"s der Parser dieses Token nur lesen und die Analyse
+ist beendet. Im Fall einer "offnenden eckigen Klammer liest er
+drei Token und ruft sich anschlie"send selbst auf.\footnote{Es
+ist leicht m"oglich, eine am Ende stehende Rekursion durch einen
+Sprung an den Beginn der Funktion, z.~B. durch eine
+\rw{repeat}-Schleife, evtl. durch einen Stack unterst"utzt, zu
+ersetzen, was im Normalfall die bessere L"osung ist.} Analog dazu
+ist die Produktion \fu{`*' type} zu implementieren. Sollte der
+Look-Ahead keinem der Token entsprechen, hat es der Parser
+offensichtlich mit einem Fehler zu tun, den er entsprechend
+behandeln mu"s. Ein Interpreter wird in diesem Fall eine
+Fehlermeldung ausgeben und die Ausf"uhrung beenden.
+
+Nat"urlich ist klar, da"s unser Parser nicht nur die Aufgabe hat,
+einen Typ zu erkennen, sondern auch, mitzuteilen, um welchen Typ
+es sich dabei handelt. Das jedoch f"allt unter die semantische
+Analyse und wird in Kapitel \ref{inttypes} behandelt.
+
+\subsection{Der Ausdruck-Parser}
+\label{exprparser}
+
+Nachdem wir nun die grundlegenden Funktionen eines Parsers
+kennen, wollen wir einen etwas komplexeren Parser konstruieren:
+Den Parser f"ur SEL-Ausdr"ucke. Die Grammatik hierzu kann im
+Anhang \ref{grammar} oder in \cite{selkr}, Seite 14 nachgelesen
+werden. Ausdr"ucke in SEL werden in der Grammatik durch die
+beiden Nonterminals \fu{expr} und \fu{primary} repr"asentiert. In
+den Produktionen f"ur \fu{primary} taucht noch das dritte
+Nonterminal \fu{type} auf, doch dieses stellt hier kein
+Problem mehr dar, da der entsprechende Parser bereits im letzten
+Unterkapitel skizziert wurde.
+
+Besonders interessant sind die Produktionen f"ur \fu{expr}, denn
+sie bestehen gr"o"stenteils aus dem Nonterminal \fu{expr} selbst.
+Wie sich leicht ersehen l"a"st, ist diese Grammatik auf keinen
+Fall eindeutig, was die beiden Parse-Trees f"ur den Ausdruck
+\fu{a=b+1} in Abbildung \ref{twopartrees}
+verdeutlichen.\footnote{In einer eindeutigen Grammatik darf es
+f"ur einen korrekten Satz nur einen einzigen Parse-Tree geben.}
+
+\begin{figure}
+
+\centerline{\includegraphics[height=3cm]{partree2.eps}}
+
+\caption{Zwei Parse-Trees f"ur \fu{a=b+1}}
+\label{twopartrees}
+\end{figure}
+
+Alle diese Konflikte jedoch lassen sich durch die in
+\cite{selkr},~Seite~21 angegebene Priorit"atstabelle l"osen. Die
+Frage, die sich nun stellt, ist, wie man diese Rangfolge in den
+Parser einbringen kann. Betrachten wir der Einfachheit halber
+nur die folgenden drei Produktionen von \fu{expr}:
+
+\begin{verbatim}
+expr:   expr `=' expr
+      | expr `+' expr
+      | expr `*' expr
+      | primary
+      ;
+\end{verbatim}
+
+Die Priorit"atstabelle sagt, da"s die h"ochste Priorit"at der
+Operator \fu{*} hat, danach folgen \fu{+} und~\fu{=}. Der
+Konflikt kann nun gel"ost werden, indem man f"ur jede Priorit"atsstufe ein
+eigenes Nonterminal einf"uhrt, wobei die Produktionen f"ur die
+Operatoren niedriger Priorit"at auf die Nonterminals der
+Operatoren h"oherer Priorit"at zur"uckgreifen, wie hier
+dargestellt:
+
+\begin{verbatim}
+expr3:   expr2 `=' expr2
+       | expr2
+       ;
+expr2:   expr1 `+' expr1
+       | expr1
+       ;
+expr1:   primary `*' primary
+       | primary
+       ;
+\end{verbatim}
+
+Diese Grammatik kann, angewendet auf den Ausdruck \fu{a=b+1},
+nur einen Parse-Tree erzeugen, n"amlich den, der der
+Klammerung des Ausdrucks \fu{a=(b+1)} entspricht.
+Ungl"ucklicherweise geht mit dieser Grammatik die F"ahigkeit
+verloren, einen Ausdruck wie \fu{a+b+c} darzustellen. Um auch
+diesen Mangel zu beseitigen, ersetzt man in jeder Produktion mit
+einem Operator die linke bzw. rechte Seite mit dem Nonterminal
+des jeweiligen Levels, je nachdem, ob der Operator links- oder
+rechtsassoziativ ist. Daraus resultiert folgende Grammatik:
+
+\begin{verbatim}
+expr3:   expr2 `=' expr3
+       | expr2
+       ;
+expr2:   expr2 `+' expr1
+       | expr1
+       ;
+expr1:   expr1 `*' primary
+       | primary
+       ;
+\end{verbatim}
+
+Diese Grammatik ist eindeutig und erzeugt sowohl f"ur den
+Ausdruck \fu{a=b+1} als auch f"ur \fu{a+b+c} die richtigen
+Parse-Trees, man kann also mit dieser Methode die "`gro"se"'
+Grammatik f"ur den Bau des Anweisungs-Parsers umwandeln. Ich m"ochte die
+sich daraus ergebende Grammatik in dieser Arbeit nicht
+auff"uhren, da sie sehr leicht hergeleitet werden kann und zu
+viel Platz beanspruchen w"urde.
+
+Mit den bisher besprochenen Techniken kann man bereits einen
+Parser f"ur einen Teil der Grammatik konstruieren, sp"atestens
+bei den Linksrekursionen, wie z.~B. in den
+Produktionen f"ur \fu{expr2} in der obigen Grammatik, wird man
+allerdings Schwierigkeiten bekommen. Eine Rechtsrekursion wie etwa bei
+\fu{expr3} ist keine Schwierigkeit: Man kann sie entweder
+durch eine echte Rekursion implementieren oder durch eine
+Schleife, unterst"utzt durch einen Stack. F"ur die erste Produktion
+von \fu{expr2} m"u"ste man jedoch eine Funktion programmieren,
+die als erstes sich selbst aufruft, was nat"urlich in einer
+endlosen Rekursion m"unden w"urde.
+
+Um dieses Problem zu l"osen, versuchen wir zu ergr"unden, welche
+Menge von Ausdr"ucken eigentlich die beiden Produktionen von
+\fu{expr2} beschreiben. Der einfachste Ausdruck, den die
+Grammatik beschreiben kann, ist offensichtlich \fu{expr1}. Er
+l"a"st sich mit Hilfe der beiden Produktionen nicht weiter
+expandieren. Benutzt man als Basis nun die erste Produktion,
+kann man den ersten \fu{expr2} expandieren, entweder
+durch die erste oder die zweite Produktion. Benutzt man die
+zweite Produktion, bekommt man als Ergebnis den Ausdruck
+\fu{expr1 `+' expr1}, der sich abermals nicht weiter expandieren
+l"a"st. F"uhrt man diesen Proze"s fort, wird man bald merken,
+da"s diese beiden Produktionen eine Abfolge von beliebig vielen
+\fu{expr1}, verbunden jeweils durch ein \fu{`+'}, beschreiben.
+Zwar beschreiben die Produktionen f"ur \fu{expr3} im Grunde
+dieselbe Menge, doch ist der Operator \fu{=} rechts-assoziativ,
+w"ahrend \fu{+} links-assoziativ ist, was sich z.~B. beim
+Erzeugen eines Parse-Trees zeigt.
+
+Mit diesem Wissen k"onnen wir nun einen Parser konstruieren, der
+einen \fu{expr2} akzeptiert, m"ussen aber wie gesagt die
+Links-Assoziativit"at beachten. Um nicht unn"otig viele Worte
+machen zu m"ussen, folgt ein Beispiel einer Implementation, die
+einen (primitiven) Parse-Tree erzeugt. F"ur den Parse-Tree wird
+folgende Struktur verwendet, die keiner Erkl"arung bedarf:
+
+\begin{verbatim}
+struct ParseTree
+  Operator : int;
+  Value    : int;
+  Left     : *ParseTree;
+  Right    : *ParseTree;
+end
+\end{verbatim}
+
+Die Funktion \fu{expr2} erzeugt einen Parse-Tree f"ur einen
+\fu{expr2} und greift dabei auf die Funktion \fu{expr1} zur"uck,
+die dasselbe f"ur einen \fu{expr1} tut. Zus"atzlich werden die
+Funktionen \fu{LookAhead} und \fu{Accept} verwendet, die ich
+nicht n"aher erl"autern mu"s:
+
+\begin{verbatim}
+function expr2 () : *ParseTree
+
+  Tree : *ParseTree;
+  Temp : *ParseTree;
+
+begin
+  Tree = expr1();
+  while (LookAhead() == PLUS)
+    Accept(PLUS);
+    Temp = new ParseTree;
+    Temp->Operator = PLUS;
+    Temp->Left = Tree;
+    Temp->Right = expr1();
+    Tree = Temp;
+  end
+  return Tree;
+end
+\end{verbatim}
+
+Auf diese Art und Weise k"onnen Funktionen f"ur jeden der
+Priorit"atsgrade erstellt werden. Im wesentlichen mit derselben
+Methode werden auch die Links-Rekursionen in den Produktionen von
+\fu{primary} beseitigt. Eine Kleinigkeit in der Implementation
+von \fu{primary} m"ochte ich noch besprechen: Die Produktion
+\fu{IDENTIFIER `(' [expr \{`,' expr\}] `)'} enth"alt ein
+optionales Element und darin eingeschlossen ein Element, da"s
+sich beliebig oft wiederholen kann. Es ist zwar m"oglich, solche
+Konstruktionen durch Umformung der Grammatik mit den oben
+besprochenen Methoden zu analysieren, doch die direkte
+Implementation ist nicht schwer zu realisieren und wird deshalb
+von mir vorgezogen.
+
+Die beiden eckigen Klammern in der Produktion bedeuten, da"s auf
+die "offnende runde Klammer, die nach dem \fu{IDENTIFIER} zu
+stehen hat, entweder eine schlie"sende runde Klammer oder ein
+\fu{expr} folgt. Welche der beiden M"oglichkeiten zutrifft,
+kann der Parser dadurch erkennen, da"s er den Look-Ahead
+betrachtet.
+Da ein \fu{expr} niemals mit einer schlie"senden Klammer beginnen
+kann, ist klar, da"s, wenn der Look-Ahead die schlie"sende
+Klammer ist, die erste Variante zutrifft, andernfalls die zweite.
+In letzterem Fall mu"s die Funktion \fu{expr} aufgerufen werden, um
+den ersten \fu{expr} zu erkennen. Nun steht der Parser vor einem
+"ahnlichen Problem. Entweder, es folgt ein Beistrich und noch ein
+\fu{expr}, dann vielleicht noch ein Beistrich u.~s.~w., oder es
+folgt die schlie"sende Klammer. Wie oben kann auch dieses
+Problem mit dem Look-Ahead gel"ost werden. Entspricht er einem Beistrich,
+mu"s noch ein \fu{expr} analysiert werden, wonach der Parser wieder
+auf einen Beistrich testen mu"s. Ist der Look-Ahead die
+schlie"sende Klammer, mu"s er diese nur noch lesen und ist
+mit der Analyse des \fu{primary} fertig. Wenn jedoch der
+Look-Ahead keinem der beiden Symbole entspricht, hat er
+offensichtlich einen Fehler gefunden, der dementsprechend zu
+behandeln ist.
+
+\subsection{Der Anweisungsparser}
+
+Der Parser f"ur Anweisungen ist relativ einfach zu realisieren,
+da er weder Linksrekursionen enth"alt, noch irgendwelche
+Priorit"atsregeln zu befolgen sind. Die Anweisungen von SEL sind
+so konzipiert, da"s der Parser schon anhand des ersten Tokens
+entscheiden kann, um welche Anweisung es sich handelt. Er
+unterscheidet sich jedoch insofern von den bis jetzt besprochenen
+Parsern, als da"s bei bestimmten Anweisungen nur Teile dieser
+Anweisung geparst werden m"ussen, wie z.~B. bei \rw{if}, wo der Wert der
+Bedingung bestimmt, ob der \rw{if}- oder der \rw{else}-Zweig,
+wenn vorhanden, ausgef"uhrt werden soll.
+
+Betrachten wir als Beispiel die zitierte \rw{if}-Anweisung. Der
+Parser erkennt anhand des Look-Ahead, da"s es sich um eine
+\rw{if}-Anweisung handelt. Er "uberliest also die beiden Token
+\rw{if} und \fu{(} und ruft anschlie"send den im vorigen
+Unterkapitel besprochenen Ausdruck-Parser auf, um den \fu{expr}
+zu lesen. Wie sich in Kapitel \ref{semantics} zeigen wird,
+berechnet dieser Parser den Wert des Ausdrucks, der nun
+benutzt werden kann, um zu entscheiden, ob die dem \rw{if} folgenden
+Anweisungen ausgef"uhrt werden sollen. Ist der Wert ungleich \fu{0}, ist
+die Sache leicht. In diesem Fall mu"s sich der Anweisungs-Parser
+nur selbst aufrufen, um die folgenden Anweisungen bis zum
+\rw{end} bzw. \rw{else} zu parsen. Andernfalls benutzt er die
+zus"atzliche Information, die ihm der in Kapitel \ref{tokencode}
+besprochene Zwischencode zum \rw{if}-Token liefert. Sie gibt die
+Position an, an der das zugeh"orige \rw{end} bzw. \rw{else}
+steht. So m"ussen nicht langwierig alle folgenden Anweisungen bis
+zum jeweiligen Token durchsucht werden, sondern es kann direkt an
+die entsprechende Position gesprungen werden. Steht an dieser
+Stelle ein \rw{end}, ist die Analyse der \rw{if}-Anweisung
+beendet, andernfalls mu"s der \rw{else}-Zweig ausgef"uhrt werden.
+
+Noch etwas komplizierter verh"alt es sich mit der
+\rw{switch}-Anweisung. Dort mu"s das \rw{switch}-Token die
+Position des ersten zugeh"origen \rw{case} enthalten, dieses
+wiederum die des n"achsten \rw{case} bzw. \rw{default}
+u.~s.~w. Auf diese Weise ist es m"oglich, einen Zweig nach
+dem anderen auf "Ubereinstimmung zu untersuchen und, falls eine
+"ubereinstimmende Konstante gefunden wurde, diesen Zweig
+auszuf"uhren, indem die Funktion sich selbst aufruft. Damit die
+\rw{switch}-Anweisung auch wie vorgeschrieben ausgef"uhrt wird,
+mu"s der Anweisungs-Parser beim normalen Parsen ein
+\rw{case}-Schl"usselwort einfach "uberspringen und bei einem
+\rw{break} zur "ubergeordneten Funktion zur"uckkehren.
+
+Ein Problemfall ist die \rw{return}-Anweisung. Wenn der
+Parser auf sie trifft, mu"s er auch zur "ubergeordneten Funktion
+zur"uckkehren, doch er mu"s das im Gegensatz zur
+\rw{break}-Anweisung so lange tun, bis der Anweisungs-Parser
+komplett verlassen wurde. Wir m"ussen uns also "uberlegen, wie
+wir es anstellen k"onnten, da"s der Parser wei"s, wann die
+untergeordnete Instanz ein \rw{return} entdeckt hat. Die
+einfachste L"osung ist, das mit dem R"uckgabewert zu tun. Im
+n"achsten Kapitel wird sich zeigen, da"s SEL-Werte vom
+Interpreter in Strukturen gehalten werden. Am sinnvollsten ist
+es, als R"uckgabetyp f"ur den Parser einen Zeiger auf eine solche
+Struktur zu benutzen. Trifft er nun auf ein \rw{break}, gibt er
+einen Nullzeiger zur"uck und der "ubergeordnete Parser wei"s, das
+alles in Ordunung ist. Wurde aber eine \rw{return}-Anweisung
+entdeckt, wird ein Zeiger auf den zugeh"origen Wert
+zur"uckgegeben. Die "ubergeordnete Funktion wei"s nun, da"s auch
+sie beendet werden mu"s und gibt ihrerseits den Wert weiter. Wird
+eine Funktion geparst, die als R"uckgabetyp \tvoid\ hat, mu"s
+ein Zeiger auf einen Dummy-Wert zur"uckgegeben werden.
+
+Der Anweisungs-Parser mu"s auch mit einem Null-Zeiger verlassen
+werden, wenn er auf ein \rw{end} oder \rw{else} trifft, die zu
+keiner von ihm behandelten Anweisungen geh"ort, denn dann f"allt
+es in den Zust"andigkeitsbereich der "ubergeordneten
+Rekursionsebene.
+
+Hier wird auch klar, warum ich auf eine
+\rw{goto}-Anweisung\footnote{siehe Kapitel \ref{goto}} verzichtet
+habe: In einem rekursiven Parser w"are es f"ur einen Sprung
+n"otig, zun"achst zu ermitteln, auf welcher Rekursionsebene das
+Label liegt, und ob es vielleicht innerhalb einer anderen Anweisung
+liegt, was einen besonders schlimmen Fall darstellt. Betrachten wir
+dazu folgendes (theoretische) Programmfragment:
+
+\begin{verbatim}
+if (x == 5)
+  goto label;
+end
+if (y == 3)
+  do_something();
+  if (z == 4)
+    label:
+    do_something_else();
+  end
+end
+\end{verbatim}
+
+In diesem Fall m"u"ste der Interpreter, wenn er die
+\rw{goto}-Anweisung ausf"uhrt, zun"achst eine Rekursionsebene
+verlassen und dann in zwei andere einsteigen, was nat"urlich sehr
+schwer zu realisieren ist. "Uberdies m"u"ste der Parser sehr
+schnell herausfinden k"onnen, wieviel Ebenen zu verlassen und in
+welche er einzusteigen hat. Zu diesem Problem ist mir bis jetzt
+noch keine zufriedenstellende L"osung eingefallen.
+
+\section{Die Verwaltung}
+\label{semantics}
+
+In den letzten Unterkapiteln wurde behandelt, wie der Interpreter
+den Quelltext (genauer gesagt, den Zwischencode) lexikalisch
+analysiert, in Zwischencode verwandelt und diesen syntaktisch
+analysiert, jedoch wurde noch nicht gesagt, wie der Interpreter
+die durch diese Analyse gewonnenen Informationen dazu verwenden
+kann, das Programm auszuf"uhren. Das ist die Aufgabe dieses
+Unterkapitels. Hier wird besprochen, was der Interpreter bei der
+Ausf"uhrung des Programms tut, und wie dies implementiert werden
+kann.
+
+Die meisten der in diesem Unterkapitel besprochenen Algorithmen
+werden w"ahrend der Syntaxanalyse, also des im letzten
+Unterkapitel besprochenen Parsing, ausgef"uhrt, was auch der
+Definition des Interpreters\footnote{siehe Kapitel
+\ref{whatisit}} entspricht.
+        
+\subsection{Module}
+\label{modules}
+
+Da SEL es erlaubt, modulglobale Variablen und Funktionen zu
+benutzen, ist es vonn"oten, ein SEL-Programm auch im Speicher in
+Module aufzuteilen. Dazu m"ussen f"ur jedes Modul mindestens der
+Zwischencode und die modulglobalen Variablen und Funktionen
+gespeichert werden. Im n"achsten Unterkapitel werden sich dazu
+noch einige zus"atzliche Informationen gesellen, die bei der
+Fehlerbehandlung helfen.
+
+Die programmglobalen Funktionen und Variablen werden au"serhalb
+der Module f"ur das gesamte Programm gemeinsam verwaltet, was
+wesentlich effizienter und auch einsichtiger ist (und es nebenbei
+einfacher und schneller macht, Namenskonflike zu bemerken).
+Weiters gibt es zwei Variablen, die f"ur das gesamte Programm
+gelten. Sie geben die Position an, an der sich der Parser
+gerade mit der Ausf"uhrung aufh"alt. Die erste dieser Variablen
+nenne ich \fu{MP} (Module Pointer). Sie enth"alt einen Wert, der
+das Modul, in dem sich die gerade abgearbeiteten Anweisungen
+befinden, eindeutig identifiziert. Am effizientesten ist es, ein
+Array aus Modulbeschreibungen anzulegen, das durch diese
+Variable indiziert wird. Die zweite Variable, \fu{IP}
+(Instruction Pointer), gibt die Position innerhalb des
+Zwischencodes des aktuellen Moduls an.\footnote{Genauerweise
+m"u"ste diese Variable den Namen \fu{TP} f"ur Token Pointer
+tragen, da sie sich nicht auf die aktuelle Anweisung, sondern auf
+das aktuelle Token bezieht.}
+
+\bigskip
+
+In Kapitel \ref{intgoals} wurde als Ziel f"ur den Interpreter
+festgelegt, da"s er Multitasking unterst"utzt. Um die dazu
+notwendigen Schritte anzugeben, mu"s erst gekl"art werden, wie
+Multitasking funktioniert. Zun"achst m"ochte ich feststellen, da"s
+ich mit Multitasking nicht die F"ahigkeit eines Betriebssystems
+meine, mehrere Programme gleichzeitig zu bearbeiten, sondern die
+F"ahigkeit, innerhalb eines Programms mehrere Funktionen zur
+gleichen Zeit auszuf"uhren. Unter den Betriebssystemen OS/2 und
+Windows NT wird daf"ur der Begriff "`Multithreading"' gepr"agt.
+Im Fall eines SEL-Interpreters l"auft dieses Multitasking darauf
+hinaus, da"s durch diesen Interpreter (der ja ein Programm
+darstellt) mehrere SEL-Programme gleichzeitig ausgef"uhrt werden
+k"onnen.
+
+Zwei Funktionen, die gleichzeitig ausgef"uhrt werden, k"onnen
+zwar auf dieselben globalen Variablen zugreifen, soda"s eine
+gemeinsame Benutzung eines Datenpools, etwa einer
+Funktionssammlung f"ur ein Mathematikprogramm, gew"ahrleistet
+ist, jedoch besitzt jede der beiden Funktionen einen eigenen
+Stack, was garantiert, da"s sie ungest"ort von den anderen
+Funktionen ihre eigenen lokalen Variablen verwenden kann.
+
+Wenn nun der Interpreter zwei verschiedene SEL-Programme
+gleichzeitig ausf"uhren soll, tut er das, indem er zwei Tasks
+startet, die jeweils ein Programm bearbeiten. Um zu
+gew"ahrleisten, da"s sich diese beiden Funktionen dabei nicht in
+die Quere kommen, d"urfen die Daten, die das aktuelle Programm
+betreffen, nat"urlich nicht in globalen Variablen gespeichert
+werden, sondern m"ussen der Funktion, die f"ur die Ausf"uhrung
+zust"andig ist, als Parameter mitgegeben werden. F"ur unseren
+rekursiven Parser bedeutet das, da"s diese Daten sehr oft als
+Parameter "ubergeben werden, was nicht nur den Stack belastet,
+sondern auch die Ausf"uhrungsgeschwindigkeit. Um diese Verluste
+gering zu halten, empfielt es sich, nicht direkt die Daten,
+sondern Zeiger auf sie zu verwenden, was aber in den meisten
+Programmiersprachen ohnedies die einzige M"oglichkeit ist.
+
+\subsection{Typen}
+\label{inttypes}
+
+Eine f"ur die Ausf"uhrungsgeschwindigkeit sehr wichtige
+Entscheidung bei einem Interpreter f"ur eine Programmiersprache,
+die ein im Vergleich zu anderen Interpretersprachen so komplexes
+Typkonzept verwendet, wie SEL, ist, wie diese Typen
+repr"asentiert werden sollen. In Compilern werden hierf"ur
+h"aufig verkettete Listen verwendet, die jedoch f"ur einen
+Interpreter nicht sehr brauchbar sind, da sie wegen ihres
+Aufbaus, der auf dynamischer Speicherverwaltung basiert, zu
+langsam sind und au"serdem zu viel Speicher verbrauchen.
+
+Das von mir verwendete Konzept basiert darauf, da"s Typen durch
+Byte-Arrays mit begrenzter L"ange repr"asentiert werden. Da es
+in SEL nur eine geringe Zahl an Grundtypen und auch nicht viele
+M"oglichkeiten, diese zu verkn"upfen, gibt, kann ein Byte
+jeweils eine Zusammensetzungsstufe oder einen Grundtypen
+enthalten. Ein Beispiel: Der Typ \type{\poi \arr{10}int} wird
+durch ein Array mit der Gr"o"se von 5 Bytes repr"asentiert,
+dessen erstes Byte angibt, da"s es sich um einen Zeiger handelt.
+Das zweite Element gibt an, da"s ein Array im Spiel ist. F"ur
+dieses Array werden auch die n"achsten zwei Bytes ben"otigt, die
+die Gr"o"se angeben. Das f"unfte Element schlie"slich steht f"ur
+den Grundtypen \tint\ und ist gleichzeitig die Ende-Markierung,
+da es sich dabei um einen Grundtypen handelt. In gewisser Weise
+"ahnlich wie \tint\ werden Strukturen behandelt, die ja auch
+immer am Ende des Typs stehen. Bei ihnen mu"s, "ahnlich dem
+Array, ein Wert angegeben werden, der den Typ der Struktur
+bestimmt. Zu diesem Zweck vergibt der Interpreter f"ur die Strukturen
+Nummern, wobei die Werte von 0 bis 9999 f"ur programmglobale
+Strukturen reserviert sind. Die weiteren Zuordungen richten sich
+danach, wie viel Strukturen in den einzelnen Modulen definiert
+sind.
+
+Wie schon oben erw"ahnt, besitzen die Typenarrays eine begrenzte
+L"ange, was es erm"oglicht, sie schon vor ihrer Verwendung
+bereitzustellen, soda"s sie nicht w"ahrend der Ausf"uhrung des
+SEL-Programms dynamisch allokiert werden m"ussen. In meiner
+Implementation habe ich mich f"ur eine L"ange von 20 Bytes
+entschieden. Das mag nicht viel erscheinen, vor allem in
+Anbetracht der Tatsache, da"s es in SEL m"oglich ist, Typen
+beliebig zu verschachteln, doch ist es m"oglich, mit diesen 20
+Bytes einen Zeiger auf einen Zeiger auf einen Zeiger auf ein Array
+aus Arrays aus Strukturen zu repr"asentieren, wobei noch 8 Byte
+frei bleiben. Dieses Beispiel soll zeigen, da"s 20 Bytes f"ur die
+Praxis eine absolut ausreichende Gr"o"se ist.
+
+Beim Analysieren von Ausdr"ucken ist es in einem SEL-Interpreter
+sehr oft n"otig, Typen bereitzustellen, von denen aber viele
+schon im n"achsten Moment wieder freigegeben werden. Ist es nicht
+m"oglich, diese Operationen effizient auszuf"uhren, leidet
+darunter die Geschwindigkeit des Interpreters sehr. Ich habe zu
+diesem Zweck einen Algorithmus entwickelt, der es erm"oglicht, in
+konstanter Zeit, also unabh"angig davon, wieviele von den
+bereitgestellten Typenarrays bereits vergeben sind, Typenarrays
+zu allokieren und freizugeben:
+
+\bigskip
+
+Sei $n$ die Anzahl der maximal bereitzustellenden Typen und $s$
+die Gr"o"se eines Typenarrays, dann wird vor der Ausf"uhrung des
+SEL-Programms ein Byte-Array mit der Gr"o"se $n \cdot s$ erzeugt,
+wobei $t$ die Speicheradresse sei, an der das Array beginnt.
+Weiters sei $r$ die Speicheradresse, an der ein Array der Gr"o"se
+$n$ beginnt, dessen Elemente vern"unftigerweise Maschinenworte
+sind. Dieses Array wird initialisiert, soda"s $r[x] = x$.
+Zus"atzlich sei $i$ eine numerische Variable, die mit
+dem Wert $0$ initialisiert werden.
+
+Soll ein Typenarray allokiert werden, wird zun"achst "uberpr"uft,
+ob $i = n$. In diesem Fall sind bereits alle Arrays vergeben und
+eine entsprechende Fehlermeldung wird ausgegeben. Andernfalls ist
+$t + r[i] \cdot s$ die Adresse, bei der das angeforderte Array
+beginnt. Zus"atzlich ist $i = i + 1$ zu setzen.
+
+Soll das Typenarray mit der Speicheradresse $f$ freigegeben
+werden, so ist zuerst $i = i - 1$ und dann $r[i] = (f - t) / s$
+zu setzen.
+
+Der angegebene Algorithmus verl"a"st sich darauf, da"s nicht
+Arrays freigegeben werden sollen, die nicht allokiert sind, und
+da"s jeweils maximal $s$ Bytes eines Arrays genutzt werden.
+
+\bigskip
+
+Dieser Algorithmus verwendet zwei Datenstrukturen. Das Array $t$
+ist sozusagen ein Zusammenschlu"s aller Arrays, die zur
+Verf"ugung gestellt werden k"onnen, was sich nat"urlich auch
+mittels eines zweidimensionalen Arrays realisieren lie"se. Das
+Array $r$ ist ein Puffer, der die Nummern (0 bis $n - 1$)
+aller noch freien Typenarrays enth"alt. Die Variable $i$ gibt den
+Index des n"achsten zu vergebenden Typenarrays an. Wird dieses
+angefordert, wird $i$ um 1 erh"oht. Umgekehrt wird $i$ um 1
+vermindert, wenn ein Array freizugeben ist. Dessen Nummer wird
+anschlie"send in $r[i]$ gespeichert, soda"s es bei der n"achsten
+Anforderung sofort wieder vergeben wird. Wie schon gesagt, nimmt
+der Algorithmus an, da"s keine Fehler vom Programmierer begangen
+werden, wie z~B. die Freigabe eines bereits freigegebenen Arrays.
+
+In meiner Implementation von SEL habe ich f"ur $n$ den Wert 400
+benutzt, f"ur $s$ wie gesagt 20. Diese Werte sind f"ur die
+meisten Anwendungen ausreichend, und wenn n"otig, k"onnten sie
+vom Benutzer entsprechend ge"andert werden. Die
+Speicheranforderungen dieses Algorithmus sind durchaus
+vertretbar. Bei den angegebenen Werten erw"achst f"ur die beiden
+Arrays unter Windows NT ein Speicherbedarf von genau 9600 Byte,
+was bei den heute "ublichen Speicherkapazit"aten kaum ein Problem
+darstellt.
+
+\subsection{Ausdr"ucke}
+\label{intexprs}
+
+"Ahnlich wichtig wie die Typen sind in SEL die Ausdr"ucke, die
+nat"urlich auch verwaltet werden m"ussen. Dabei werden wir jedoch
+nicht ganze Ausdr"ucke verwenden, sondern uns lediglich auf die
+Werte der Ausdr"ucke beschr"anken, die im Laufe des
+Parsevorganges errechnet werden.
+
+Um zu zeigen, wie wichtig die effiziente Verwaltung von
+Ausdr"ucken ist, hier ein konkretes Beispiel: Ein
+QuickSort-Programm f"ur 500 zuf"allig angeordnete Zahlen hat auf
+meinem Computer eine Laufzeit von etwa 25 Sekunden, wobei w"ahrend
+dieser Zeit ungef"ahr 60000 Ausdr"ucke allokiert und wieder
+freigegeben werden m"ussen.
+
+Zum Allokieren und Freigeben von Ausdr"ucken verwende ich aus
+diesem Grund denselben Algorithmus wie f"ur Typen, wobei ich von
+Haus aus maximal 200 Ausdr"ucke zur Verf"ugung stelle, was in den
+meisten F"allen ausreichend ist.
+
+Sehr wichtig f"ur eine effiziente Verarbeitung ist nat"urlich
+auch der Aufbau eines Ausdrucks. Ich verwende hierzu eine
+Struktur. Ein obligater Bestandteil eines Ausdrucks ist dessen
+Typ, soda"s ein Typenarray Teil dieser Struktur ist. Weiters gibt
+es je eine Variable f"ur die Basistypen \tchar , \tint\ und
+\tfloat . Hierzu wird es aus Effizienzgr"unden am besten sein,
+passende Typen der Implementationssprache zu verwenden. F"ur den
+Fall, da"s der Ausdruck ein Array, ein Zeiger oder eine Struktur
+ist, habe ich zus"atzlich einen typenlosen Zeiger aufgenommen,
+der, falls die Implementationssprache keine typenlosen Zeiger
+zul"a"st, durch einen Zeiger auf ein Byte ersetzt werden kann.
+Im Falle eines Funktionsaufrufs ist es n"otig, mehrere Ausdr"ucke
+zu verketten, um die Parameter der Funktion anzugeben, soda"s
+zus"atzlich ein Zeiger auf einen Ausdruck in die Struktur
+eingebaut werden sollte, soda"s sie sich zu einer verketteten
+Liste erweitern l"a"st.
+
+Soviel zur Verwaltung der Ausdr"ucke im Speicher. Eine weit
+wichtigere Frage jedoch ist, was der Interpreter mit diesen
+Ausdr"ucken tut. Nun, zun"achst einmal mu"s jede der in
+Kapitel \ref{exprparser} besprochenen Produktionsfunktionen so
+konzipiert werden, da"s sie der "ubergeordneten Funktion einen Ausdruck
+mit dem Wert des von ihr geparsten Ausdrucks zur"uckgibt. Diese
+verwendet ihn ihrerseits, um den Wert ihres Ausdrucks zu
+berechnen u.~s.~w. In der Kette der Funktionsaufrufe gibt es dann
+irgendwann eine Funktion, die den Wert des Ausdrucks benutzt, um
+damit etwas zu entscheiden, wie z.~B., ob der Zweig einer
+\rw{if}-Anweisung ausgef"uhrt werden soll.
+
+Solange man lediglich Berechnungen mit den Ausdr"ucken
+anstellt, ergeben sich mit der oben skizzierten Methode
+keinerlei Probleme, wie ist es jedoch m"oglich, den
+Zuweisungsoperator zu implementieren? Bauen wir die Funktion zum
+Parsen eines \fu{primary} so auf, da"s sie f"ur eine Variable
+lediglich deren Wert zur"uckgibt, werden wir Probleme haben, denn
+dann wei"s der Interpreter nicht, wo diese Variable im Speicher liegt und
+kann ihr so auch keinen Wert zuweisen. Um dieses Problem zu
+"uberwinden, wird intern ein zus"atzlicher Typ,
+n"amlich der Referenztyp, der einem Zeiger sehr "ahnlich ist,
+verwendet.
+Trifft die Funktion zum Parsen eines \fu{primary} nun im Zwischencode auf eine Variable des Typs
+\tint , dann gibt sie nicht deren Wert zur"uck, sondern ihre
+Adresse und vermerkt, da"s es sich dabei um eine Referenz auf
+einen \tint\ handelt, der Einfachheit halber von mir mit
+\type{\reference int} bezeichnet.
+Mu"s nun mit diesem Ausdruck gerechnet werden, gen"ugt es, ihn zu
+dereferenzieren, soda"s ein Ausdruck mit dem Typ \tint\ entsteht.
+Wird ihm ein Wert zugewiesen, mu"s dieser lediglich an die
+Speicheradresse geschrieben werden, die er angibt. Soll der
+un"are Operator \fu{\&} auf ihn angewendet werden, dann ist es
+lediglich n"otig, das erste Byte im Typenarray so zu "andern,
+da"s daraus ein Zeiger wird.
+                
+\subsection{Variablen}
+\label{maintvars}
+
+Variablen sind von den oben besprochenen Ausdr"ucken und Typen
+insofern verschieden, als da"s sie nicht intern vom Interpreter
+verwendet werden, sondern direkt mit dem Quellprogramm in
+Verbindung stehen. Aus dem Modulkonzept und der Tatsache, da"s
+Funktionsvariablen nur in der jeweiligen Funktion verf"ugbar
+sind, folgt, da"s die Verwaltung von Variablen auf mehrern Stufen
+erfolgen mu"s. Die umfassendste Stufe, allerdings auch diejenige
+mit der niedrigsten Priorit"at, ist die der programmglobalen
+Variablen. Auf sie folgt die Stufe der modulglobalen Variablen.
+Die h"ochste Priorit"at besitzt die Stufe der Funktionsvariablen,
+die allerdings in der Regel auch die wenigsten Variablen
+aufnimmt.
+
+Wird nun im Programm eine Variable verwendet, mu"s zun"achst
+gepr"uft werden, ob es eine Funktionsvariable ihres Namens gibt.
+Ist das nicht der Fall, kann es sich nur mehr um eine globale
+Variable handeln. Gibt es eine modulglobale Variable, die den
+gesuchten Namen hat, wird sie verwendet, andernfalls mu"s es eine
+programmglobale Variable geben. Ist auch das nicht zutreffend,
+hat es der Interpreter mit einem Programmfehler zu tun (siehe Kapitel
+\ref{errortrapping}).
+
+Die komplizierteste Verwaltungsstufe ist die der
+Funktionsvariablen (es ist am einfachsten, bei der Verwaltung der
+Variablen nicht zwischen Parametern und direkten Funktionsvariablen
+zu unterscheiden), was daran liegt, da"s nicht alle
+Funktionsvariablen in einen "`Topf"' geworfen werden k"onnen,
+sondern da"s f"ur jede Funktion eine eigene Variablenliste
+angelegt werden mu"s. Die einfachste L"osung f"ur dieses Problem
+ist, einen Stack zu verwenden, auf dem f"ur jeden
+Funktionsaufruf eine Liste aller Funktionsvariablen angelegt
+wird, "ahnlich dem Code, den ein Compiler erzeugen w"urde. Analog
+dazu werden bei der R"uckkehr aus einer Funktion die vorher
+erzeugten Variablen wieder entfernt. Um nun
+nach einer Funktionsvariablen zu suchen, mu"s nur der oberste
+Stacklevel in Betracht gezogen werden, da er alle Variablen
+beinhaltet, die zu der gerade auszuf"uhrenden Funktion geh"oren.
+
+Wie schon in Kapitel \ref{modules} angesprochen, stellt der
+Interpreter f"ur jedes Modul eine eigene Datenstruktur zur
+Verf"ugung, die unter anderem alle modulglobalen Variablen dieses
+Moduls verwaltet. Ist also nach einer modulglobalen Variablen zu
+suchen, kann man die Suche auf das durch \fu{MP} angegebene Modul
+beschr"anken.
+
+Der einfachste Fall liegt bei programmglobalen Variablen vor.
+F"ur ihre Verwaltung gen"ugt es, eine einzige Liste
+bereitzustellen, die die programmglobalen Variablen aller Module
+bereitstellt, ohne Unterscheidung, in welchem Modul diese
+definiert sind.
+
+\bigskip
+
+Bis jetzt habe ich, wenn es um die Details der
+Variablenverwaltung ging, lediglich von "`Listen"' gesprochen,
+wobei ich damit weniger dynamische Listen, als vielmehr
+geeignete Datenstrukturen f"ur das schnelle Auffinden von
+Variablen gemeint habe. Diese Datenstrukturen m"ochte ich jetzt
+genauer besprechen.
+
+Das Problem, auf das wir hier treffen ist, eine
+Datenstruktur (und nat"urlich auch die dazugeh"origen
+Algorithmen) aussuchen zu m"ussen, die es erm"oglicht, einen
+Datensatz in einer Menge von Datens"atzen m"oglichst
+schnell zu finden. Dieses Problem ist ein gutes Beispiel f"ur das
+Grundproblem eines Programmdesigners: F"ur eine bestimmte Aufgabe
+den besten Algorithmus bzw. die beste Datenstruktur (was in den
+meisten F"allen Hand in Hand geht) auszuw"ahlen. G"abe es eine
+absolut beste L"osung, dann h"atte der Designer seine Aufgabe
+schnell erledigt, doch leider gibt es eine solche nur in den
+seltensten F"allen.
+
+Das wichtigste Entscheidungskriterium f"ur unsere Datenstruktur
+ist, wieviel Datens"atze zu verwalten sind. F"ur die
+Variablenverwaltung eines Interpreters bieten sich grunds"atzlich
+zwei Strukturen an: Bin"are Suchb"aume und Hash-Tabellen. Um
+entscheiden zu k"onnen, welche der beiden Strukturen f"ur unsere
+Anwendungen die bessere ist, ist es n"otig, ein wenig zu rechnen.
+Der Einfachheit halber gehen wir vom g"unstigsten Fall aus (die
+Ergebnisse sind von denen des durchschnittlichen Falls nicht sehr
+verschieden). Dieser ist, da"s der Benutzer die Variablennamen so
+gew"ahlt hat, da"s sich eine gleichm"a"sige Anordung in der
+Hash-Tabelle ergibt bzw. der Suchbaum ausgeglichen ist.
+
+In einer Hash-Tabelle, bei der die Eintr"age f"ur gleiche
+Hash-Werte linear verkettet sind, werden f"ur eine Suche nach
+einem Datensatz im Mittel $\max (N / 2M + 1/2, 1)$ Vergleiche
+ben"otigt, wohingegen f"ur die Suche in einem Baum etwa
+$\log_2N - 1$ Vergleiche notwendig sind, wobei $N$ die Anzahl der
+Datens"atze und $M$ die Gr"o"se der Hash-Tabelle angibt. Auf den
+ersten Blick scheint der Baum die bessere L"osung zu sein, da die
+Anzahl der ben"otigten Vergleiche f"ur gro"se $N$ in etwa
+proportional zum bin"aren Logarithmus der Anzahl der Datens"atze
+ist, bei einer Hash-Tabelle allerdings die Anzahl der Vergleiche
+direkt proportional zur Anzahl der Datens"atze ist, was f"ur
+gro"se $N$ nat"urlich bedeutend schlechter ist, als die
+Leistungsdaten des Baums. Nehmen wir allerdings an, wir benutzen
+eine Hash-Tabelle mit 37 Eintr"agen, was in Bezug auf den
+Speicherplatz "uberhaupt kein Problem darstellt. In diesem Fall
+sind f"ur eine Suche in einer Hash-Tabelle mit 100 Datens"atzen
+im Durchschnitt weniger als zwei Vergleiche n"otig, wohingegen in
+einem Baum mehr als sechs Vergleiche ben"otigt werden. Erst wenn
+mehr als 550 Datens"atze vorhanden sind, ist die Suche in einem
+Baum g"unstiger als in einer Hash-Tabelle.
+
+Es ist kaum anzunehmen, da"s jemand f"ur einen Interpreter ein
+Programm schreibt, welches mehr als 300 globale Variablen verwendet,
+soda"s es f"ur unsere Zwecke die bei weitem bessere L"osung ist,
+f"ur die Verwaltung programm- und modulglobaler Variablen
+Hash-Tabellen zu verwenden, wobei eine Gr"o"se von 37 durchaus
+praktikabel ist, sowohl in Bezug auf Schnelligkeit als auch auf
+die vern"unftige Ausnutzung des Speicherplatzes. F"ur
+Funktionsvariablen sind 37 Eintr"age wohl "uberdimensioniert.
+Hierf"ur bieten sich die Primzahlen 7 und 11 an.
+
+Zuletzt stellt sich noch die Frage nach der Hash-Funktion. Ich
+verwende sowohl der Einfachheit als auch der Effizienz halber die
+Modulo-Funktion, d. h., ich betrachte eine Zeichenkette als lange
+Ganzzahl, deren Rest bez"uglich des Moduls 37 den Index in der
+Hash-Tabelle angibt. Die folgende Implementation geht davon aus, 
+da"s ein \tchar\ 256 verschiedene Werte annehmen kann.
+
+\begin{verbatim}
+function hash (s : *char, m : int) : int
+
+  h : int = 0;
+
+begin
+  while (*s)
+    h = (h * 256 + *s) % m;
+    s = s + 1;
+  end
+  return h;
+end
+\end{verbatim}
+
+\subsection{Funktionen}
+
+Die Funktionsverwaltung hat in erster Linie die Aufgabe, eine
+Funktion eines bestimmten Namens zu finden und deren Adresse im
+Zwischencode zu ermitteln. Weiters ist es wichtig, Namen und
+Typen der Funktionsparameter zu erfahren, um erstens "uberpr"ufen
+zu k"onnen, ob die Funktion mit der richtigen Anzahl und den
+richtigen Typen der Parameter aufgerufen worden ist, und zweitens,
+um die Parameter auf dem Funktionsstack anlegen zu
+k"onnen.\footnote{siehe Kapitel \ref{maintvars}}
+
+Zus"atzlich sollte es m"oglich sein, nicht nur Funktionen, die in SEL
+implementiert sind, aufzurufen, sondern auch solche, die in der
+Implementationssprache des Interpreters geschrieben sind,
+da eine Implementation der Grundfunktionen von SEL in
+SEL selbst f"ur einen Interpreter viel zu ineffizient w"are.
+Deshalb schreibt man Funktionen wie etwa zum Kopieren von
+Strings in der Implementationssprache des Interpreters (in
+meinem Falle C) und ruft diese auf. Um das nahtlos in die
+Verwaltung einbinden zu k"onnen, ist es notwendig, da"s die
+Implementationssprache Zeiger auf Funktionen unterst"utzt. Ist
+diese M"oglichkeit nicht vorhanden (wie etwa im Falle von
+\pascal ), dann mu"s jede einzelne Funktion im Programmcode extra
+behandelt werden, was sowohl umst"andlicher als auch langsamer
+ist.\footnote{In Turbo Pascal ab der Version 5.5 ergibt sich die
+M"oglichkeit, statt eines Zeigers auf eine Funktion einen Zeiger
+auf ein Objekt zu verwenden, welches eine Methode enth"alt, die
+die gew"unschte Funktion ersetzt.}
+
+Um eine Funktion eines bestimmten Namens zu finden, werden
+Hash-Tabellen, wie im letzten Unterkapitel beschrieben,
+verwendet: Eine f"ur programmglobale Funktionen und eine
+pro Modul f"ur modulglobale Funktionen, der Einfachheit halber
+jeweils mit 37 Eintr"agen, was bei einem Programm mit 10 Modulen
+unter Windows NT einen Speicherplatz von 1628 Bytes beansprucht
+(was ohne schlechtes Gewissen als "`unbedenklich"' eingestuft
+werden kann). Eintr"age f"ur denselben Hash-Wert werden
+unsortiert linear verkettet.\footnote{Eine Sortierung h"atte bei
+einer linearen Verkettung auch nicht den geringsten Sinn, da
+ohnedies alle Eintr"age bis zum gew"unschten durchlaufen werden
+m"ussen, unabh"angig davon, in welcher Reihenfolge die Eintr"age
+gespeichert sind.}
+
+Die Datenstruktur, die eine einzelne Funktion beschreibt, mu"s
+neben deren Namen und R"uckgabetyp auch eine Angabe dar"uber
+enthalten, wo der Code der Funktion zu finden ist. Hierf"ur wird
+zun"achst eine Variable ben"otigt, die Auskunft dar"uber gibt, ob
+die Funktion in SEL geschrieben ist oder in der
+Implementationssprache des Interpreters. Im ersten Fall mu"s die
+Datenstruktur Auskunft dar"uber geben k"onnen, in welchem Modul
+und an welcher Stelle der Code beginnt, andernfalls wird ein
+Zeiger auf die jeweilige Funktion ben"otigt. Zus"atzlich m"ussen
+Informationen "uber Namen und Typen der Parameter gespeichert
+sein. Ich verwende hierzu eine einfach verkettete Liste.
+
+\bigskip
+
+Interessant ist die Realisierung von Funktionsaufrufen. Dazu ist
+zun"achst zu bedenken, da"s der Parser rekursiv implementiert ist
+und der Funktionsaufruf ein \fu{primary} ist, sich also auf der
+untersten Grammatikebene der Ausdr"ucke befindet. Aus diesem
+Grund wird man schwer umhinkommen, auch Funktionsaufrufe rekursiv
+zu behandeln, was nat"urlich bei einem rekursiven SEL-Programm zu
+einer starken Belastung des Prozessorstacks f"uhren kann, weshalb
+dieser m"oglichst gro"s dimensioniert werden sollte. Mu"s nun
+innerhalb eines \fu{primary} eine Funktion aufgerufen werden,
+wird in den oben besprochenen Hash-Tabellen die Funktion gesucht
+und, wenn vorhanden, wird an die angegebene Stelle im
+Zwischencode gesprungen. Dort werden zun"achst der Funktionskopf
+und die Deklaration der direkten Funktionsvariablen interpretiert
+und anschlie"send der Code der Funktion mittels des
+Anweisungs-Parsers ausgef"uhrt. Ist die Ausf"uhrung der Funktion
+beendet, mu"s zur aufrufenden Funktion zur"uckgekehrt, also die
+Werte der Variablen \fu{MP} und \fu{IP} restauriert werden.
+Hierzu m"ussen klarerweise die alten Werte irgendwo
+zwischengespeichert werden. Weiters m"ussen die lokalen Variablen
+der Funktion abgelegt werden, und zwar so, da"s auch mehrere
+Instanzen dieser Funktion existieren k"onnen und jede ihre
+eigenen Variablen zur Verf"ugung hat. Wie schon im letzten
+Kapitel angedeutet, wird hierzu ein Stack verwendet, in Anlehnung
+an den Prozessorstack, der bei compilierten Programmen dieselben
+Aufgaben wahrnimmt. Relevant ist jeweils nur der oberste Level
+des Stacks, der die R"ucksprungadresse und die lokalen Variablen
+der jeweils aktiven Funktion enth"alt. Wird aus dieser eine
+andere Funktion aufgerufen, kommt ein Level zum Stack hinzu,
+andernfalls wird ein Level entfernt. Um sich nicht auf die
+relativ langsame dynamische Allokation verlassen zu m"ussen, ist
+es am besten, diesen Stack als Array zu
+konzipieren.\footnote{Eine Konzeption als dynamische Liste hat
+auf den ersten Blick den Vorteil, da"s die Rekursionstiefe
+lediglich vom vorhandenen Speicherplatz abh"angig ist, was jedoch
+bei einem rekursiven Interpreter nicht zutrifft: dort ist der
+Prozessorstack das Ma"s aller Dinge.}
+
+\section{Fehlerbehandlung}
+\label{errortrapping}
+
+Da nicht davon auszugehen ist, da"s das Programm, das
+interpretiert werden soll, fehlerfrei ist, mu"s der Interpreter
+auch die M"oglichkeit haben, Fehler zu entdecken und sie
+entsprechend zu behandeln. Im Gegensatz zu Compilern, die wenn
+m"oglich nach dem Erkennen eines Fehlers mit dem "Ubersetzen
+fortfahren sollten, um evtl. weitere Fehler zu entdecken, ist das
+bei einem Interpreter nicht n"otig und auch wenig sinnvoll, da
+das auszuf"uhrende Programm in seiner Stabilit"at gest"ort und
+vermutlich abst"urzen w"urde. Eine sogenannte "`{\em Error
+Recovery}"' bleibt uns also erspart. Die Ziele f"ur die
+Fehlerbehandlung sind also das Erkennen von Fehlern und die
+Ausgabe einer f"ur den Benutzer m"oglichst hilfreichen
+Fehlermeldung.
+
+Grunds"atzlich mu"s ein Interpreter zwei Arten von Fehlern
+behandeln: syntaktische und semantische Fehler. Syntaktische
+Fehler treten dann auf, wenn die im Anhang \ref{grammar}
+angegebene Grammatik von SEL durch das Programm verletzt wird.
+Diese Art von Fehler ist in der Regel leicht zu erkennen und kann
+dem Benutzer relativ verst"andlich erkl"art werden. Ein Beispiel:
+Der Interpreter ist gerade besch"aftigt, die Anweisung
+\fu{while [x != 10)} auszuf"uhren. Der Parser erkennt das
+Schl"usselwort \rw{while}, dem laut Grammatik immer
+eine "offnende runde Klammer folgen mu"s. Offenbar hat sich der Benutzer
+jedoch vertippt und statt der runden eine "offnende eckige
+Klammer eingegeben. Es ist leicht, den Parser so zu erweitern,
+da"s er an dieser Stelle den Fehler erkennt. Die entsprechende
+Fehlermeldung sollte lauten: \fu{'(' expected}.
+
+Semantische Fehler treten auf, wenn das Programm versucht,
+unerlaubte Operationen auszuf"uhren, wie etwa das Casten eines
+\tfloat\ in einen Zeiger, die Verwendung einer Variablen,
+die gar nicht existiert, oder die Anwendung eines Operators auf
+einen nicht erlaubten Typen. Tritt ein solcher Fall auf,
+l"a"st sich das in der Regel ohnedies leicht feststellen und auch
+eine passende Fehlermeldung ist nicht schwer zu schreiben.
+
+F"ur den Benutzer des SEL-Interpreters ist es klarerweise nicht
+nur wichtig, da"s ein Fehler aufgetreten und welcher Art
+dieser ist, sondern auch, in welchem Modul in welcher Zeile der
+Fehler steckt. Da der Interpreter weder syntaktische noch
+semantische Fehler erkennen kann, w"ahrend er den Quellcode
+untersucht, und der Zwischencode aus Effizienzgr"unden keine
+Zeilenumbr"uche enth"alt, m"ussen die Zeilennummern gesondert
+gespeichert werden. Ich verwende hierzu ein durch die
+Zeilennummer indiziertes Array, das f"ur jede
+Zeile eines Moduls die Anzahl der Bytes angibt, die diese Zeile
+im Zwischencode beansprucht. Da der Zwischencode in der Regel
+k"urzer als der Quellcode und kaum eine Programmzeile l"anger
+als 100 Zeichen ist, gen"ugt es, pro Arrayelement ein Byte zur
+Verf"ugung zu stellen. Tritt nun an der Stelle \fu{MP==3} und
+\fu{IP==1364} ein Fehler auf, dann mu"s im Modul Nr. 3 das
+Zeilennummernarray so lange durchlaufen werden, bis die Summe der
+Elemente gr"o"ser als 1364 ist. Der folgenden Funktion, die die
+gesuchte Zeilennummer zur"uckgibt, ist
+das Zeilennummernarray als Zeiger und der Wert von \fu{IP} zu
+"ubergeben:
+
+\begin{verbatim}
+function line (a : *char, ip : int) : int
+
+  l : int = 0;
+  c : int = 0;
+  
+begin
+  repeat
+    c = c + a[l];
+    l = l + 1;
+  until (c > ip)
+  return l;
+end
+\end{verbatim}
+
+In einem rekursiven Interpreter ist neben dem Erkennen und
+Anzeigen eines Fehlers noch ein weiteres Problem zu "uberwinden:
+das au"serordentliche Beenden des Interpreters. Es ist davon
+auszugehen, da"s der Interpreter schon eine gewisse
+Rekursionsebene erreicht hat, wenn der Fehler auftritt, soda"s es
+nicht so einfach ist, ihn zu beenden und evtl. zu einer (den
+Interpreter) aufrufenden Funktion zur"uckzukehren. Die
+ANSI-Bibliothek von C bietet hierzu das praktische Konzept der
+"`{\em Long-Jumps}"' an, das ungef"ahr einem \rw{goto}
+gleichkommt, das nicht nur Spr"unge innerhalb einer Funktion
+erlaubt, sondern auch aus einer Funktion in eine andere,
+"ubergeordnete Funktion hinein. In C++ z.~B. ist es nicht einmal
+mehr n"otig, sich auf Bibliotheksfunktionen zu st"utzen, da ein
+"ahnliches Konzept (das sog. "`{\em Exception-Handling}"') in der
+Programmiersprache selbst eingebaut ist. Leider besitzen nicht
+alle Sprachen einen derartigen Luxus. In \pascal\ etwa mu"s man
+sich einer anderen Methode bedienen. Eine einfache und
+naheliegende L"osung ist, eine Variable zu definieren, die
+angibt, ob bei der Ausf"uhrung des Programms bisher ein Fehler
+aufgetreten ist. Eine Funktion, die einen Fehler entdeckt, hat
+diesen zu melden und die Variable auf einen Wert zu setzen, der
+anzeigt, da"s ein Fehler gefunden wurde. Kehrt diese Funktion zu
+der aufrufenden Funktion zur"uck, mu"s diese "uberpr"ufen, ob die
+Variable gesetzt ist und in diesem Fall zu ihrer aufrufenden
+Funktion zur"uckkehren, so lange, bis man an der Funktion
+angelangt ist, die die Ausf"uhrung des Programms initiiert hat.
+Zwar ist diese Methode simpel, doch hat sie einen gewissen
+Overhead zur Folge, der nicht nur den Code gr"o"ser, sondern auch
+un"ubersichtlicher macht.
+                                   
+\newpage
+\section{Weiterf\protect{"uhrende} Projekte}
+
+Ebenso wie im ersten Kapitel m"ochte ich auch hier einige meiner
+Ideen darlegen, die leider zu umfangreich sind, als da"s ich sie
+ausf"uhrlich in dieser Arbeit h"atte behandeln k"onnen.
+
+\begin{description}
+\item[Verwendung einer Baumstruktur] anstatt des Zwischencodes
+k"onnte die Geschwindigkeit des Interpreters um einiges erh"ohen.
+Diese Baumstruktur w"urde in gewisser Weise einem
+Parse-Tree\footnote{siehe Kapitel \ref{topdbotu}} "ahneln, bei
+dem jedoch die unn"otigen Bl"atter entfernt sind. Zus"atzlich
+k"onnte vor der Ausf"uhrung des Programms der Baum optimiert
+werden, z.~B. durch Vereinfachung von konstanten Ausdr"ucken
+(\fu{2*3+4} kann ohne Ver"anderung der Laufzeiteigenschaften zu
+\fu{10} umgeformt werden). Eine Darstellung als Baum hat f"ur den
+Interpreter den gro"sen Vorteil, da"s die lexikalische Analyse
+und der Parsevorgang nur einmal ausgef"uhrt werden m"ussen. Ist die
+Baumstruktur gut konzipiert, k"onnte der Parser sogar als
+Front-End f"ur einen Compiler dienen.
+
+\item[Ein Compiler f"ur SEL] ist mein n"achstes Ziel. Leider sind
+jedoch die meisten Maschinensprachen entweder zu komplex (wie
+etwa die des Intel 80386) oder zu umst"andlich (wie die des Intel
+8086), als da"s es Spa"s machen k"onnte, f"ur diese Prozessoren
+einen Compiler zu schreiben. Aus diesem Grund erw"age ich zwei
+M"oglichkeiten, um diese Schwierigkeiten zu umgehen.
+Die einfachere der beiden ist, ein SEL-Programm anstatt in
+Maschinencode in eine andere h"ohere Programmiersprache,
+vorzugsweise C, zu "ubersetzen. Besonders interessant w"are es,
+diesen Compiler selbst in SEL zu schreiben und ihn dann durch sich
+selbst "ubersetzen zu lassen (mit Hilfe des Interpreters).
+
+Die zweite M"oglichkeit ist,
+anstatt f"ur einen real existierenden Prozessor Maschinencode
+f"ur einen einfachen, auf die Programmiersprache zugeschnittenen,
+hypothetischen Prozessor zu erzeugen, wobei dieser Prozessor
+nat"urlich zun"achst entworfen und auf einem existierenden
+Prozessor emuliert werden m"u"ste. Obwohl auch hier ein Interpreter
+im Spiel ist, ist die Ausf"uhrungsgeschwindigkeit eines
+Pseudo-Code weit h"oher als die eines Interpreters, der den
+Quellcode (oder auch einen Zwischencode) der Programmiersprache
+interpretiert. Der Vorteil dieser beiden M"oglichkeiten ist, da"s
+sie gr"o"stenteils prozessorunabh"angig sind. So existiert heute
+beinahe f"ur jeden Prozessor eine ausreichende Menge an
+C-Compilern und f"ur den P-Code m"u"ste lediglich der Interpreter
+neu geschrieben, oder, falls auch er in einer h"oheren
+Programmiersprache geschrieben ist, lediglich neu compiliert
+werden. Aus Effizienzgr"unden ist es jedoch ratsam, einen
+Interpreter f"ur P-Code in Assembler zu implementieren.
+
+\item[Ein Pretty-Printer] ist ein Programm, das einen Quelltext
+einer bestimmten Programmiersprache in eine ansprechende Form
+bringt, also Einr"uckungen vornimmt, wenn n"otig, und Kommentare
+einheitlich gestaltet. F"ur C existiert eine Reihe solcher
+Programme, das bekannteste ist wohl C-Indent. Es ist eine
+interessante, wenn auch nicht "uberm"a"sig schwere Aufgabe, einen
+solchen Pretty-Printer f"ur SEL zu schreiben.
+\end{description}
+
+\begin{appendix}
+
+\chapter{Die Grammatik von SEL}
+\label{grammar}
+
+\begin{verbatim}
+module:        {block}
+             ;
+block:         function
+             | local
+             | global
+             ;
+function:      `function' IDENTIFIER `(' [formal_params] `)' `:' type
+                 {func_var}
+               `begin'
+                 {statment}
+               `end'
+             ;
+formal_params: IDENTIFIER `:' [`&']  type [`,' formal_params]
+             ;
+func_var:      IDENTIFIER `:' type [`=' expr] `;'
+             ;
+func_proto:    `function' IDENTIFIER
+               `(' [[`&' type {`,' [`&'] type}] `)' `:' type
+             ;
+local:         `local' {local_decl} `end'
+             ;
+local_decl:    struct
+             | func_proto
+             | var
+             ;
+global:        `global' {global_decl} `end'
+             ;
+global_decl:   struct
+             | func_proto
+             | var
+             | extern
+             ;
+\end{verbatim}
+\newpage
+\begin{verbatim}
+statement:     [expr] `;'
+             | if
+             | while
+             | for
+             | repeat
+             | switch
+             | prefix
+             | `break' `;'
+             | `return' [expr] `;'
+             ;
+if:            `if' `(' expr `)' {statement} [`else' {statement}] `end'
+             ;
+switch:        `switch' `(' expr `)' {statement} `end'
+             ;
+prefix:        `case' constant `:'
+             | `default' `:'
+             ;
+while:         `while' `(' expr `)' {statement} `end'
+             ;
+repeat:        `repeat' {statement} `until' `(' expr `)'
+             ;
+for:           `for' `(' primary `=' expr (`to' | `downto') expr
+                         [`step' expr] `)'
+                 {statement}
+               `end'
+             ;
+expr:          expr (`=' | `&&' | `||' | `^^' | `==' | `<' | `>'
+                   | `<=' | `>=' | `!=' | `&' | `|' | `^' | `<<'
+                   | `>>' | `+' | `-' | `*' | `/' | `%') expr
+             | (`!' | `~' | `-' | `*' | `&') expr
+             | `delete' expr
+             | primary
+             ;
+primary:       IDENTIFIER
+             | `(' expr `)'
+             | CHAR_CONSTANT
+             | INT_CONSTANT
+             | FLOAT_CONSTANT
+             | STRING_CONSTANT
+             | primary `->' IDENTIFIER
+             | primary `:' type
+             | primary `[' expr `]'
+             | IDENTIFIER `(' [expr {`,' expr}] `)'
+             | `sizeof' type
+             | `new' type
+             ;
+var:           IDENTIFIER `:' type [`=' constant] `;'
+             ;
+extern:        `extern' IDENTIFIER `:' type `;'
+             ;
+\end{verbatim}
+\newpage
+\begin{verbatim}
+struct:        `struct' IDENTIFIER {IDENTIFIER `:' type `;'} `end'
+             ;
+type:          `char'
+             | `int'
+             | `float'
+             | `void'
+             | `[' INT_CONSTANT `]' type
+             | `*' type
+             | IDENTIFIER
+             ;
+constant:      CHAR_CONSTANT
+             | [`-'] INT_CONSTANT
+             | [`-'] FLOAT_CONSTANT
+             | STRING_CONSTANT
+             ;
+INT_CONSTANT:    [0-9]+
+CHAR_CONTANT:    '(.|\.)'
+FLOAT_CONSTANT:  [0-9]*(`.'[0-9]*)?((e|E)(+|-)?[0-9]+)?
+STRING_CONSTANT: "([^"\n]|\.)*"
+IDENTIFIER:      [A-Za-z_][A-Za-z0-9_]*
+\end{verbatim}
+
+\end{appendix}
+
+\begin{thebibliography}{9}
+\addcontentsline{toc}{chapter}{Literaturverzeichnis}
+\bibitem{selkr} Mark Probst. {\em SEL-Kurzreferenz}, Version~0.3.
+Beilage.
+\bibitem{kandr} Brian W.~Kernighan, Dennis M.~Ritchie. {\em
+Programmieren in C}, deutsche Ausgabe bearbeitet
+von A.~T.~Schreiner, Ernst Janich. Carl Hanser Verlag, Wien,~1983.
+ISBN~3-446-13878-1.
+\bibitem{sedge} Robert Sedgewick. {\em Algorithmen}, deutsche
+Ausgabe. Addison-Wesley~GmbH, Deutschland, 1.~Auflage~1991.
+ISBN~3-89319-301-4.
+\bibitem{duden} {\em Duden Informatik}, 2.~Auflage. Dudenverlag,
+Mannheim,~1993. ISBN~3-411-05232-5.
+\end{thebibliography}
+
+% \newpage
+% \addcontentsline{toc}{chapter}{Index}
+% \printindex
+
+\end{document}

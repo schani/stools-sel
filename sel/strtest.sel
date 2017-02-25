@@ -1,0 +1,39 @@
+#include "conio.sh"
+
+global
+
+  function input (*char) : int
+  function main  ()      : void
+
+end
+
+function input (s : *char) : int
+
+  i : int = 0;
+
+begin
+  repeat
+    s[i] = ReadChar();
+    if (s[i] == 13)
+      WriteChar('\n');
+      s[i] = 0;
+      return i + 1;
+    else
+      WriteChar(s[i]);
+    end
+    i = i + 1;
+  until (0)
+end
+
+function main () : void
+
+  name : [80]char;
+
+begin
+  WriteString("Please enter your name : ");
+  WriteInt(input(name));
+  WriteString("\nYour name is ");
+  WriteString(name);
+  WriteString("!\n");
+  ReadChar();
+end

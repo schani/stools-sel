@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8E66EFCD1E5EA62A00B2E503 /* regalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E66EFC31E5EA62A00B2E503 /* regalloc.c */; };
+		8E66EFCE1E5EA62A00B2E503 /* sellex.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E66EFC51E5EA62A00B2E503 /* sellex.c */; };
+		8E66EFCF1E5EA62A00B2E503 /* selmain.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E66EFC61E5EA62A00B2E503 /* selmain.c */; };
+		8E66EFD01E5EA62A00B2E503 /* selman.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E66EFC71E5EA62A00B2E503 /* selman.c */; };
+		8E66EFD11E5EA62A00B2E503 /* selmem.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E66EFC81E5EA62A00B2E503 /* selmem.c */; };
+		8E66EFD21E5EA62A00B2E503 /* selmod.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E66EFC91E5EA62A00B2E503 /* selmod.c */; };
+		8E66EFD31E5EA62A00B2E503 /* selpar.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E66EFCA1E5EA62A00B2E503 /* selpar.c */; };
+		8E66EFD41E5EA62A00B2E503 /* selprg.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E66EFCB1E5EA62A00B2E503 /* selprg.c */; };
+		8E66EFD51E5EA62A00B2E503 /* selrtl.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E66EFCC1E5EA62A00B2E503 /* selrtl.c */; };
 		8EFCC2361E596176003993DA /* boxes.c in Sources */ = {isa = PBXBuildFile; fileRef = 8EFCC2181E596176003993DA /* boxes.c */; };
 		8EFCC2371E596176003993DA /* buffers.c in Sources */ = {isa = PBXBuildFile; fileRef = 8EFCC2191E596176003993DA /* buffers.c */; };
 		8EFCC2381E596176003993DA /* dlg.c in Sources */ = {isa = PBXBuildFile; fileRef = 8EFCC21A1E596176003993DA /* dlg.c */; };
@@ -49,6 +58,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8E66EFC31E5EA62A00B2E503 /* regalloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regalloc.c; path = ../sel/regalloc.c; sourceTree = "<group>"; };
+		8E66EFC41E5EA62A00B2E503 /* sel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sel.h; path = ../sel/sel.h; sourceTree = "<group>"; };
+		8E66EFC51E5EA62A00B2E503 /* sellex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sellex.c; path = ../sel/sellex.c; sourceTree = "<group>"; };
+		8E66EFC61E5EA62A00B2E503 /* selmain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = selmain.c; path = ../sel/selmain.c; sourceTree = "<group>"; };
+		8E66EFC71E5EA62A00B2E503 /* selman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = selman.c; path = ../sel/selman.c; sourceTree = "<group>"; };
+		8E66EFC81E5EA62A00B2E503 /* selmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = selmem.c; path = ../sel/selmem.c; sourceTree = "<group>"; };
+		8E66EFC91E5EA62A00B2E503 /* selmod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = selmod.c; path = ../sel/selmod.c; sourceTree = "<group>"; };
+		8E66EFCA1E5EA62A00B2E503 /* selpar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = selpar.c; path = ../sel/selpar.c; sourceTree = "<group>"; };
+		8E66EFCB1E5EA62A00B2E503 /* selprg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = selprg.c; path = ../sel/selprg.c; sourceTree = "<group>"; };
+		8E66EFCC1E5EA62A00B2E503 /* selrtl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = selrtl.c; path = ../sel/selrtl.c; sourceTree = "<group>"; };
 		8EFCC20E1E59605E003993DA /* stools */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = stools; sourceTree = BUILT_PRODUCTS_DIR; };
 		8EFCC2181E596176003993DA /* boxes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = boxes.c; path = ../src/boxes.c; sourceTree = "<group>"; };
 		8EFCC2191E596176003993DA /* buffers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = buffers.c; path = ../src/buffers.c; sourceTree = "<group>"; };
@@ -114,12 +133,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8E66EFC21E5EA52900B2E503 /* sel */ = {
+			isa = PBXGroup;
+			children = (
+				8E66EFC31E5EA62A00B2E503 /* regalloc.c */,
+				8E66EFC41E5EA62A00B2E503 /* sel.h */,
+				8E66EFC51E5EA62A00B2E503 /* sellex.c */,
+				8E66EFC61E5EA62A00B2E503 /* selmain.c */,
+				8E66EFC71E5EA62A00B2E503 /* selman.c */,
+				8E66EFC81E5EA62A00B2E503 /* selmem.c */,
+				8E66EFC91E5EA62A00B2E503 /* selmod.c */,
+				8E66EFCA1E5EA62A00B2E503 /* selpar.c */,
+				8E66EFCB1E5EA62A00B2E503 /* selprg.c */,
+				8E66EFCC1E5EA62A00B2E503 /* selrtl.c */,
+			);
+			name = sel;
+			sourceTree = "<group>";
+		};
 		8EFCC2051E59605D003993DA = {
 			isa = PBXGroup;
 			children = (
+				8E66EFC21E5EA52900B2E503 /* sel */,
 				8EFCC2701E5963F6003993DA /* test.c */,
-				8EFCC26A1E5961A8003993DA /* src */,
-				8EFCC2691E596199003993DA /* include */,
+				8EFCC26A1E5961A8003993DA /* stools */,
 				8EFCC20F1E59605E003993DA /* Products */,
 				8EFCC26B1E596375003993DA /* Frameworks */,
 			);
@@ -161,9 +197,10 @@
 			name = include;
 			sourceTree = "<group>";
 		};
-		8EFCC26A1E5961A8003993DA /* src */ = {
+		8EFCC26A1E5961A8003993DA /* stools */ = {
 			isa = PBXGroup;
 			children = (
+				8EFCC2691E596199003993DA /* include */,
 				8EFCC2181E596176003993DA /* boxes.c */,
 				8EFCC2191E596176003993DA /* buffers.c */,
 				8EFCC21A1E596176003993DA /* dlg.c */,
@@ -190,7 +227,7 @@
 				8EFCC2321E596176003993DA /* utility.c */,
 				8EFCC2351E596176003993DA /* window.c */,
 			);
-			name = src;
+			name = stools;
 			sourceTree = "<group>";
 		};
 		8EFCC26B1E596375003993DA /* Frameworks */ = {
@@ -259,21 +296,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E66EFD31E5EA62A00B2E503 /* selpar.c in Sources */,
+				8E66EFCD1E5EA62A00B2E503 /* regalloc.c in Sources */,
 				8EFCC23C1E596176003993DA /* dlgedit.c in Sources */,
 				8EFCC2391E596176003993DA /* dlgact.c in Sources */,
 				8EFCC23D1E596176003993DA /* dlghelp.c in Sources */,
 				8EFCC2531E596176003993DA /* window.c in Sources */,
 				8EFCC24A1E596176003993DA /* queue.c in Sources */,
 				8EFCC2461E596176003993DA /* menu.c in Sources */,
+				8E66EFCE1E5EA62A00B2E503 /* sellex.c in Sources */,
 				8EFCC2381E596176003993DA /* dlg.c in Sources */,
+				8E66EFD21E5EA62A00B2E503 /* selmod.c in Sources */,
 				8EFCC24D1E596176003993DA /* stack.c in Sources */,
 				8EFCC24F1E596176003993DA /* sthelp.c in Sources */,
 				8EFCC23E1E596176003993DA /* dlglabel.c in Sources */,
 				8EFCC23F1E596176003993DA /* dlglist.c in Sources */,
 				8EFCC2441E596176003993DA /* global.c in Sources */,
+				8E66EFD41E5EA62A00B2E503 /* selprg.c in Sources */,
 				8EFCC23A1E596176003993DA /* dlgbord.c in Sources */,
 				8EFCC24B1E596176003993DA /* sdl.c in Sources */,
 				8EFCC2421E596176003993DA /* dlgscrol.c in Sources */,
+				8E66EFD01E5EA62A00B2E503 /* selman.c in Sources */,
+				8E66EFD11E5EA62A00B2E503 /* selmem.c in Sources */,
 				8EFCC2451E596176003993DA /* memofile.c in Sources */,
 				8EFCC24E1E596176003993DA /* status.c in Sources */,
 				8EFCC23B1E596176003993DA /* dlgcolor.c in Sources */,
@@ -284,6 +328,8 @@
 				8EFCC2401E596176003993DA /* dlgpush.c in Sources */,
 				8EFCC2501E596176003993DA /* utility.c in Sources */,
 				8EFCC2371E596176003993DA /* buffers.c in Sources */,
+				8E66EFCF1E5EA62A00B2E503 /* selmain.c in Sources */,
+				8E66EFD51E5EA62A00B2E503 /* selrtl.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
