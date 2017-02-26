@@ -676,7 +676,7 @@ void win_init (void)
   winDesktop->handle_event = pwc->handle_event;
   winDesktop->pelementFirst = winDesktop->pelementLast = winDesktop->pelementActive = NULL;
   winDesktop->redraw_func = NULL;
-  winDesktop->pcColors = pwc->pcColors;
+  winDesktop->pcColors = prgProgram.pcPalette + PAL_COLORS * pwc->ucColors;
   if (!(winDesktop->pcharSave = utl_alloc(winDesktop->iWidth * winDesktop->iHeight * sizeof(CHARACTER))))
     return;
   memset(winDesktop->pcharSave, 0xff, winDesktop->iWidth * winDesktop->iHeight * sizeof(CHARACTER));
@@ -1127,7 +1127,7 @@ BOOL win_register_class (CHAR *pcName, UCHAR ucColors, UCHAR ucBorder, UCHAR ucT
   strncpy(pwc->acName, pcName, WIN_MAX_CLASS_NAME);
   pwc->pwcNext = pwcFirst;
   pwc->handle_event = handle_event;
-  pwc->pcColors = prgProgram.pcPalette + PAL_COLORS * ucColors;
+  pwc->ucColors = ucColors;
   memset(&pwc->flFlags, 0x00, sizeof(WIN_FLAGS));
   pwc->flFlags.binBorderType = ucBorder;
   pwc->flFlags.binTitlePos = ucTitlePos;
@@ -1187,7 +1187,7 @@ WINDOW win_new (INT iX, INT iY, INT iWidth, INT iHeight, CHAR *pcClassName, ULON
   winReturnVar->iCursY = 1;
   winReturnVar->iCursPercent = 20;
   winReturnVar->pcTitle = NULL;
-  winReturnVar->pcColors = pwc->pcColors;
+  winReturnVar->pcColors = prgProgram.pcPalette + PAL_COLORS * pwc->ucColors;
   winReturnVar->pelementFirst = winReturnVar->pelementLast = winReturnVar->pelementActive = NULL;
   if (!(winReturnVar->pcharSave = utl_alloc((iWidth + 2) * (iHeight + 1) * sizeof(CHARACTER))))
     return NULL;

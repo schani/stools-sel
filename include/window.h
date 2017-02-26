@@ -56,7 +56,7 @@ typedef struct _WINDOW_CLASS
   CHAR                   acName[WIN_MAX_CLASS_NAME];
   struct _WINDOW_CLASS  *pwcNext;
   void                 (*handle_event)(struct _WB*, UTL_EVENT*);
-  CHAR                  *pcColors;
+  CHAR                   ucColors;
   WIN_FLAGS              flFlags;
 } WINDOW_CLASS;
 
