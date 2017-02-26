@@ -14,9 +14,12 @@ extern int sel_run (const char *program);
 #define M_FILE_RUN         1005
 #define M_FILE_QUIT        1006
 
-#define M_HELP             2000
-#define M_HELP_HELP        2001
-#define M_HELP_ABOUT       2002
+#define M_SETTINGS         2000
+#define M_SETTINGS_PALETTE 2001
+
+#define M_HELP             3000
+#define M_HELP_HELP        3001
+#define M_HELP_ABOUT       3002
 
 #define BUFFER_SIZE        8192
 
@@ -220,12 +223,16 @@ program_handler (GLB_PROGRAM *pprogProgram, UTL_EVENT *peventEvent)
                                               mnu_new_line(
                                               mnu_new_item(M_FILE_RUN,  "#Run    Alt-R", NULL, K_A_R, 0, NULL,
                                               mnu_new_line(
-                                              mnu_new_item(M_FILE_QUIT, "#Quit   Alt-X", NULL, K_A_X, 0, NULL, NULL))))))))),
+                                              mnu_new_item(M_FILE_QUIT, "#Quit   Alt-X", NULL, K_A_X, 0, NULL,
+                                              NULL))))))))),
+                                 mnu_new_item(M_SETTINGS, "#Settings", NULL, 0, 0, mnu_new_window(
+                                              mnu_new_item(M_SETTINGS_PALETTE, "#Palette...", NULL, 0, 0, NULL,
+                                              NULL)),
                                  mnu_new_item(M_HELP, "#Help", NULL, 0, 0, mnu_new_window(
                                               mnu_new_item(M_HELP_HELP, "#Help...   F1", NULL, K_F1, 0, NULL,
                                               mnu_new_line(
                                               mnu_new_item(M_HELP_ABOUT, "#About...", NULL, 0, 0, NULL, NULL)))),
-                                              NULL)));
+                                              NULL))));
                     break;
                 
                 case M_FILE_NEW: {
@@ -252,6 +259,10 @@ program_handler (GLB_PROGRAM *pprogProgram, UTL_EVENT *peventEvent)
                     
                 case M_FILE_QUIT:
                     bExit = TRUE;
+                    break;
+                    
+                case M_SETTINGS_PALETTE:
+                    box_palette();
                     break;
                     
                 case M_HELP_ABOUT:
