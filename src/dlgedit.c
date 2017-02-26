@@ -82,7 +82,7 @@ static void int_dlg_editor_make_line_buffer (DLG_ELEMENT *pelementElement, CHAR 
   {
     if (pcLine == pedit->pcCursor)
       pcLine += pedit->ulGapLength;
-    if (!(*pcLine && *pcLine != '\n' && pcLine < pedit->pcBuffer + pedit->ulBufferLength))
+    if (!(pcLine < pedit->pcBuffer + pedit->ulBufferLength && *pcLine && *pcLine != '\n'))
       break;
     *pcCounter++ = *pcLine++;
     iBufferLength++;
@@ -95,7 +95,7 @@ static CHAR* int_dlg_editor_next_line (DLG_ELEMENT *pelementElement, CHAR *pcLin
   DLG_EDITOR *pedit;
               
   pedit = (DLG_EDITOR*)pelementElement->pAddInfo;
-  for (; *pcLine != '\n' && pcLine < pedit->pcBuffer + pedit->ulBufferLength; )
+  for (; pcLine < pedit->pcBuffer + pedit->ulBufferLength && *pcLine != '\n'; )
     if (pcLine == pedit->pcCursor)
       pcLine += pedit->ulGapLength;
     else
@@ -190,7 +190,7 @@ static INT int_dlg_editor_len_to_end (DLG_ELEMENT *pelementElement)
               
   pedit = (DLG_EDITOR*)pelementElement->pAddInfo;
   pcCounter = pedit->pcCursor + pedit->ulGapLength;
-  for (; *pcCounter && *pcCounter != '\n' && pcCounter < pedit->pcBuffer + pedit->ulBufferLength;
+  for (; pcCounter < pedit->pcBuffer + pedit->ulBufferLength && *pcCounter && *pcCounter != '\n';
        pcCounter++)
     i++;
   return i;
@@ -327,7 +327,7 @@ static void int_dlg_editor_go_line (DLG_ELEMENT *pelementElement, INT iLine)
   {
     pcLine = int_dlg_editor_get_line(pelementElement, pedit->coordCursor.iY + iLine - 1);
     for (iCounter = 0;
-         iCounter < pedit->iRow - 1 && *pcLine != '\n' && pcLine < pedit->pcBuffer + pedit->ulBufferLength;
+         iCounter < pedit->iRow - 1 && pcLine < pedit->pcBuffer + pedit->ulBufferLength && *pcLine != '\n';
          pcLine++, iCounter++)
       ;
     memmove(pedit->pcCursor, pedit->pcCursor + pedit->ulGapLength,

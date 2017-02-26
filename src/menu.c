@@ -117,7 +117,7 @@ static BOOL int_mnu_search_item (MNU_ITEM *pitemItem, WORD wKey)
   
   if (pitemItem->wHotKey == wKey)
   {
-    peventEvent = utl_alloc(sizeof(UTL_EVENT*));
+    peventEvent = utl_alloc(sizeof(UTL_EVENT));
     utl_fill_event(peventEvent);
     peventEvent->uiKind = E_MESSAGE;
     peventEvent->uiMessage = pitemItem->uiMessage;

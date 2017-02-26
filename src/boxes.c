@@ -750,6 +750,7 @@ BOOL box_load_save (CHAR *pcTitle, CHAR *pcMask)
     return FALSE;
   fwin.pcMask = pcMask;
   strcpy(fwin.pcFileName, pcMask);
+  utl_get_path(fwin.pcPath);
   fwin.ppcFirstLine = NULL;
   int_box_files_read(pcMask, &fwin);
   if (!(winWindow = win_new(14, 3, 51, 18, "load_save_box", (ULONG)&fwin)))
@@ -768,7 +769,6 @@ BOOL box_load_save (CHAR *pcTitle, CHAR *pcMask)
   win_add_element(winWindow, dlg_init_act_button(39, 16, "Hilfe", K_F1, pcHelp, BOX_HELP, TRUE, NULL));
   win_add_element(winWindow, dlg_init_border(1, 15, 49, 1, 0));
   win_cursor(winWindow, TRUE);
-  utl_get_path(fwin.pcPath);
   glb_send_message(NULL, winWindow, M_REDRAW, 0);
   glb_execute(winWindow);
   win_get_last_button(winWindow, &uiID);

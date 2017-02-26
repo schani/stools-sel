@@ -589,9 +589,9 @@ void dlg_help_box_handle_event (DLG_ELEMENT *pelementElement, UTL_EVENT *peventE
         break;
       if (phelpbox->plnkActLink)
       {
-        plnkNewLink = phelpbox->plnkActLink;
-        glb_send_message(pelementElement, pelementElement, M_SET_VALUES, plnkNewLink->dwContext);
-        glb_send_message(pelementElement, RECIPIENT, M_HELP_CONTEXT_CHANGED, plnkNewLink->dwContext);
+        DWORD dwNewContext = phelpbox->plnkActLink->dwContext;
+        glb_send_message(pelementElement, pelementElement, M_SET_VALUES, dwNewContext);
+        glb_send_message(pelementElement, RECIPIENT, M_HELP_CONTEXT_CHANGED, dwNewContext);
       }
       peventEvent->uiKind = E_DONE;
       break;
