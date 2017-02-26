@@ -607,8 +607,8 @@ void static int_win_desktop_handler (WINDOW winWindow, UTL_EVENT *peventEvent)
       {
         case M_REDRAW :
           mnu_redraw();
-          sts_redraw();
           dsk_sw_za(1, 2, iSizeX, iSizeY - 1, '±', dsk_get_color(PAL_COL_BACKGROUND));
+          sts_redraw();
           peventEvent->uiKind = E_DONE;
           break;                
       }
