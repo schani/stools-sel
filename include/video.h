@@ -47,6 +47,7 @@ extern "C"
 #endif
 void      vio_init            (void);
 void      vio_redraw          (void);
+void      vio_get_screen_size (INT*, INT*);
 void      vio_set_page        (WORD);
 WORD      vio_get_page        (void);
 void      vio_set_vir_page    (CHARACTER far*);

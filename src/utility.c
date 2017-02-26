@@ -397,8 +397,8 @@ void utl_std_scr_saver (BOOL bMouse)
   for (uiEbene = 0; uiEbene < UTL_SS_EBENEN; uiEbene++)
     for (uiStern = 0; uiStern < UTL_SS_STERNE; uiStern++)
     {
-      sastrSterne[uiEbene][uiStern].ucX = utl_random(80) + 1;
-      sastrSterne[uiEbene][uiStern].ucY = utl_random(25) + 1;
+      sastrSterne[uiEbene][uiStern].ucX = utl_random(iSizeX) + 1;
+      sastrSterne[uiEbene][uiStern].ucY = utl_random(iSizeY) + 1;
     }
   do
   {
@@ -419,7 +419,7 @@ void utl_std_scr_saver (BOOL bMouse)
           vio_s_z(sastrSterne[uiEbene][uiStern].ucX,
                   sastrSterne[uiEbene][uiStern].ucY, ' ');
           if (!(--sastrSterne[uiEbene][uiStern].ucX))
-            sastrSterne[uiEbene][uiStern].ucX = 80;
+            sastrSterne[uiEbene][uiStern].ucX = iSizeX;
           vio_s_z(sastrSterne[uiEbene][uiStern].ucX,
                   sastrSterne[uiEbene][uiStern].ucY, UTL_SS_STERN);
         }
@@ -452,7 +452,7 @@ void utl_save_screen (void)
   bMouse = msm_cursor_off();
   bShorts = utl_short_cuts(FALSE);
   pcharScreenBuffer = utl_alloc(iSizeX * iSizeY * sizeof(CHARACTER));
-  vio_lw(1, 1, 80, 25, pcharScreenBuffer);
+  vio_lw(1, 1, iSizeX, iSizeY, pcharScreenBuffer);
   vio_get_cursor(&iDummy, &iDummy, &iPercent);
 #ifndef _MSDOS
   vio_set_cursor_type(0);
@@ -461,7 +461,7 @@ void utl_save_screen (void)
 #ifndef _MSDOS
   vio_set_cursor_type(iPercent);
 #endif
-  vio_sw(1, 1, 80, 25, pcharScreenBuffer);
+  vio_sw(1, 1, iSizeX, iSizeY, pcharScreenBuffer);
   utl_free(pcharScreenBuffer);
   if (bMouse)
     msm_cursor_on();
@@ -628,12 +628,12 @@ void utl_shadow (INT iX, INT iY, UINT uiWidth, UINT uiHeight)
   for (iZaehler1 = (iY + 1); iZaehler1 <= (INT)(iY + uiHeight); iZaehler1++)
     for (iZaehler2 = (iX + uiWidth); iZaehler2 < (INT)(iX + uiWidth + 2);
          iZaehler2++)
-      if (iZaehler1 >= 1 && iZaehler1 <= 25 && 
-          iZaehler2 >= 1 && iZaehler2 <= 80)
+      if (iZaehler1 >= 1 && iZaehler1 <= iSizeY &&
+          iZaehler2 >= 1 && iZaehler2 <= iSizeX)
       vio_s_a(iZaehler2, iZaehler1, 8);
-  if (iY + uiHeight >= 1 && iY + uiHeight <= 25)
+  if (iY + uiHeight >= 1 && iY + uiHeight <= iSizeY)
     for (iZaehler1 = (iX + 2); iZaehler1 < (INT)(iX + uiWidth); iZaehler1++)
-      if (iZaehler1 >= 1 && iZaehler1 <= 80)
+      if (iZaehler1 >= 1 && iZaehler1 <= iSizeX)
         vio_s_a(iZaehler1, iY + uiHeight, 8);
   END_MOUSE;
 }
@@ -900,7 +900,7 @@ DWORD utl_get_timer (void)
 
 void utl_cls (CHAR cAttri)
 {
-  vio_scroll_down(1, 1, 80, 25, cAttri, 0);
+  vio_scroll_down(1, 1, iSizeX, iSizeY, cAttri, 0);
 }
 
 void utl_strdel (CHAR *pcText, INT iStart, INT iLength)

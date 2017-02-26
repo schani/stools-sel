@@ -214,6 +214,13 @@ vio_init (void)
 }
 
 void
+vio_get_screen_size (INT *x, INT *y)
+{
+    *x = iSizeX;
+    *y = iSizeY;
+}
+
+void
 vio_redraw (void)
 {
 	if (!need_redraw)

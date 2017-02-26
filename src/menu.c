@@ -52,13 +52,15 @@ static void int_mnu_write_menu_bar (void)
            *pitemCounterLeft;
   INT       iCounter          = 0,
             iX;
-    
-  dsk_sw_za(1, 1, 80, 1, ' ', dsk_get_color(PAL_COL_DSK_MENU_BAR));
+  INT iSizeX, iSizeY;
+  
+  vio_get_screen_size(&iSizeX, &iSizeY);
+  dsk_sw_za(1, 1, iSizeX, 1, ' ', dsk_get_color(PAL_COL_DSK_MENU_BAR));
   if (!pmenuLast)
     return;              
   if (pmenuLast->iRight > 0)
   {
-    for (pitemCounterRight = pmenuLast->pwindowWindow->pitemLast, iX = 80;
+    for (pitemCounterRight = pmenuLast->pwindowWindow->pitemLast, iX = iSizeX;
          iCounter < pmenuLast->iRight && pitemCounterRight;
          pitemCounterRight = pitemCounterRight->pitemPrev, iCounter++)
     {
@@ -243,6 +245,7 @@ static MNU_WINDOW* int_mnu_open_window (MNU_WINDOW *pwindowWindow, CNT_STACK *ps
 {
   INT iX,
       iY;
+  INT iSizeX, iSizeY;
 
   if (pwindowWindow == pmenuLast->pwindowWindow)
   {
@@ -255,8 +258,9 @@ static MNU_WINDOW* int_mnu_open_window (MNU_WINDOW *pwindowWindow, CNT_STACK *ps
     iY = pwindowWindow->winWindow->iY + pwindowWindow->pitemActive->iLine + 1;
   }                                       
   pwindowWindow = pwindowWindow->pitemActive->pwindowWindow;
-  iX = min(iX, 80 - pwindowWindow->iWidth);
-  iY = min(iY, 26 - pwindowWindow->iHeight);
+  vio_get_screen_size(&iSizeX, &iSizeY);
+  iX = min(iX, iSizeX - pwindowWindow->iWidth);
+  iY = min(iY, iSizeY + 1 - pwindowWindow->iHeight);
   cnt_stack_put(psStack, (ULONG)pwindowWindow);
   int_mnu_display_window(pwindowWindow, iX, iY);
   return(pwindowWindow);
