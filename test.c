@@ -137,6 +137,7 @@ code_editor_callback (WINDOW win, UTL_EVENT *peventEvent)
                     if (data)
                         free_edit_data(data);
                     win_set_add_info(win, (ULONG)new_data);
+                    win_title(win, new_data->filename, TITLE_T_C);
                     if (fwrite(text, 1, len, f) != len)
                         box_info(BOX_ERROR, BOX_OK, "Could not save file", 0);
                     fclose(f);
@@ -164,9 +165,10 @@ code_editor_callback (WINDOW win, UTL_EVENT *peventEvent)
 }
 
 static BOOL
-make_editor (CHAR *pcTitle, CHAR *pcBuffer, edit_data_t *data)
+make_editor (CHAR *pcBuffer, edit_data_t *data)
 {
     WINDOW winWindow;
+    CHAR *pcTitle = data ? data->filename : "untitled";
     
     if (!(winWindow = win_new(10, 2, 66, 21, "code_editor", (ULONG)data)))
         return FALSE;
@@ -212,7 +214,7 @@ program_handler (GLB_PROGRAM *pprogProgram, UTL_EVENT *peventEvent)
                 case M_FILE_NEW: {
                     CHAR *pcBuffer = utl_alloc(BUFFER_SIZE);
                     strcpy(pcBuffer, "let main x =\n  x\nend");
-                    make_editor(" Edit ", pcBuffer, NULL);
+                    make_editor(pcBuffer, NULL);
                     break;
                 }
                     
@@ -223,7 +225,7 @@ program_handler (GLB_PROGRAM *pprogProgram, UTL_EVENT *peventEvent)
                         CHAR *buffer = utl_alloc(BUFFER_SIZE);
                         size_t num_read = fread(buffer, 1, BUFFER_SIZE - 1, f);
                         buffer[num_read] = 0;
-                        make_editor(" Edit ", buffer, data);
+                        make_editor(buffer, data);
                         fclose(f);
                     } else {
                         free_edit_data(data);
