@@ -20,6 +20,23 @@ extern int sel_run (const char *program);
 
 #define BUFFER_SIZE        8192
 
+static STS_ITEM aitemEditorItems[] =
+{
+    {
+        "~Alt-R~ Run",
+        M_FILE_RUN,
+        K_A_R,
+        TRUE
+    },
+    {
+        "~Alt-S~ Save",
+        M_FILE_SAVE,
+        K_A_S,
+        TRUE
+    },
+    STS_END
+};
+
 typedef struct {
     char *dir;
     char *filename;
@@ -95,11 +112,11 @@ code_editor_callback (WINDOW win, UTL_EVENT *peventEvent)
                 break;
             case M_GET_FOCUS :
                 win_show(win);
-                /* sts_new_status_line(aitemHelpItems); */
+                sts_new_status_line(aitemEditorItems);
                 peventEvent->uiKind = E_DONE;
                 break;
             case M_LOST_FOCUS :
-                /* sts_del_status_line(); */
+                sts_del_status_line();
                 peventEvent->uiKind = E_DONE;
                 break;
             case M_QUIT :
