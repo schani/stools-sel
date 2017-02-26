@@ -20,6 +20,7 @@ typedef struct
 {
 	CHAR character;
 	CHAR attribute;
+    BYTE needsRedraw;
 } CHARACTER;
 
 typedef struct

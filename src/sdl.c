@@ -77,6 +77,7 @@ static INT iCursorX = 1, iCursorY = 1, iCursorPercent = 20;
 
 static SDL_Window *window;
 static SDL_Renderer *renderer;
+static SDL_Texture *content_texture;
 static SDL_Texture *font_texture;
 
 static SDL_Color colors [NUM_COLORS];
@@ -150,6 +151,8 @@ render_screen (void)
 	for (int y = 1; y <= TEXT_ROWS; y++) {
 		for (int x = 1; x <= TEXT_COLUMNS; x++) {
 			CHARACTER *src = pcharPhysPage + (x-1 + (y-1) * iSizeX);
+            if (!src->needsRedraw)
+                continue;
 			attribute_t attr = src->attribute;
 			SDL_Color bg = colors [attribute_background (attr)];
 			SDL_SetRenderDrawColor (renderer, bg.r, bg.g, bg.b, bg.a);
@@ -158,6 +161,7 @@ render_screen (void)
 			int c = src->character & 0xff;
 			SDL_Rect src_rect = { c * FONT_WIDTH, attribute_foreground (attr) * FONT_HEIGHT, FONT_WIDTH, FONT_HEIGHT };
 			SDL_RenderCopy (renderer, font_texture, &src_rect, &dst_rect);
+            src->needsRedraw = FALSE;
 		}
 	}
 
@@ -201,11 +205,12 @@ vio_init (void)
 	iSizeY = TEXT_ROWS;
 
 	pcharVirPage = pcharPhysPage = malloc (sizeof (CHARACTER) * iSizeX * iSizeY);
-	memset (pcharVirPage, 0, sizeof (CHARACTER) * iSizeX * iSizeY);
 
 	pcharBuffer = malloc (sizeof (CHARACTER) * iSizeX * iSizeY);
+    
+    content_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_TARGET, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	need_redraw = TRUE;
+    vio_sp_za(' ', vio_attri(7, 0));
 }
 
 void
@@ -214,8 +219,12 @@ vio_redraw (void)
 	if (!need_redraw)
 		return;
 
-	SDL_RenderClear (renderer);
+    SDL_SetRenderTarget(renderer, content_texture);
 	render_screen ();
+    SDL_SetRenderTarget(renderer, NULL);
+    
+    SDL_RenderClear (renderer);
+    SDL_RenderCopy(renderer, content_texture, NULL, NULL);
 	SDL_RenderPresent (renderer);
 
 	need_redraw = FALSE;
@@ -275,6 +284,8 @@ vio_set_cursor_pos (INT iX, INT iY)
 	assert (iX > 0 && iX <= iSizeX);
 	assert (iY > 0 && iY <= iSizeY);
 
+    VIO_BUFFER_POS(iCursorX, iCursorY)->needsRedraw = TRUE;
+
 	iCursorX = iX;
 	iCursorY = iY;
 
@@ -314,6 +325,7 @@ vio_s_z (INT iX, INT iY, CHAR cChar)
 {
 	CHARACTER *pchar = VIO_BUFFER_POS(iX, iY);
 	pchar->character = cChar;
+    pchar->needsRedraw = TRUE;
 
 	set_redraw_if_phys ();
 }
@@ -323,6 +335,7 @@ vio_s_a (INT iX, INT iY, CHAR cAttri)
 {
 	CHARACTER *pchar = VIO_BUFFER_POS(iX, iY);
 	pchar->attribute = cAttri;
+    pchar->needsRedraw = TRUE;
 
 	set_redraw_if_phys ();
 }
@@ -335,6 +348,7 @@ vio_s_za (INT iX, INT iY, CHAR cChar, CHAR cAttri)
 	pchar = VIO_BUFFER_POS(iX,iY);
 	pchar->character = cChar;
 	pchar->attribute = cAttri;
+    pchar->needsRedraw = TRUE;
 
 	set_redraw_if_phys ();
 }
@@ -347,6 +361,7 @@ vio_ss (INT iX, INT iY, CHAR *pcString)
 	pchar = VIO_BUFFER_POS(iX,iY);
 	for (; *pcString; pcString++, pchar++) {
 		pchar->character = *pcString;
+        pchar->needsRedraw = TRUE;
 	}
 
 	set_redraw_if_phys ();
@@ -362,6 +377,7 @@ vio_ss_a (INT iX, INT iY, CHAR *pcString, CHAR cAttri)
 	{
 		pchar->character = *pcString;
 		pchar->attribute = cAttri;
+        pchar->needsRedraw = TRUE;
 	}
 
 	set_redraw_if_phys ();
@@ -382,6 +398,7 @@ vio_sp_za (CHAR cChar, CHAR cAttri)
 	{
 		pchar->character = cChar;
 		pchar->attribute = cAttri;
+        pchar->needsRedraw = TRUE;
 	}
 
 	set_redraw_if_phys ();
@@ -400,6 +417,7 @@ vio_sp_z (CHAR cChar)
 	pchar = pcharVirPage;
 	for (i = 0; i < (INT)dwCells; i++, pchar++) {
 		pchar->character = cChar;
+        pchar->needsRedraw = TRUE;
 	}
 
 	set_redraw_if_phys ();
@@ -417,6 +435,7 @@ vio_sp_a (CHAR cAttri)
 	pchar = pcharVirPage;
 	for (i = 0; i < (INT)dwCells; i++, pchar++) {
 		pchar->attribute = cAttri;
+        pchar->needsRedraw = TRUE;
 	}
 
 	set_redraw_if_phys ();
@@ -440,6 +459,7 @@ vio_sw_za (INT iX, INT iY, INT iWidth, INT iHeight,
 		{
 			pcharCounter->character = cChar;
 			pcharCounter->attribute = cAttri;
+            pcharCounter->needsRedraw = TRUE;
 		}
 		pcharCounter += iJump;
 	}
@@ -462,6 +482,7 @@ vio_sw_z (INT iX, INT iY, INT iWidth, INT iHeight, CHAR cChar)
 		pcharLimit = pcharCounter + iWidth;
 		for (; pcharCounter < pcharLimit; pcharCounter++) {
 			pcharCounter->character = cChar;
+            pcharCounter->needsRedraw = TRUE;
 		}
 		pcharCounter += iJump;
 	}
@@ -484,6 +505,7 @@ vio_sw_a (INT iX, INT iY, INT iWidth, INT iHeight, CHAR cAttri)
 		pcharLimit = pcharCounter + iWidth;
 		for (; pcharCounter < pcharLimit; pcharCounter++) {
 			pcharCounter->attribute = cAttri;
+            pcharCounter->needsRedraw = TRUE;
 		}
 		pcharCounter += iJump;
 	}
@@ -530,7 +552,7 @@ vio_lw (INT iX, INT iY, INT iWidth, INT iHeight, CHARACTER *pcharDest)
 	pcharSource = VIO_BUFFER_POS(iX, iY);
 	for (i = 0; i < iHeight; i++)
 	{
-		memcpy(pcharDest, pcharSource, iWidth * sizeof(CHARACTER));
+        memcpy(pcharDest, pcharSource, iWidth * sizeof(CHARACTER));
 		pcharSource += iSizeX;
 		pcharDest += iWidth;
 	}
@@ -545,7 +567,12 @@ vio_sw (INT iX, INT iY, INT iWidth, INT iHeight, CHARACTER *pcharSource)
 	pcharDest = VIO_BUFFER_POS(iX, iY);
 	for (i = 0; i < iHeight; i++)
 	{
-		memcpy(pcharDest, pcharSource, iWidth * sizeof(CHARACTER));
+        for (int j = 0; j < iWidth; j++)
+        {
+            pcharDest[j].character = pcharSource[j].character;
+            pcharDest[j].attribute = pcharSource[j].attribute;
+            pcharDest[j].needsRedraw = TRUE;
+        }
 		pcharDest += iSizeX;
 		pcharSource += iWidth;
 	}
@@ -569,9 +596,11 @@ void vio_sw_ff (INT iX, INT iY, INT iWidth, INT iHeight, CHARACTER *pcharSource)
 		{
 			if (pcharSource->character != (CHAR)0xff) {
 				pcharDest->character = pcharSource->character;
+                pcharDest->needsRedraw = TRUE;
 			}
 			if (pcharSource->attribute != (CHAR)0xff) {
 				pcharDest->attribute = pcharSource->attribute;
+                pcharDest->needsRedraw = TRUE;
 			}
 		}
 		pcharDest += iJump;
