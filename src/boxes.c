@@ -644,7 +644,7 @@ BOOL box_palette (void)
 {
   BOOL         bEnd           = FALSE,
                bShorts;
-  INT          iPalette;
+  INT          iPalette = -1;
   UINT         uiID;
   WINDOW       winWindow;
   DLG_BUTTON   abutButtons[]  = {
@@ -724,7 +724,8 @@ BOOL box_palette (void)
   } while (!bEnd);
   if (!win_delete(winWindow))
     return FALSE;
-  glb_set_palette((UCHAR)iPalette);
+  if (iPalette >= 0)
+    glb_set_palette((UCHAR)iPalette);
   utl_short_cuts(bShorts);
   return TRUE;
 }
