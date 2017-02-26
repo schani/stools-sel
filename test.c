@@ -16,6 +16,7 @@ extern int sel_run (const char *program);
 
 #define M_SETTINGS         2000
 #define M_SETTINGS_PALETTE 2001
+#define M_SETTINGS_CUSTOM_PALETTE 2002
 
 #define M_HELP             3000
 #define M_HELP_HELP        3001
@@ -227,7 +228,8 @@ program_handler (GLB_PROGRAM *pprogProgram, UTL_EVENT *peventEvent)
                                               NULL))))))))),
                                  mnu_new_item(M_SETTINGS, "#Settings", NULL, 0, 0, mnu_new_window(
                                               mnu_new_item(M_SETTINGS_PALETTE, "#Palette...", NULL, 0, 0, NULL,
-                                              NULL)),
+                                              mnu_new_item(M_SETTINGS_CUSTOM_PALETTE, "#Custom palette...", NULL, 0, 0, NULL,
+                                              NULL))),
                                  mnu_new_item(M_HELP, "#Help", NULL, 0, 0, mnu_new_window(
                                               mnu_new_item(M_HELP_HELP, "#Help...   F1", NULL, K_F1, 0, NULL,
                                               mnu_new_line(
@@ -263,6 +265,10 @@ program_handler (GLB_PROGRAM *pprogProgram, UTL_EVENT *peventEvent)
                     
                 case M_SETTINGS_PALETTE:
                     box_palette();
+                    break;
+                    
+                case M_SETTINGS_CUSTOM_PALETTE:
+                    box_custom_palette();
                     break;
                     
                 case M_HELP_ABOUT:
