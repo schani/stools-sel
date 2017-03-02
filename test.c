@@ -239,7 +239,7 @@ program_handler (GLB_PROGRAM *pprogProgram, UTL_EVENT *peventEvent)
                 
                 case M_FILE_NEW: {
                     CHAR *pcBuffer = utl_alloc(BUFFER_SIZE);
-                    strcpy(pcBuffer, "let main x =\n  x\nend");
+                    strcpy(pcBuffer, "");
                     make_editor(pcBuffer, NULL);
                     break;
                 }
