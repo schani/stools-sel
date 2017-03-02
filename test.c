@@ -282,18 +282,6 @@ program_handler (GLB_PROGRAM *pprogProgram, UTL_EVENT *peventEvent)
                 default:
                     return;
             }
-        case E_KEY :
-            switch (peventEvent->wKey) {
-                    /*
-                case K_A_X :
-                    bExit = TRUE;
-                    peventEvent->uiKind = E_DONE;
-                    break;
-                     */
-                    
-                default:
-                    return;
-            }
             break;
         default:
             return;
