@@ -312,6 +312,20 @@ SEL_EXPR* rtl_vio_w_w_c_a (SEL_PROGRAM *pprogProgram)
   return(NULL);
 }
 
+SEL_EXPR* rtl_vio_w_s_a (SEL_PROGRAM *pprogProgram)
+{
+    TYPE_INT iX, iY;
+    TYPE_CHAR *pcString;
+    TYPE_CHAR cAttri;
+    
+    iX = (TYPE_INT)(man_get_variable(pprogProgram, "x")->ulValue);
+    iY = (TYPE_INT)(man_get_variable(pprogProgram, "y")->ulValue);
+    pcString = (TYPE_CHAR*)man_get_variable(pprogProgram, "s")->ulValue;
+    cAttri = (TYPE_CHAR)(man_get_variable(pprogProgram, "a")->ulValue);
+    vio_ss_a(iX, iY, pcString, cAttri);
+    return(NULL);
+}
+
 SEL_EXPR* rtl_vio_redraw (SEL_PROGRAM *pprogProgram)
 {
     vio_redraw();

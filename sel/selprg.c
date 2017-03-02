@@ -95,6 +95,11 @@ void prg_init_run_time_lib (SEL_PROGRAM *pprogProgram)
                     prg_param("h", SEL_INT,
                     prg_param("c", SEL_CHAR,
                     prg_param("a", SEL_CHAR, NULL)))))), rtl_vio_w_w_c_a);
+  prg_init_rtl_func(pprogProgram, "VioWSA", SEL_VOID,
+                    prg_param("x", SEL_INT,
+                    prg_param("y", SEL_INT,
+                    prg_param("s", SEL_STRING,
+                    prg_param("a", SEL_CHAR, NULL)))), rtl_vio_w_s_a);
   prg_init_rtl_func(pprogProgram, "VioRedraw", SEL_VOID, NULL, rtl_vio_redraw);
 }
 

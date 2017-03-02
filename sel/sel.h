@@ -541,4 +541,5 @@ SEL_EXPR*           rtl_mem_free             (SEL_PROGRAM*);
 SEL_EXPR*           rtl_mem_avail            (SEL_PROGRAM*);        
 SEL_EXPR*           rtl_vio_w_p_c_a          (SEL_PROGRAM*);
 SEL_EXPR*           rtl_vio_w_w_c_a          (SEL_PROGRAM*);
+SEL_EXPR*           rtl_vio_w_s_a            (SEL_PROGRAM*);
 SEL_EXPR*           rtl_vio_redraw           (SEL_PROGRAM*);

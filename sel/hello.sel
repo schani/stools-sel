@@ -1,0 +1,38 @@
+#include "video.sh"
+#include "stdlib.sh"
+
+global
+    function main () : void
+end
+
+function strlen (str : *char) : int
+    i : int;
+begin
+    i = 0;
+    while (str[i])
+        i = i + 1;
+    end
+    return i;
+end
+
+function attri (fg : int, bg : int) : int
+begin
+    return (bg << 4) | fg;
+end
+
+function main () : void
+    i : int;
+    x : int;
+    y : int;
+    str : *char;
+    l : int;
+begin
+    str = "Hello, world!";
+    l = strlen(str);
+    for (i = 0 to 3000)
+        x = 1 + Random(80 - l + 1);
+        y = 1 + Random(25);
+        VioWSA(x, y, str, attri(1 + Random(7), 1 + Random(7)));
+        VioRedraw();
+    end
+end
