@@ -27,6 +27,11 @@ $(OBJDIR)/stools_%.o : src/%.c $(STOOLS_H)
 	mkdir -p $(OBJDIR)
 	gcc $(CFLAGS) -o $@ -c $<
 
+$(OBJDIR)/stools_sdl.o : src/font.h
+
+src/font.h : src/Px437_IBM_VGA9.ttf
+	xxd -i $^ >$@
+
 $(OBJDIR)/sel_%.o : sel/%.c $(SEL_H) $(STOOLS_H)
 	mkdir -p $(OBJDIR)
 	gcc $(CFLAGS) -o $@ -c $<

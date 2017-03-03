@@ -14,6 +14,8 @@
 #include <mouse.h>
 #include <utility.h>
 
+#include "font.h"
+
 typedef CHAR attribute_t;
 
 static inline int
@@ -193,7 +195,8 @@ vio_init (void)
 	SDL_Init (SDL_INIT_TIMER | SDL_INIT_VIDEO);
 	SDL_CreateWindowAndRenderer (WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer);
 	TTF_Init();
-	TTF_Font *font = TTF_OpenFont ("Px437_IBM_VGA9.ttf", TTF_FONT_SIZE);
+	SDL_RWops *rwops = SDL_RWFromMem (src_Px437_IBM_VGA9_ttf, src_Px437_IBM_VGA9_ttf_len);
+	TTF_Font *font = TTF_OpenFontRW (rwops, 1, TTF_FONT_SIZE);
 	if (font == NULL) {
 		fprintf (stderr, "Error: font not found\n");
 		exit(EXIT_FAILURE);
