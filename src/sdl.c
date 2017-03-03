@@ -3,7 +3,11 @@
 #include <stdint.h>
 
 #include <SDL2/SDL.h>
+#ifdef _LINUX
+#include <SDL_ttf.h>
+#else
 #include <SDL2_ttf/SDL_ttf.h>
+#endif
 
 #include <gemein.h>
 #include <video.h>
@@ -189,7 +193,7 @@ vio_init (void)
 	SDL_Init (SDL_INIT_TIMER | SDL_INIT_VIDEO);
 	SDL_CreateWindowAndRenderer (WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer);
 	TTF_Init();
-	TTF_Font *font = TTF_OpenFont ("/Users/schani/Dropbox/Work/stools/Px437_IBM_VGA9.ttf", TTF_FONT_SIZE);
+	TTF_Font *font = TTF_OpenFont ("Px437_IBM_VGA9.ttf", TTF_FONT_SIZE);
 	if (font == NULL) {
 		fprintf (stderr, "Error: font not found\n");
 		exit(EXIT_FAILURE);

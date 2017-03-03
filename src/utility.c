@@ -1071,7 +1071,7 @@ glob_files (CHAR *pcMask, BOOL dirs,
     if (glob(pcMask, GLOB_MARK, NULL, &results))
         return;
 
-    for (int i = 0; i < results.gl_matchc; i++) {
+    for (int i = 0; i < results.gl_pathc; i++) {
         char *path = results.gl_pathv[i];
         size_t len = strlen(path);
         if (len == 0)
