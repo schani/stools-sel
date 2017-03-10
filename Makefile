@@ -1,4 +1,4 @@
-STOOLS_SRC := boxes.c		dlgact.c	dlgedit.c	dlglist.c	dlgscrol.c	memofile.c	sdl.c		status.c	utility.c	window.c \
+STOOLS_SRC := boxes.c		dlgact.c	dlgedit.c	dlglist.c	dlgscrol.c	memofile.c	sdl.c		status.c	utility.c	utlstr.c	window.c \
 	buffers.c	dlgbord.c	dlghelp.c	dlgpush.c	dlgtext.c	menu.c	sthelp.c \
 	dlg.c		dlgcolor.c	dlglabel.c	dlgradio.c	global.c	queue.c		stack.c
 
