@@ -69,20 +69,20 @@ DWORD get_context (CHAR *pcName)
   return 0;
 }
 
-void append_color (BYTE byColor, WORD wCount)
+void append_color (BYTE byColor, SWORD swCount)
 {
   COLOR *pcolColor;
 
   if (!pcolFirst)
-    pcolColor = pcolFirst = utl_alloc(sizeof(COLOR));
+    pcolColor = pcolFirst = malloc(sizeof(COLOR));
   else
   {
     for (pcolColor = pcolFirst; pcolColor->pcolNext; pcolColor = pcolColor->pcolNext)
       ;
-    pcolColor = pcolColor->pcolNext = utl_alloc(sizeof(COLOR));
+    pcolColor = pcolColor->pcolNext = malloc(sizeof(COLOR));
   }
   pcolColor->clrColor.byColor = byColor;
-  pcolColor->clrColor.wCount = wCount;
+  pcolColor->clrColor.swCount = swCount;
   pcolColor->pcolNext = NULL;
 }
 
@@ -94,11 +94,11 @@ void make_colors (void)
   dwColors = 0;
   for (pcolColor = pcolFirst; pcolColor; pcolColor = pcolColor->pcolNext)
     dwColors++;
-  pclrColors = utl_alloc(sizeof(HLP_COLOR) * dwColors);
+  pclrColors = malloc(sizeof(HLP_COLOR) * dwColors);
   for (pcolColor = pcolFirst; pcolColor; pcolColor = pcolColor->pcolNext)
   {
     pclrColors[iCounter].byColor = pcolColor->clrColor.byColor;
-    pclrColors[iCounter].wCount = pcolColor->clrColor.wCount;
+    pclrColors[iCounter].swCount = pcolColor->clrColor.swCount;
     iCounter++;
   }
 }
@@ -112,7 +112,7 @@ void delete_colors (void)
   while (pcolColor)
   {
     pcolNext = pcolColor->pcolNext;
-    utl_free(pcolColor);
+    free(pcolColor);
     pcolColor = pcolNext;
   }
   pcolFirst = NULL;
@@ -123,12 +123,12 @@ void append_link (SWORD swX, SWORD swY, SWORD swWidth, DWORD dwContext)
   LINK *plinkLink;
 
   if (!plinkFirst)
-    plinkLink = plinkFirst = utl_alloc(sizeof(LINK));
+    plinkLink = plinkFirst = malloc(sizeof(LINK));
   else
   {
     for (plinkLink = plinkFirst; plinkLink->plinkNext; plinkLink = plinkLink->plinkNext)
       ;
-    plinkLink = plinkLink->plinkNext = utl_alloc(sizeof(LINK));
+    plinkLink = plinkLink->plinkNext = malloc(sizeof(LINK));
   }
   plinkLink->lnkLink.swX = swX;
   plinkLink->lnkLink.swY = swY;
@@ -146,7 +146,7 @@ void make_links (void)
   dwLinks = 0;
   for (plinkLink = plinkFirst; plinkLink; plinkLink = plinkLink->plinkNext)
     dwLinks++;
-  plnkLinks = utl_alloc(sizeof(HLP_LINK) * dwLinks);
+  plnkLinks = malloc(sizeof(HLP_LINK) * dwLinks);
   for (plinkLink = plinkFirst; plinkLink; plinkLink = plinkLink->plinkNext)
   {
     plnkLinks[iCounter].swX = plinkLink->lnkLink.swX;
@@ -167,7 +167,7 @@ void delete_links (void)
   while (plinkLink)
   {
     plinkNext = plinkLink->plinkNext;
-    utl_free(plinkLink);
+    free(plinkLink);
     plinkLink = plinkNext;
   }
   plinkFirst = NULL;
@@ -210,14 +210,14 @@ void analyze_source (void)
   CONTEXT *pctxContext;
   NAME    *pnameName;
 
-  win_info("Analysiere Source");
+  printf("Analysiere Source\n");
   get_line(acBuffer);
   while (!feof(pfileSource))
   {
     if (!pctxFirst)
-      pctxContext = pctxFirst = utl_alloc(sizeof(CONTEXT));
+      pctxContext = pctxFirst = malloc(sizeof(CONTEXT));
     else
-      pctxContext = pctxContext->pctxNext = utl_alloc(sizeof(CONTEXT));
+      pctxContext = pctxContext->pctxNext = malloc(sizeof(CONTEXT));
     pctxContext->dwContext = ++dwContexts;
     pctxContext->pctxNext = NULL;
     pctxContext->pnameName = NULL;
@@ -228,14 +228,14 @@ void analyze_source (void)
       {
         case KEY_CONTEXT :
           if (!pctxContext->pnameName)
-            pnameName = pctxContext->pnameName = utl_alloc(sizeof(NAME));
+            pnameName = pctxContext->pnameName = malloc(sizeof(NAME));
           else
-            pnameName = pnameName->pnameNext = utl_alloc(sizeof(NAME));
+            pnameName = pnameName->pnameNext = malloc(sizeof(NAME));
           pnameName->pnameNext = NULL;
           strncpy(pnameName->acName, acName, 20);
           break;
         case KEY_FREEZE :
-          pctxContext->swFreeze = atoi(acName);
+          pctxContext->wFreeze = atoi(acName);
           break;
       }
       get_line(acBuffer);
@@ -244,7 +244,6 @@ void analyze_source (void)
       get_line(acBuffer);
   }
   fseek(pfileSource, 0, SEEK_SET);
-  win_info(NULL);
 }
 
 void make_quickhelp (void)
@@ -263,17 +262,17 @@ void make_quickhelp (void)
              iIndex;
   SWORD      swHotSpotX,
              swColorCounter,
-             swLines;
-  WORD       wCount;
+             swLines,
+             swCount;
   DWORD      dwCounter,
              dwDummy             = 0,
              dwPos;
  
-  win_info("Erzeuge Quick-Help Datei");
+  printf("Erzeuge Quick-Help Datei\n");
   fwrite(&dwContexts, sizeof(DWORD), 1, pfileQuickHelp);
   for (dwCounter = 0; dwCounter < dwContexts; dwCounter++)
     fwrite(&dwDummy, sizeof(DWORD), 1, pfileQuickHelp);
-  pcText = utl_alloc(32768);
+  pcText = malloc(32768);
   pctxContext = pctxFirst;
   get_line(acBuffer);
   while (pctxContext)
@@ -369,19 +368,19 @@ void make_quickhelp (void)
       acLineBuffer[swColorCounter] = 0;
       utl_rtrim(acLineBuffer);
       byColor = *abyColorBuffer;
-      wCount = 0;
+      swCount = 0;
       for (iCounter = 0; iCounter < swColorCounter; iCounter++)
       {
         if (abyColorBuffer[iCounter] == byColor)
-          wCount++;
+          swCount++;
         else
         {
-          append_color(byColor, wCount);
+          append_color(byColor, swCount);
           byColor = abyColorBuffer[iCounter];
-          wCount = 1;
+          swCount = 1;
         }
       }
-      append_color(byColor, (WORD)-1);
+      append_color(byColor, -1);
       strcat(pcText, acLineBuffer);
       get_line(acBuffer);
       if (*acBuffer != '.')
@@ -391,20 +390,30 @@ void make_quickhelp (void)
     delete_colors();
     make_links();
     delete_links();
-    fwrite(&pctxContext->swFreeze, sizeof(SWORD), 1, pfileQuickHelp);
+    fwrite(&pctxContext->wFreeze, sizeof(WORD), 1, pfileQuickHelp);
     fwrite(&swLines, sizeof(SWORD), 1, pfileQuickHelp);
     fwrite(&dwColors, sizeof(DWORD), 1, pfileQuickHelp);
-    fwrite(pclrColors, sizeof(HLP_COLOR) * dwColors, 1, pfileQuickHelp);
-    utl_free(pclrColors);
+    for (DWORD dw = 0; dw < dwColors; dw++)
+    {
+      fwrite(&pclrColors[dw].byColor, sizeof(BYTE), 1, pfileQuickHelp);
+      fwrite(&pclrColors[dw].swCount, sizeof(SWORD), 1, pfileQuickHelp);
+    }
+    free(pclrColors);
     fwrite(&dwLinks, sizeof(DWORD), 1, pfileQuickHelp);
-    fwrite(plnkLinks, sizeof(HLP_LINK) * dwLinks, 1, pfileQuickHelp);
-    utl_free(plnkLinks);
+    for (DWORD dw = 0; dw < dwLinks; dw++)
+    {
+      fwrite(&plnkLinks [dw].swX, sizeof (SWORD), 1, pfileQuickHelp);
+      fwrite(&plnkLinks [dw].swY, sizeof (SWORD), 1, pfileQuickHelp);
+      fwrite(&plnkLinks [dw].swWidth, sizeof (SWORD), 1, pfileQuickHelp);
+      fwrite(&plnkLinks [dw].swHeight, sizeof (SWORD), 1, pfileQuickHelp);
+      fwrite(&plnkLinks [dw].dwContext, sizeof (DWORD), 1, pfileQuickHelp);
+    }
+    free(plnkLinks);
     dwDummy = strlen(pcText) + 1;
     fwrite(&dwDummy, sizeof(DWORD), 1, pfileQuickHelp);
     fwrite(pcText, dwDummy, 1, pfileQuickHelp);
     pctxContext = pctxContext->pctxNext;
   }
-  win_info(NULL);
 }
 
 void make_header (void)
@@ -415,7 +424,7 @@ void make_header (void)
   CHAR     acBuffer1[81],
            acBuffer2[21];
 
-  win_info("Erzeuge Headerdatei");
+  printf("Erzeuge Headerdatei\n");
   fwrite(pcHead, strlen(pcHead), 1, pfileHeader);
   for (pctxContext = pctxFirst; pctxContext; pctxContext = pctxContext->pctxNext)
   {
@@ -426,13 +435,12 @@ void make_header (void)
       strcat(acBuffer1, acBuffer2);
       for (iCounter = 0; iCounter < 30 - strlen(acBuffer2); iCounter++)
         strcat(acBuffer1, " ");
-      itoa(pctxContext->dwContext, acBuffer2, 10);
+      sprintf(acBuffer2, "%d", pctxContext->dwContext);
       strcat(acBuffer1, acBuffer2);
       strcat(acBuffer1, "\n");
       fwrite(acBuffer1, strlen(acBuffer1), 1, pfileHeader);
     }
   }
-  win_info(NULL);
 }
 
 void main (int argc, char *argv[])
@@ -448,7 +456,7 @@ void main (int argc, char *argv[])
            "    STHC <helpfile>\n"
            "\n"
            "    <helpfile> ist der Name der zu kompilierenden Hilfedatei\n"
-           "               ohne Dateierweiterung");
+           "               ohne Dateierweiterung\n");
     exit(1);
   }
   strcpy(acFileName, argv[1]);
@@ -462,10 +470,9 @@ void main (int argc, char *argv[])
   pfileHeader = fopen(acFileName, "wt");
   if (!(pfileSource && pfileQuickHelp && pfileHeader))
   {
-    printf("Dateien k”nnen nicht ge”ffnet werden!");
+    printf("Dateien k”nnen nicht ge”ffnet werden!\n");
     exit(1);
   }
-  glb_init(NULL);
   analyze_source();
   make_quickhelp();
   make_header();
@@ -473,9 +480,3 @@ void main (int argc, char *argv[])
   fclose(pfileQuickHelp);
   fclose(pfileSource);
 }
-
-/*
-Local Variables:
-compile-command: "wmake -f sthc.mk -h -e"
-End:
-*/
