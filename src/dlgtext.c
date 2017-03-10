@@ -44,9 +44,12 @@ void static int_dlg_draw_text_field (DLG_ELEMENT *pelementElement)
      win_get_color(OWNER, PAL_COL_BACKGROUND));
   for (i = 0; i < ptext->iDispLength; i++)
   {
-    if (!(ptext->pcInput[ptext->iFirstChar + i]))
+    if (bNull || !(ptext->pcInput[ptext->iFirstChar + i]))
+    {
       bNull = TRUE;
-    if (!bNull)
+      win_s_za(OWNER, ptext->coord.iX + i + 1, ptext->coord.iY, (CHAR)250, win_get_color(OWNER, PAL_COL_BACKGROUND));
+    }
+    else
     {
       if (ptext->bPassword)
         win_s_za(OWNER, ptext->coord.iX + i + 1, ptext->coord.iY, '*',
@@ -55,8 +58,6 @@ void static int_dlg_draw_text_field (DLG_ELEMENT *pelementElement)
         win_s_za(OWNER, ptext->coord.iX + i + 1, ptext->coord.iY, ptext->pcInput[ptext->iFirstChar + i],
                  win_get_color(OWNER, PAL_COL_BACKGROUND));
     }
-    else
-      win_s_za(OWNER, ptext->coord.iX + i + 1, ptext->coord.iY, (CHAR)250, win_get_color(OWNER, PAL_COL_BACKGROUND));
   }
   if (ptext->bMarked && ptext->iMarkLength)
     win_sw_a(OWNER, ptext->coord.iX + 1 + min(max(0, ptext->iMarkStart - ptext->iFirstChar),
