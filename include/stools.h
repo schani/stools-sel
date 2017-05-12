@@ -28,6 +28,7 @@
 #include <memofile.h>
 #include <context.h>
 
+extern UCHAR       ucActPalette;
 extern UINT        uiMouseSpeed;
 extern ULONG       ulDoubleClick;
 extern BOOL        bBeep;
