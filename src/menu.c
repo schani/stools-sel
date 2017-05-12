@@ -352,7 +352,7 @@ static BOOL int_mnu_check_tear_down (WINDOW winWindow, ULONG ulWindow)
 {
   MNU_ITEM *pitemCounter;
 
-  if ((MNU_WINDOW*)ulWindow == ((MNU_TEAR_DOWN*)win_get_add_info(winWindow))->pwindowWindow)
+  if (strcmp(win_get_class(winWindow), "tear_down") == 0)
     return TRUE;
   for (pitemCounter = ((MNU_WINDOW*)ulWindow)->pitemFirst; pitemCounter;
        pitemCounter = pitemCounter->pitemNext)           
