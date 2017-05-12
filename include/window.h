@@ -153,7 +153,6 @@ typedef WB* WINDOW;
 #define win_get_title(w)         (w->pcTitle)
 #define win_get_last_button(w,i) glb_send_message(NULL, w, M_QUERY_VALUES, \
                                                   (ULONG)(i))
-#define win_get_color(w,c)       (w->pcColors[c])
 
 /***************************************************************************
  *                             Desktop                                     *
@@ -225,6 +224,7 @@ BOOL                 win_delete            (WINDOW);
 BOOL                 win_title             (WINDOW, CHAR*, UCHAR);
 BOOL                 win_border            (WINDOW, UCHAR);
 BOOL                 win_color             (WINDOW, UCHAR);
+CHAR                 win_get_color         (WINDOW winWindow, int iColor);
 void                 win_update            (WINDOW);
 BOOL                 win_move              (WINDOW, INT, INT);
 BOOL                 win_resize            (WINDOW, INT, INT);

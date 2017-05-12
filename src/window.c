@@ -1349,6 +1349,13 @@ BOOL win_border (WINDOW winWindow, UCHAR ucBorderType)
   return TRUE;
 }
 
+CHAR win_get_color (WINDOW winWindow, int iColor)
+{
+  if (!winWindow)
+    winWindow = AKT_WIN;
+  return winWindow->pcColors[iColor];
+}
+
 BOOL win_color (WINDOW winWindow, UCHAR ucColors)
 {
   if (!winWindow)
