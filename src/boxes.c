@@ -841,10 +841,10 @@ BOOL box_beep (BOOL bLoadOnCall)
                                                  TRUE, NULL));
   win_add_element(winWindow, dlg_init_act_button(36, 14, "#Test", 0, pcSoundTest, BOX_SOUND_TEST, TRUE, NULL));
   win_add_element(winWindow, dlg_init_act_button(46, 14, "Hilfe", K_F1, pcHelp, BOX_HELP, TRUE, NULL));
-  win_add_element(winWindow, dlg_init_label(10, 5, "55 ms", 0, NULL));
-  win_add_element(winWindow, dlg_init_label(30, 5, "1100 ms", 0, NULL));
-  win_add_element(winWindow, dlg_init_label(10, 8, "50 Hz", 0, NULL));
-  win_add_element(winWindow, dlg_init_label(30, 8, "1000 Hz", 0, NULL));
+  win_add_element(winWindow, dlg_init_label(10, 5, "55 ms", 0, 0));
+  win_add_element(winWindow, dlg_init_label(30, 5, "1100 ms", 0, 0));
+  win_add_element(winWindow, dlg_init_label(10, 8, "50 Hz", 0, 0));
+  win_add_element(winWindow, dlg_init_label(30, 8, "1000 Hz", 0, 0));
   win_add_element(winWindow, dlg_init_border(1, 13, 56, 1, 0));
   win_cursor(winWindow, TRUE);
   do
