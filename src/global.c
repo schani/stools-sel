@@ -393,34 +393,35 @@ void glb_pre_process (UTL_EVENT *peventEvent)
 
 void glb_run (void)
 {
-  WINDOW winWindow;
-
-  do
-  {
-    bExit = FALSE;
-    utl_event(&(prgProgram.eventEvent));
-    if (!winWorking)
-      glb_pre_process(&(prgProgram.eventEvent));
-    if (prgProgram.eventEvent.uiKind != E_DONE)
+    WINDOW winWindow;
+    
+    do
     {
-      if (winWorking)
-        win_handle_event(winWorking, &(prgProgram.eventEvent));
-      else
-      {
-        if (prgProgram.winFocussed->flFlags.binModal)
-          win_handle_event(prgProgram.winFocussed, &(prgProgram.eventEvent));
-        else
+        bExit = FALSE;
+        utl_event(&(prgProgram.eventEvent));
+        if (!winWorking)
+            if (!prgProgram.winFocussed->flFlags.binModal)
+                glb_pre_process(&(prgProgram.eventEvent));
+        if (prgProgram.eventEvent.uiKind != E_DONE)
         {
-          winWindow = win_which(&(prgProgram.eventEvent));
-          if (prgProgram.eventEvent.uiKind == E_MSM_L_DOWN &&
-              winWindow != prgProgram.winFocussed &&
-              winWindow->flFlags.binCanBeFocussed)
-            win_set_focus(winWindow);
-          win_handle_event(winWindow, &(prgProgram.eventEvent));
+            if (winWorking)
+                win_handle_event(winWorking, &(prgProgram.eventEvent));
+            else
+            {
+                if (prgProgram.winFocussed->flFlags.binModal)
+                    win_handle_event(prgProgram.winFocussed, &(prgProgram.eventEvent));
+                else
+                {
+                    winWindow = win_which(&(prgProgram.eventEvent));
+                    if (prgProgram.eventEvent.uiKind == E_MSM_L_DOWN &&
+                        winWindow != prgProgram.winFocussed &&
+                        winWindow->flFlags.binCanBeFocussed)
+                        win_set_focus(winWindow);
+                    win_handle_event(winWindow, &(prgProgram.eventEvent));
+                }
+            }
         }
-      }
-    }
-  } while (!bExit);
+    } while (!bExit);
 }
 
 void glb_done (void)
