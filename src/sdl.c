@@ -30,9 +30,9 @@ attribute_background (attribute_t attr)
 	return (attr >> 4) & 0xf;
 }
 
-#define TTF_FONT_SIZE 16
-#define FONT_WIDTH    8
-#define FONT_HEIGHT   16
+#define TTF_FONT_SIZE 32
+#define FONT_WIDTH    16
+#define FONT_HEIGHT   32
 #define TEXT_COLUMNS  80
 #define TEXT_ROWS     25
 #define NUM_COLORS    16
