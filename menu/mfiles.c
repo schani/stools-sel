@@ -14,7 +14,6 @@
 #include <stools.h>
 #include <stdio.h>
 #include <string.h>
-#include <dos.h>
 #include "menu.h"
 
 extern UCHAR  ucUhr,
@@ -201,10 +200,10 @@ void write_config (void)
   {
     if (!(pfileDatei = fopen(pucConfigDatei, "w+")))
     {
-      utl_cls(HELLGRAU);
+      utl_cls(vio_attri(7, 0));
       vio_set_cursor_pos(1, 1);
       printf("Konfigurationsdatei kann nicht geîffnet werden\n");
-      utl_get_taste();
+      utl_get_key();
       exit(1);
     }
     ucStartup = TRUE;
@@ -390,10 +389,10 @@ UINT open_menu_file (UINT uiUser)
   {
     if (!(pfileMenu = fopen(pucHauptDatei, "w+")))
     {
-      utl_cls(HELLGRAU);
+      utl_cls(vio_attri(7, 0));
       vio_set_cursor_pos(1, 1);
       printf("MenÅdatei kann nicht geîffnet werden\n");
-      utl_get_taste();
+      utl_get_key();
       exit(1);
     }
     fputc(1, pfileMenu);
@@ -410,10 +409,10 @@ UINT open_menu_file (UINT uiUser)
   {
     if (fgetc(pfileMenu) != 1)
     {
-      utl_cls(HELLGRAU);
+      utl_cls(vio_attri(7, 0));
       vio_set_cursor_pos(1, 1);
       printf("Falsche Version des Dateiformates\n");
-      utl_get_taste();
+      utl_get_key();
       exit(1);
     }
   }
@@ -431,7 +430,7 @@ UCHAR get_user (UCHAR *pucName, UINT *puiUser)
   MNU_USER  userUser;
 
   pucNameGross = utl_alloc(strlen(pucName) + 1);
-  utl_str_gross(strcpy(pucNameGross, pucName));
+  utl_str_upper(strcpy(pucNameGross, pucName));
   fseek(pfileUsers, 0, SEEK_SET);
   fread(&uiUsers, sizeof(UINT), 1, pfileUsers);
   for (uiCounter = 0; uiCounter < uiUsers; uiCounter++)
@@ -457,7 +456,7 @@ UCHAR password_right (UINT uiUser, UCHAR *pucPassword)
   UCHAR    *pucPasswordGross;
 
   pucPasswordGross = utl_alloc(strlen(pucPassword) + 1);
-  utl_str_gross(strcpy(pucPasswordGross, pucPassword));
+  utl_str_upper(strcpy(pucPasswordGross, pucPassword));
   read_user_info(uiUser, &userUser);
   decrypt_password(userUser.aucPassword);
   if (!strcmp(pucPasswordGross, userUser.aucPassword))
@@ -491,21 +490,17 @@ UCHAR read_user (UINT uiUser, MNU_USER *puserUser)
   UINT        uiYear;
 
   read_user_info(uiUser, puserUser);
-  fread(&ucBeep, sizeof(UCHAR), 1, pfileUsers);
-  fread(&uiBeepDauer, sizeof(UINT), 1, pfileUsers);
-  fread(&uiBeepFrequenz, sizeof(UINT), 1, pfileUsers);
-  fread(&ucAktPalette, sizeof(UCHAR), 1, pfileUsers);
+  fread(&bBeep, sizeof(BOOL), 1, pfileUsers);
+  fread(&ulBeepDuration, sizeof(ULONG), 1, pfileUsers);
+  fread(&ulBeepFrequency, sizeof(ULONG), 1, pfileUsers);
+  fread(&ucActPalette, sizeof(UCHAR), 1, pfileUsers);
   fread(&uiMouseSpeed, sizeof(UINT), 1, pfileUsers);
-  fread(&uiDoubleClick, sizeof(UINT), 1, pfileUsers);
+  fread(&ulDoubleClick, sizeof(ULONG), 1, pfileUsers);
   fread(&ucUhr, sizeof(UCHAR), 1, pfileUsers);
   fread(&ucButtonBar, sizeof(UCHAR), 1, pfileUsers);
-  fread(apalPalette + P_USER_DEFINED, sizeof(PALETTE), 1, pfileUsers);
-  fread(&ucSaver, sizeof(UCHAR), 1, pfileUsers);
-  fread(&uiScreenTicks, sizeof(UINT), 1, pfileUsers);
-  fread(&ucVOCBeep, sizeof(UCHAR), 1, pfileUsers);
-  fread(acVOC, 128, 1, pfileUsers);
-  if (ucVOCBeep)
-    utl_set_voc_beep(acVOC, TRUE);
+  //fread(aapcPalColors + PAL_USER_DEFINED, PAL_COLORS, 1, pfileUsers);
+  fread(&bSaver, sizeof(BOOL), 1, pfileUsers);
+  fread(&ulScreenTimeout, sizeof(ULONG), 1, pfileUsers);
   fread(acStartVOC, 128, 1, pfileUsers);
   fread(acLogoutVOC, 128, 1, pfileUsers);
   fread(&ucRememberList, sizeof(UCHAR), 1, pfileUsers);
@@ -513,7 +508,7 @@ UCHAR read_user (UINT uiUser, MNU_USER *puserUser)
   fread(&ucDay, sizeof(UCHAR), 1, pfileUsers);
   fread(&ucMonth, sizeof(UCHAR), 1, pfileUsers);
   fread(&uiYear, sizeof(UINT), 1, pfileUsers);
-  getdate(&dateDate);
+  get_local_date(&dateDate);
   if (ucDay != dateDate.da_day || ucMonth != dateDate.da_mon ||
       uiYear != dateDate.da_year)
     return(TRUE);
@@ -538,24 +533,22 @@ void write_user (UINT uiUser, MNU_USER *puserUser)
   struct date dateDate;
 
   write_user_info(uiUser, puserUser);
-  fwrite(&ucBeep, sizeof(UCHAR), 1, pfileUsers);
-  fwrite(&uiBeepDauer, sizeof(UINT), 1, pfileUsers);
-  fwrite(&uiBeepFrequenz, sizeof(UINT), 1, pfileUsers);
-  fwrite(&ucAktPalette, sizeof(UCHAR), 1, pfileUsers);
+  fwrite(&bBeep, sizeof(BOOL), 1, pfileUsers);
+  fwrite(&ulBeepDuration, sizeof(ULONG), 1, pfileUsers);
+  fwrite(&ulBeepFrequency, sizeof(ULONG), 1, pfileUsers);
+  fwrite(&ucActPalette, sizeof(UCHAR), 1, pfileUsers);
   fwrite(&uiMouseSpeed, sizeof(UINT), 1, pfileUsers);
-  fwrite(&uiDoubleClick, sizeof(UINT), 1, pfileUsers);
+  fwrite(&ulDoubleClick, sizeof(ULONG), 1, pfileUsers);
   fwrite(&ucUhr, sizeof(UCHAR), 1, pfileUsers);
   fwrite(&ucButtonBar, sizeof(UCHAR), 1, pfileUsers);
-  fwrite(apalPalette + P_USER_DEFINED, sizeof(PALETTE), 1, pfileUsers);
-  fwrite(&ucSaver, sizeof(UCHAR), 1, pfileUsers);
-  fwrite(&uiScreenTicks, sizeof(UINT), 1, pfileUsers);
-  fwrite(&ucVOCBeep, sizeof(UCHAR), 1, pfileUsers);
-  fwrite(acBeepVOC, 128, 1, pfileUsers);
+  //fwrite(apalPalette + P_USER_DEFINED, sizeof(PALETTE), 1, pfileUsers);
+  fwrite(&bSaver, sizeof(BOOL), 1, pfileUsers);
+  fwrite(&ulScreenTimeout, sizeof(ULONG), 1, pfileUsers);
   fwrite(acStartVOC, 128, 1, pfileUsers);
   fwrite(acLogoutVOC, 128, 1, pfileUsers);
   fwrite(&ucRememberList, sizeof(UCHAR), 1, pfileUsers);
   fwrite(&ucTerminWarning, sizeof(UCHAR), 1, pfileUsers);
-  getdate(&dateDate);
+  get_local_date(&dateDate);
   fwrite(&(dateDate.da_day), sizeof(UCHAR), 1, pfileUsers);
   fwrite(&(dateDate.da_mon), sizeof(UCHAR), 1, pfileUsers);
   fwrite(&(dateDate.da_year), sizeof(UINT), 1, pfileUsers);
@@ -645,10 +638,10 @@ UINT open_user_file (void)
   {
     if (!(pfileUsers = fopen(pucUserDatei, "w+")))
     {
-      utl_cls(HELLGRAU);
+      utl_cls(vio_attri(7, 0));
       vio_set_cursor_pos(1, 1);
       printf("Userdatei kann nicht geîffnet werden\n");
-      utl_get_taste();
+      utl_get_key();
       exit(1);
     }
     strcpy(userUser.aucName, "SUPERVISOR");
@@ -658,19 +651,17 @@ UINT open_user_file (void)
                         RIGHT_QUIT;
     fwrite(&uiUsers, sizeof(UINT), 1, pfileUsers);
     fwrite(&userUser, sizeof(MNU_USER), 1, pfileUsers);
-    fwrite(&ucBeep, sizeof(UCHAR), 1, pfileUsers);
-    fwrite(&uiBeepDauer, sizeof(UINT), 1, pfileUsers);
-    fwrite(&uiBeepFrequenz, sizeof(UINT), 1, pfileUsers);
-    fwrite(&ucAktPalette, sizeof(UCHAR), 1, pfileUsers);
+    fwrite(&bBeep, sizeof(BOOL), 1, pfileUsers);
+    fwrite(&ulBeepDuration, sizeof(ULONG), 1, pfileUsers);
+    fwrite(&ulBeepFrequency, sizeof(ULONG), 1, pfileUsers);
+    fwrite(&ucActPalette, sizeof(UCHAR), 1, pfileUsers);
     fwrite(&uiMouseSpeed, sizeof(UINT), 1, pfileUsers);
-    fwrite(&uiDoubleClick, sizeof(UINT), 1, pfileUsers);
+    fwrite(&ulDoubleClick, sizeof(ULONG), 1, pfileUsers);
     fwrite(&ucUhr, sizeof(UCHAR), 1, pfileUsers);
     fwrite(&ucButtonBar, sizeof(UCHAR), 1, pfileUsers);
-    fwrite(apalPalette + P_USER_DEFINED, sizeof(PALETTE), 1, pfileUsers);
-    fwrite(&ucSaver, sizeof(UCHAR), 1, pfileUsers);
-    fwrite(&uiScreenTicks, sizeof(UINT), 1, pfileUsers);
-    fwrite(&ucVOCBeep, sizeof(UCHAR), 1, pfileUsers);
-    fwrite(acBeepVOC, 128, 1, pfileUsers);
+    //fwrite(apalPalette + P_USER_DEFINED, sizeof(PALETTE), 1, pfileUsers);
+    fwrite(&bSaver, sizeof(BOOL), 1, pfileUsers);
+    fwrite(&ulScreenTimeout, sizeof(ULONG), 1, pfileUsers);
     fwrite(acStartVOC, 128, 1, pfileUsers);
     fwrite(acLogoutVOC, 128, 1, pfileUsers);
     fwrite(&ucRememberList, sizeof(UCHAR), 1, pfileUsers);
@@ -694,10 +685,10 @@ UCHAR* get_message (MNU_MESSAGE *pmsgMessage)
   LONG     lLength;
 
   read_user_info(uiUserID, &userUser);
-  utl_str_gross(userUser.aucName);
+  utl_str_upper(userUser.aucName);
   for (uiCounter = 0; uiCounter < 2048; uiCounter++)
   {
-    fseek(pfileMessage, uiCounter * 4, SEEK_SET);
+    fseek(pfileMessage, uiCounter * sizeof(LONG), SEEK_SET);
     fread(&lLength, sizeof(LONG), 1, pfileMessage);
     if (!lLength)
       return(NULL);
@@ -711,7 +702,7 @@ UCHAR* get_message (MNU_MESSAGE *pmsgMessage)
         pucBuffer = utl_alloc(pmsgMessage->uiLength + 10);
         fread(pucBuffer, pmsgMessage->uiLength, 1, pfileMessage);
         lLength = -lLength;
-        fseek(pfileMessage, uiCounter * 4, SEEK_SET);
+        fseek(pfileMessage, uiCounter * sizeof(LONG), SEEK_SET);
         fwrite(&lLength, sizeof(LONG), 1, pfileMessage);
         return(pucBuffer);
       }
@@ -764,10 +755,10 @@ void open_message_file (void)
   {
     if (!(pfileMessage = fopen(pucMessageDatei, "w+")))
     {
-      utl_cls(HELLGRAU);
+      utl_cls(vio_attri(7, 0));
       vio_set_cursor_pos(1, 1);
       printf("Messagedatei kann nicht geîffnet werden\n");
-      utl_get_taste();
+      utl_get_key();
       exit(1);
     }
     for (uiCounter = 0; uiCounter < 2048; uiCounter++)
@@ -889,7 +880,7 @@ MNU_TERMIN* remember_list (void)
                    uiID;
   struct date      dateToday;
 
-  getdate(&dateToday);
+  get_local_date(&dateToday);
   ucTodayDay = dateToday.da_day;
   ucTodayMonth = dateToday.da_mon;
   uiTodayYear = dateToday.da_year;
@@ -971,8 +962,8 @@ UCHAR next_termin (MNU_TERMIN *ptrmTermin)
   struct date      dateToday;
   struct time      timeNow;
 
-  getdate(&dateToday);
-  gettime(&timeNow);
+  get_local_date(&dateToday);
+  get_local_time(&timeNow);
   dtNow.ucMinute = timeNow.ti_min;
   dtNow.ucHour = timeNow.ti_hour;
   dtNow.ucDay = dateToday.da_day;
@@ -1080,10 +1071,10 @@ void open_termin_file (void)
   {
     if (!(pfileTermin = fopen(pucTerminDatei, "w+")))
     {
-      utl_cls(HELLGRAU);
+      utl_cls(vio_attri(7, 0));
       vio_set_cursor_pos(1, 1);
       printf("Termindatei kann nicht geîffnet werden\n");
-      utl_get_taste();
+      utl_get_key();
       exit(1);
     }
     for (uiCounter = 0; uiCounter < 2048; uiCounter++)

@@ -8,12 +8,12 @@
  ***************************************************************************
  ***************************************************************************/
 
-#define IN_CLICK_FIELD   ((eventEvent.uiHor > (win_get_aktiv()->iX + 1)) && \
-			 (eventEvent.uiHor < (win_get_aktiv()->iX + \
-			 win_get_aktiv()->uiWidth - 2)) && \
-			 (eventEvent.uiVer > (win_get_aktiv()->iY + 1)) && \
-			 (eventEvent.uiVer < (win_get_aktiv()->iY + \
-			 win_get_aktiv()->uiHeight - 2)))
+#define IN_CLICK_FIELD   ((event->iHor > (winAkt->iX + 1)) && \
+			 (event->iHor < (winAkt->iX + \
+			 winAkt->iWidth - 2)) && \
+			 (event->iVer > (winAkt->iY + 1)) && \
+			 (event->iVer < (winAkt->iY + \
+			 winAkt->iHeight - 2)))
 
 #define HAUPTMENU             1
 
@@ -59,10 +59,9 @@
 #define     ID_MAUSTEMPO   1403
 #define     ID_WARNTON     1404
 #define     ID_SCR_SAVER   1405
-#define     ID_SOUNDS      1406
-#define     ID_SONSTIGES   1407
+#define     ID_SONSTIGES   1406
        /***********************/
-#define     ID_SUPER_OPT   1408
+#define     ID_SUPER_OPT   1407
 
 #define BOX_PROGRAMM         10
 #define BOX_GRUPPE           11
@@ -184,6 +183,29 @@ typedef struct _MNU_TERMIN
   struct _MNU_TERMIN *ptrmNext;
 } MNU_TERMIN;
 
+struct dosdate_t {
+    unsigned int year;
+    unsigned char month;
+    unsigned char day;
+    unsigned char dayofweek;
+};
+
+struct date {
+    unsigned int da_year;
+    unsigned char da_mon;
+    unsigned char da_day;
+};
+
+struct time {
+    unsigned char ti_sec;
+    unsigned char ti_min;
+    unsigned char ti_hour;
+};
+
+void _dos_getdate (struct dosdate_t *d);
+void get_local_date (struct date *da);
+void get_local_time (struct time *ti);
+
 UCHAR       rotate_left       (UCHAR, UCHAR);
 void        decrypt_password  (UCHAR*);
 void        encrypt_password  (UCHAR*);
@@ -252,9 +274,7 @@ void        show_window       (_MNU_MENU*);
 void        show_windows      (void);
 UCHAR       get_grp_prg       (void);
 void        show_mail         (void);
-void        run               (void);
 void        bewegen           (_MNU_MENU*, MNU_EINTRAG**, UCHAR);
-UCHAR       auswahl           (UINT*, UCHAR*, UCHAR);
 UCHAR*      message_box       (MNU_MESSAGE*);
 void        send_mail         (void);
 void        show_message      (UCHAR*, MNU_MESSAGE*);
@@ -269,6 +289,7 @@ void        sonstiges_box     (void);
 void        supervisor_box    (void);
 void        user_box          (UCHAR*);
 UCHAR       password_box      (UCHAR*, UCHAR*);
+void        sounds_box        (void);
 void        user_list         (UCHAR***);
 void        user_editor       (void);
 UCHAR       edit_user         (UCHAR*, MNU_USER*);

@@ -14,7 +14,7 @@
 #include <stools.h>
 #include <string.h>
 #include <stdlib.h>
-#include <dos.h>
+#include <time.h>
 #include "menu.h"
 
 extern _MNU_MENU *pmenuHauptMenu;
@@ -171,22 +171,7 @@ UINT list_length (MNU_TERMIN *ptrmTermin)
 
 void date_to_string (MNU_DATE *pdtDate, CHAR *pcString)
 {
-
-  CHAR acBuffer[10];
-
-  strcpy(pcString, "");
-  itoa((INT)pdtDate->ucDay, acBuffer, 10);
-  if (strlen(acBuffer) == 1)
-    strcat(pcString, "0");
-  strcat(pcString, acBuffer);
-  strcat(pcString, ".");
-  itoa((INT)pdtDate->ucMonth, acBuffer, 10);
-  if (strlen(acBuffer) == 1)
-    strcat(pcString, "0");
-  strcat(pcString, acBuffer);
-  strcat(pcString, ".");
-  itoa((INT)pdtDate->uiYear, acBuffer, 10);
-  strcat(pcString, acBuffer);
+    sprintf(pcString, "%02d.%02d.%4d", (INT)pdtDate->ucDay, (INT)pdtDate->ucMonth, (INT)pdtDate->uiYear);
 }
 
 UCHAR string_to_date (MNU_DATE *pdtDate, CHAR *pcString)
@@ -217,19 +202,7 @@ UCHAR string_to_date (MNU_DATE *pdtDate, CHAR *pcString)
 
 void time_to_string (MNU_DATE *pdtDate, CHAR *pcString)
 {
-
-  CHAR acBuffer[10];
-
-  strcpy(pcString, "");
-  itoa((INT)pdtDate->ucHour, acBuffer, 10);
-  if (strlen(acBuffer) == 1)
-    strcat(pcString, "0");
-  strcat(pcString, acBuffer);
-  strcat(pcString, ":");
-  itoa((INT)pdtDate->ucMinute, acBuffer, 10);
-  if (strlen(acBuffer) == 1)
-    strcat(pcString, "0");
-  strcat(pcString, acBuffer);
+    sprintf(pcString, "%02d:%02d", (INT)pdtDate->ucHour, (INT)pdtDate->ucMinute);
 }
 
 UCHAR string_to_time (MNU_DATE *pdtDate, CHAR *pcString)
@@ -323,20 +296,6 @@ UCHAR name_gueltig (UCHAR *pucName)
   return(ucReturnVar);
 }
 
-void park (void)
-{
-
-  union REGS regs;
-  UCHAR      ucZaehler;
-
-  for (ucZaehler = 0x80; ucZaehler < 0x85; ucZaehler++)
-  {
-    regs.h.ah = 0x11;
-    regs.h.dl = ucZaehler;
-    int86(0x13, &regs, &regs);
-  }
-}
-
 UCHAR today (struct dosdate_t *pdDate)
 {
 
@@ -418,15 +377,15 @@ void bewegen (_MNU_MENU *pmenuMenu, MNU_EINTRAG **ppmeAktZeile, UCHAR ucPos)
 {
 
   MNU_EINTRAG  mePufferZeile,
-	      *pmeMenu,
-	      *pmeZaehler;
+    *pmeMenu;
+  WINDOW win = pmenuMenu->winWindow;
 
   pmeMenu = pmenuMenu->ameEintrag;
   if (pmeMenu + ucPos == *ppmeAktZeile)
   {
-    win_sw_a(NULL, 2,
-             2 + (*ppmeAktZeile - pmeMenu), win_get_aktiv()->uiWidth - 4,
-	     1, AKT_PALETTE.ucDlgLstBoxActItem);
+    win_sw_a(win, 2,
+             2 + (*ppmeAktZeile - pmeMenu), win->iWidth - 4,
+	     1, win_get_color(win, PAL_COL_LIST_BOX_SEL_ITEM));
     return;
   }
   memmove(&mePufferZeile, *ppmeAktZeile, sizeof(MNU_EINTRAG));
@@ -439,8 +398,8 @@ void bewegen (_MNU_MENU *pmenuMenu, MNU_EINTRAG **ppmeAktZeile, UCHAR ucPos)
   memmove(pmeMenu + ucPos, &mePufferZeile, sizeof(MNU_EINTRAG));
   *ppmeAktZeile = pmeMenu + ucPos;
   show_window(pmenuMenu);
-  win_sw_a(NULL, 2, 2 + ucPos, win_get_aktiv()->uiWidth - 4, 1,
-	   AKT_PALETTE.ucDlgLstBoxActItem);
+  win_sw_a(win, 2, 2 + ucPos, win->iWidth - 4, 1,
+	   win_get_color(win, PAL_COL_LIST_BOX_SEL_ITEM));
 }
 
 UCHAR zeichen_gueltig (UCHAR ucZeichen)
@@ -484,4 +443,35 @@ void user_list (UCHAR ***pppucUser)
     strcpy((*pppucUser)[uiCounter], userUser.aucName);
   }
   (*pppucUser)[uiUsers] = NULL;
+}
+
+void
+_dos_getdate (struct dosdate_t *d)
+{
+    time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+    d->day = tm->tm_mday;
+    d->dayofweek = tm->tm_wday;
+    d->month = tm->tm_mon;
+    d->year = tm->tm_year;
+}
+
+void
+get_local_date (struct date *da)
+{
+    time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+    da->da_day = tm->tm_mday;
+    da->da_mon = tm->tm_mon + 1;
+    da->da_year = 1900 + tm->tm_year;
+}
+
+void
+get_local_time (struct time *ti)
+{
+    time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+    ti->ti_sec = tm->tm_sec;
+    ti->ti_min = tm->tm_min;
+    ti->ti_hour = tm->tm_hour;
 }

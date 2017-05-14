@@ -14,7 +14,6 @@
 #include <stools.h>
 #include <string.h>
 #include <stdio.h>
-#include <dos.h>
 #include "menu.h"
 
 extern UCHAR    *pucLeer;
@@ -50,6 +49,54 @@ UCHAR *pucPrgName        = "Sie mÅssen einen Namen eingeben!",
       *pucNoMemo         = "Zu diesem Termin gibt es\n"
                            "kein Memo!";
 
+static UINT
+dlg_aktivieren(WINDOW winWindow)
+{
+    UINT uiID;
+    glb_execute(winWindow);
+    win_get_last_button(winWindow, &uiID);
+    return uiID;
+}
+
+static DLG_ELEMENT*
+dlg_add_text_field (WINDOW win, INT iX, INT iY, INT iDispLength, INT iRealLength,
+                    CHAR *pcLabel, CHAR *pcInput, CHAR *pcHelpLine, BOOL bPassword)
+{
+    DLG_ELEMENT *pelement = dlg_init_text_field(iX + strlen(pcLabel), iY, iDispLength, iRealLength, bPassword,
+                                                pcInput, pcHelpLine, 0, TRUE, NULL);
+    win_add_element(win, dlg_init_label(iX, iY, pcLabel, pelement, 0));
+    win_add_element(win, pelement);
+    return pelement;
+}
+
+static DLG_ELEMENT*
+dlg_add_list_box (WINDOW win, INT iX, INT iY, INT iWidth, INT iHeight, INT iLabelX, INT iLabelY,
+                  INT iPos, BOOL bBorder, UINT uiID, CHAR *pcLabel, CHAR **ppcFirstLine, CHAR *pcHelpLine)
+{
+    DLG_ELEMENT *pelement = dlg_init_list_box(iX, iY, iWidth, iHeight, ppcFirstLine,
+                                              bBorder, pcHelpLine, uiID, TRUE, NULL);
+    win_add_element(win, dlg_init_label(3, 2, pcLabel, pelement, 0));
+    win_add_element(win, pelement);
+    dlg_list_box_set_values(pelement, iPos);
+    return pelement;
+}
+
+static INT
+dlg_ask_list_box (WINDOW win, UINT uiID)
+{
+    INT iValue;
+    dlg_list_box_query_values(win_get_element(win, uiID), &iValue);
+    return iValue;
+}
+
+static UCHAR
+dlg_ask_push_button (WINDOW win, UINT uiID)
+{
+    BOOL bValue;
+    dlg_push_button_query_values(win_get_element(win, uiID), &bValue);
+    return (UCHAR)bValue;
+}
+
 UCHAR get_grp_prg (void)
 {
 
@@ -64,23 +111,20 @@ UCHAR get_grp_prg (void)
   UINT         uiReturnVar;
 
   ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(18, 8, 43, 8);
-  apelementElemente[0] = dlg_init_act_button(3, 6, "#Programm", 0,
-					     BOX_PROGRAMM, pucProgramm);
-  apelementElemente[1] = dlg_init_act_button(17, 6, "#Gruppe", 0, BOX_GRUPPE,
-					     pucGruppe);
-  apelementElemente[2] = dlg_init_act_button(29, 6, "Abbruch", T_ESC,
-					     BOX_ABBRUCH, pucAbbruch);
-  apelementElemente[3] = NULL;
-  win_aktivieren(winWindow);
+  winWindow = win_new(18, 8, 43, 8, NULL, 0);
+    win_title(winWindow, " Programm oder Gruppe hinzufÅgen ", TITLE_T_C);
+  win_add_element(winWindow, dlg_init_act_button(3, 6, "#Programm", 0,
+					     pucProgramm, BOX_PROGRAMM, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(17, 6, "#Gruppe", 0,
+					     pucGruppe, BOX_GRUPPE, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(29, 6, "Abbruch", K_ESC,
+					     pucAbbruch, BOX_CANCEL, TRUE, NULL));
+  win_show(winWindow);
   win_ss(NULL, 3, 2, pucZeile1);
   win_ss(NULL, 3, 3, pucZeile2);
-  win_sw_za(NULL, 1, 5, 41, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
-  uiReturnVar = dlg_aktivieren(apelementElemente, NULL, FALSE);
-  win_entfernen(winWindow);
-  dlg_del_act_button(apelementElemente[0]);
-  dlg_del_act_button(apelementElemente[1]);
-  dlg_del_act_button(apelementElemente[2]);
+  win_sw_za(NULL, 1, 5, 41, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
+  uiReturnVar = dlg_aktivieren(winWindow);
+  win_delete(winWindow);
   utl_short_cuts(ucShorts);
   return((UCHAR)uiReturnVar);
 }
@@ -96,25 +140,21 @@ UCHAR gruppen_box (UCHAR *pucTitel, UCHAR *pucName, UCHAR *pucBeschreibung)
 	      *pucOK                = " BestÑtigt die eingegebenen Werte",
 	      *pucAbbruch           = " Bricht die Aktion ab";
   WINDOW       winWindow;
-  DLG_ELEMENT *apelementElemente[5];
 
   ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(13, 8, 53, 8);
-  win_titel(winWindow, pucTitel, TITEL_O_Z);
-  apelementElemente[0] = dlg_init_text_field(3, 2, 32, 60, "#Name        ",
-					     pucName, pucGrpName);
-  apelementElemente[1] = dlg_init_text_field(3, 3, 32, 78, "#Beschreibung",
-					     pucBeschreibung, pucHilfe);
-  apelementElemente[2] = dlg_init_act_button(3, 6, "OK", T_RETURN, BOX_OK,
-					     pucOK);
-  apelementElemente[3] = dlg_init_act_button(11, 6, "Abbruch", T_ESC,
-					     BOX_ABBRUCH, pucAbbruch);
-  apelementElemente[4] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 5, 51, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
+  winWindow = win_new(13, 8, 53, 8, NULL, 0);
+    win_title(winWindow, pucTitel, TITLE_T_C);
+  dlg_add_text_field(winWindow, 3, 2, 32, 60, "#Name        ", pucName, pucGrpName, FALSE);
+  dlg_add_text_field(winWindow, 3, 3, 32, 78, "#Beschreibung", pucBeschreibung, pucHilfe, FALSE);
+  win_add_element(winWindow, dlg_init_act_button(3, 6, "OK", K_ENTER,
+					     pucOK, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(11, 6, "Abbruch", K_ESC,
+					     pucAbbruch, BOX_CANCEL, TRUE, NULL));
+  win_show(winWindow);
+  win_sw_za(NULL, 1, 5, 51, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
   do
   {
-    switch (dlg_aktivieren(apelementElemente, NULL, FALSE))
+    switch (dlg_aktivieren(winWindow))
     {
       case BOX_OK :
 	if (!(*pucName))
@@ -125,16 +165,12 @@ UCHAR gruppen_box (UCHAR *pucTitel, UCHAR *pucName, UCHAR *pucBeschreibung)
 	ucEnde = TRUE;
 	ucReturnVar = TRUE;
 	break;
-      case BOX_ABBRUCH :
+      case BOX_CANCEL :
 	ucEnde = TRUE;
 	break;
     }
   } while (!ucEnde);
-  win_entfernen(winWindow);
-  dlg_del_text_field(apelementElemente[0]);
-  dlg_del_text_field(apelementElemente[1]);
-  dlg_del_act_button(apelementElemente[2]);
-  dlg_del_act_button(apelementElemente[3]);
+  win_delete(winWindow);
   utl_short_cuts(ucShorts);
   return(ucReturnVar);
 }
@@ -156,31 +192,25 @@ UCHAR programm_box (UCHAR *pucTitel, UCHAR *pucName, UCHAR *pucBeschreibung,
 	      *pucAbbruch           = " Bricht die Aktion ab",
 	      *pucSearch            = " Suche nach dem Programmes mit Hilfe einer Dateiauswahlbox";
   WINDOW       winWindow;
-  DLG_ELEMENT *apelementElemente[8];
 
   ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(13, 7, 53, 11);
-  win_titel(winWindow, pucTitel, TITEL_O_Z);
-  apelementElemente[0] = dlg_init_text_field(3, 2, 32, 60, "#Name        ",
-					     pucName, pucPrgrName);
-  apelementElemente[1] = dlg_init_text_field(3, 3, 32, 78, "#Beschreibung",
-					     pucBeschreibung, pucHilfe);
-  apelementElemente[2] = dlg_init_text_field(3, 5, 32, 128, "#Verzeichnis ",
-					     pucWorkDir, pucVerzeichnis);
-  apelementElemente[3] = dlg_init_text_field(3, 6, 32, 128, "#Aufruf      ",
-					     pucDatei, pucHAufruf);
-  apelementElemente[4] = dlg_init_act_button(3, 9, "OK", T_RETURN, BOX_OK,
-					     pucOK);
-  apelementElemente[5] = dlg_init_act_button(11, 9, "Abbruch", T_ESC,
-					     BOX_ABBRUCH, pucAbbruch);
-  apelementElemente[6] = dlg_init_act_button(24, 9, "#Durchsuchen", 0,
-					     BOX_SEARCH, pucSearch);
-  apelementElemente[7] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 8, 51, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
+  winWindow = win_new(13, 7, 53, 11, NULL, 0);
+    win_title(winWindow, pucTitel, TITLE_T_C);
+  dlg_add_text_field(winWindow, 3, 2, 32, 60, "#Name        ", pucName, pucPrgrName, FALSE);
+  dlg_add_text_field(winWindow, 3, 3, 32, 78, "#Beschreibung", pucBeschreibung, pucHilfe, FALSE);
+  dlg_add_text_field(winWindow, 3, 5, 32, 128, "#Verzeichnis ", pucWorkDir, pucVerzeichnis, FALSE);
+  dlg_add_text_field(winWindow, 3, 6, 32, 128, "#Aufruf      ", pucDatei, pucHAufruf, FALSE);
+  win_add_element(winWindow, dlg_init_act_button(3, 9, "OK", K_ENTER,
+					     pucOK, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(11, 9, "Abbruch", K_ESC,
+					     pucAbbruch, BOX_CANCEL, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(24, 9, "#Durchsuchen", 0,
+					     pucSearch, BOX_SEARCH, TRUE, NULL));
+  win_show(winWindow);
+  win_sw_za(NULL, 1, 8, 51, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
   do
   {
-    switch (dlg_aktivieren(apelementElemente, NULL, FALSE))
+    switch (dlg_aktivieren(winWindow))
     {
       case BOX_OK :
 	if (!name_gueltig(pucWorkDir) || strchr(pucWorkDir, '*') ||
@@ -203,9 +233,9 @@ UCHAR programm_box (UCHAR *pucTitel, UCHAR *pucName, UCHAR *pucBeschreibung,
 	ucReturnVar = TRUE;
 	break;
       case BOX_SEARCH :
-	utl_get_pfad(aucAktPfad);
+	utl_get_path(aucAktPfad);
 	strcpy(aucMaske, "*.*");
-	if (box_laden_speichern(" Datei suchen ", aucMaske))
+	if (box_load_save(" Datei suchen ", aucMaske))
 	{
 	  if (strstr(aucMaske, ".bat"))
 	  {
@@ -214,23 +244,16 @@ UCHAR programm_box (UCHAR *pucTitel, UCHAR *pucName, UCHAR *pucBeschreibung,
 	  }
 	  else
 	    strcpy(pucDatei, aucMaske);
-	  utl_get_pfad(pucWorkDir);
+	  utl_get_path(pucWorkDir);
 	}
-	utl_set_pfad(aucAktPfad);
+	utl_set_path(aucAktPfad);
 	break;
-      case BOX_ABBRUCH :
+      case BOX_CANCEL :
 	ucEnde = TRUE;
 	break;
     }
   } while (!ucEnde);
-  win_entfernen(winWindow);
-  dlg_del_text_field(apelementElemente[0]);
-  dlg_del_text_field(apelementElemente[1]);
-  dlg_del_text_field(apelementElemente[2]);
-  dlg_del_text_field(apelementElemente[3]);
-  dlg_del_act_button(apelementElemente[4]);
-  dlg_del_act_button(apelementElemente[5]);
-  dlg_del_act_button(apelementElemente[6]);
+  win_delete(winWindow);
   utl_short_cuts(ucShorts);
   return(ucReturnVar);
 }
@@ -239,7 +262,6 @@ UCHAR titel_box (UCHAR *pucTitel)
 {
 
   WINDOW       winWindow;
-  DLG_ELEMENT *apelementElemente[4];
   UCHAR        aucTitel[51],
 	       ucShorts,
 	       ucReturnVar,
@@ -250,18 +272,16 @@ UCHAR titel_box (UCHAR *pucTitel)
   strcpy(aucTitel, pucTitel + 1);
   aucTitel[strlen(aucTitel) - 1] = 0;
   ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(8, 9, 63, 7);
-  win_titel(winWindow, " Fenstertitel Ñndern ", TITEL_O_Z);
-  apelementElemente[0] = dlg_init_text_field(3, 2, 48, 48, "#Titel",
-					     aucTitel, pucTitelHelp);
-  apelementElemente[1] = dlg_init_act_button(3, 5, "OK", T_RETURN, BOX_OK,
-					     pucOK);
-  apelementElemente[2] = dlg_init_act_button(11, 5, "Abbruch", T_ESC,
-					     BOX_ABBRUCH, pucAbbruch);
-  apelementElemente[3] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 4, 61, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
-  switch (dlg_aktivieren(apelementElemente, NULL, FALSE))
+  winWindow = win_new(8, 9, 63, 7, NULL, 0);
+  win_title(winWindow, " Fenstertitel Ñndern ", TITLE_T_C);
+  dlg_add_text_field(winWindow, 3, 2, 48, 48, "#Titel", aucTitel, pucTitelHelp, FALSE);
+  win_add_element(winWindow, dlg_init_act_button(3, 5, "OK", K_ENTER,
+					     pucOK, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(11, 5, "Abbruch", K_ESC,
+					     pucAbbruch, BOX_CANCEL, TRUE, NULL));
+  win_show(winWindow);
+  win_sw_za(NULL, 1, 4, 61, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
+  switch (dlg_aktivieren(winWindow))
   {
     case BOX_OK :
       strcpy(pucTitel, " ");
@@ -269,14 +289,11 @@ UCHAR titel_box (UCHAR *pucTitel)
       strcat(pucTitel, " ");
       ucReturnVar = TRUE;
       break;
-    case BOX_ABBRUCH :
+    case BOX_CANCEL :
       ucReturnVar = FALSE;
       break;
   }
-  win_entfernen(winWindow);
-  dlg_del_text_field(apelementElemente[0]);
-  dlg_del_act_button(apelementElemente[1]);
-  dlg_del_act_button(apelementElemente[2]);
+  win_delete(winWindow);
   utl_short_cuts(ucShorts);
   return(ucReturnVar);
 }
@@ -298,58 +315,53 @@ void sonstiges_box (void)
 					  0,
 					  "#Knopfleiste"
 					},
-					DLG_RADIO_ENDE
+					DLG_RADIO_END
 				      };
-  DLG_ELEMENT *apelementElemente[5];
   WINDOW       winWindow;
   UCHAR       *pucUhr               = " Angabe, ob die Uhr in der rechten oberen Ecke aktiv ist",
 	      *pucLastLine          = " Verwendung der letzten Zeile",
 	      *pucOK                = " öbernimmt die eingestellten Werte",
 	      *pucAbbruch           = " BelÑ·t die alten Werte",
 	       ucMouse;
+  BOOL bValue;
+  INT iValue;
 
-  winWindow = win_einrichten(20, 7, 40, 11);
-  win_titel(winWindow, " Sonstige Einstellungen ", TITEL_O_Z);
-  apelementElemente[0] = dlg_init_push_button(3, 2, "#Uhr in der rechten oberen Ecke",
-					      ucUhr, pucUhr);
-  apelementElemente[1] = dlg_init_radio_button(abutButtons, ucButtonBar,
-					       pucLastLine);
-  apelementElemente[2] = dlg_init_act_button(3, 9, "OK", T_RETURN, BOX_OK,
-					     pucOK);
-  apelementElemente[3] = dlg_init_act_button(11, 9, "Abbruch", T_ESC,
-					     BOX_ABBRUCH, pucAbbruch);
-  apelementElemente[4] = NULL;
-  win_aktivieren(winWindow);
+  winWindow = win_new(20, 7, 40, 11, NULL, 0);
+  win_title(winWindow, " Sonstige Einstellungen ", TITLE_T_C);
+  win_add_element(winWindow, dlg_init_push_button(3, 2, "#Uhr in der rechten oberen Ecke",
+					      ucUhr, pucUhr, 100, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_radio_button(abutButtons, ucButtonBar,
+					       pucLastLine, 101, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(3, 9, "OK", K_ENTER,
+					     pucOK, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(11, 9, "Abbruch", K_ESC,
+					     pucAbbruch, BOX_CANCEL, TRUE, NULL));
+  win_show(winWindow);
   win_ss(NULL, 3, 4, "Letzte Zeile als");
-  win_sw_za(NULL, 1, 8, 38, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
-  switch (dlg_aktivieren(apelementElemente, NULL, FALSE))
+  win_sw_za(NULL, 1, 8, 38, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
+  switch (dlg_aktivieren(winWindow))
   {
     case BOX_OK :
-      ucUhr = dlg_ask_push_button(apelementElemente[0]);
+      ucUhr = dlg_ask_push_button(winWindow, 100);
       if (!ucUhr)
       {
 	ucMouse = msm_cursor_off();
-	dsk_sw_z(73, 1, 8, 1, T_SPACE);
+	dsk_sw_z(73, 1, 8, 1, ' ');
 	if (ucMouse)
 	  msm_cursor_on();
       }
-      ucButtonBar = dlg_ask_radio_button(apelementElemente[1]);
+      dlg_radio_button_query_values(win_get_element(winWindow, 101), &iValue);
+      ucButtonBar = iValue;
       sts_del_status_line();
       if (ucButtonBar)
 	sts_new_status_line(aitemStatusLine);
       break;
   }
-  win_entfernen(winWindow);
-  dlg_del_push_button(apelementElemente[0]);
-  dlg_del_radio_button(apelementElemente[1]);
-  dlg_del_act_button(apelementElemente[2]);
-  dlg_del_act_button(apelementElemente[3]);
+  win_delete(winWindow);
 }
 
 void supervisor_box (void)
 {
-
-  DLG_ELEMENT *apelementElemente[6];
   WINDOW       winWindow;
   UCHAR       *pucTaeglich          = " Angabe, ob tÑglich die Batchdatei TAG.BAT gestartet werden soll",
               *pucWoechentlich      = " Angabe, ob wîchentlich die Batchdatei WOCHE.BAT gestartet werden soll",
@@ -357,71 +369,56 @@ void supervisor_box (void)
 	      *pucOK                = " öbernimmt die eingestellten Werte",
 	      *pucAbbruch           = " BelÑ·t die alten Werte",
 	       ucMouse;
+  BOOL bValue;
 
-  winWindow = win_einrichten(24, 8, 32, 9);
-  win_titel(winWindow, " Supervisor-Optionen ", TITEL_O_Z);
-  apelementElemente[0] = dlg_init_push_button(3, 2, "Batchdatei #tÑglich",
-                                              ucTaeglich, pucTaeglich);
-  apelementElemente[1] = dlg_init_push_button(3, 3, "Batchdatei #wîchentlich",
-                                              ucWoechentlich,
-                                              pucWoechentlich);
-  apelementElemente[2] = dlg_init_push_button(3, 4, "Batchdatei #monatlich",
-                                              ucMonatlich, pucMonatlich);
-  apelementElemente[3] = dlg_init_act_button(3, 7, "OK", T_RETURN, BOX_OK,
-					     pucOK);
-  apelementElemente[4] = dlg_init_act_button(11, 7, "Abbruch", T_ESC,
-					     BOX_ABBRUCH, pucAbbruch);
-  apelementElemente[5] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 6, 30, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
-  switch (dlg_aktivieren(apelementElemente, NULL, FALSE))
+  winWindow = win_new(24, 8, 32, 9, NULL, 0);
+  win_title(winWindow, " Supervisor-Optionen ", TITLE_T_C);
+  win_add_element(winWindow, dlg_init_push_button(3, 2, "Batchdatei #tÑglich",
+                                              ucTaeglich, pucTaeglich, 100, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_push_button(3, 3, "Batchdatei #wîchentlich",
+                                              ucWoechentlich, pucWoechentlich, 101, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_push_button(3, 4, "Batchdatei #monatlich",
+                                              ucMonatlich, pucMonatlich, 102, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(3, 7, "OK", K_ENTER,
+					     pucOK, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(11, 7, "Abbruch", K_ESC,
+					     pucAbbruch, BOX_CANCEL, TRUE, NULL));
+  win_show(winWindow);
+  win_sw_za(NULL, 1, 6, 30, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
+  switch (dlg_aktivieren(winWindow))
   {
     case BOX_OK :
-      ucTaeglich = dlg_ask_push_button(apelementElemente[0]);
-      ucWoechentlich = dlg_ask_push_button(apelementElemente[1]);
-      ucMonatlich = dlg_ask_push_button(apelementElemente[2]);
+      ucTaeglich = dlg_ask_push_button(winWindow, 100);
+      ucWoechentlich = dlg_ask_push_button(winWindow, 101);
+      ucMonatlich = dlg_ask_push_button(winWindow, 102);
       break;
   }
-  win_entfernen(winWindow);
-  dlg_del_push_button(apelementElemente[0]);
-  dlg_del_push_button(apelementElemente[1]);
-  dlg_del_push_button(apelementElemente[2]);
-  dlg_del_act_button(apelementElemente[3]);
-  dlg_del_act_button(apelementElemente[4]);
+  win_delete(winWindow);
 }
 
 void user_box (UCHAR *pucName)
 {
-
   WINDOW       winWindow;
-  DLG_ELEMENT *apelementElemente[3];
   UCHAR        ucShorts,
 	      *pucNameHelp          = " Ihr Username",
 	      *pucOK                = " BestÑtigt den Usernamen";
 
   strcpy(pucName, pucLeer);
   ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(23, 9, 33, 7);
-  win_titel(winWindow, " Username eingeben ", TITEL_O_Z);
-  apelementElemente[0] = dlg_init_text_field(3, 2, 20, 20, "#Name",
-					     pucName, pucNameHelp);
-  apelementElemente[1] = dlg_init_act_button(3, 5, "OK", T_RETURN, BOX_OK,
-					     pucOK);
-  apelementElemente[2] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 4, 31, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
-  dlg_aktivieren(apelementElemente, NULL, FALSE);
-  win_entfernen(winWindow);
-  dlg_del_text_field(apelementElemente[0]);
-  dlg_del_act_button(apelementElemente[1]);
+  winWindow = win_new(23, 9, 33, 7, NULL, 0);
+  win_title(winWindow, " Username eingeben ", TITLE_T_C);
+  dlg_add_text_field(winWindow, 3, 2, 20, 20, "#Name", pucName, pucNameHelp, FALSE);
+  win_add_element(winWindow, dlg_init_act_button(3, 5, "OK", K_ENTER, pucOK, BOX_OK, TRUE, NULL));
+  win_show(winWindow);
+  win_sw_za(NULL, 1, 4, 31, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
+  dlg_aktivieren(winWindow);
+  win_delete(winWindow);
   utl_short_cuts(ucShorts);
 }
 
 UCHAR password_box (UCHAR *pucPassword, UCHAR *pucTitel)
 {
-
   WINDOW       winWindow;
-  DLG_ELEMENT *apelementElemente[4];
   UCHAR        ucShorts,
                ucReturnVar,
 	      *pucPasswordHelp      = " Passwort",
@@ -430,32 +427,24 @@ UCHAR password_box (UCHAR *pucPassword, UCHAR *pucTitel)
 
   strcpy(pucPassword, pucLeer);
   ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(22, 9, 36, 7);
-  win_titel(winWindow, pucTitel, TITEL_O_Z);
-  apelementElemente[0] = dlg_init_password(3, 2, 20, 20, "#Pa·wort",
-			                   pucPassword, pucPasswordHelp);
-  apelementElemente[1] = dlg_init_act_button(3, 5, "OK", T_RETURN, BOX_OK,
-					     pucOK);
-  apelementElemente[2] = dlg_init_act_button(11, 5, "Abbruch", T_ESC,
-                                             BOX_ABBRUCH, pucAbbruch);
-  apelementElemente[3] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 4, 34, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
-  if (dlg_aktivieren(apelementElemente, NULL, FALSE) == BOX_OK)
+  winWindow = win_new(22, 9, 36, 7, NULL, 0);
+  win_title(winWindow, pucTitel, TITLE_T_C);
+  dlg_add_text_field(winWindow, 3, 2, 20, 20, "#Pa·wort", pucPassword, pucPasswordHelp, TRUE);
+  win_add_element(winWindow, dlg_init_act_button(3, 5, "OK", K_ENTER, pucOK, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(11, 5, "Abbruch", K_ESC, pucAbbruch, BOX_CANCEL, TRUE, NULL));
+  win_show(winWindow);
+  win_sw_za(NULL, 1, 4, 34, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
+  if (dlg_aktivieren(winWindow) == BOX_OK)
     ucReturnVar = TRUE;
   else
     ucReturnVar = FALSE;
-  win_entfernen(winWindow);
-  dlg_del_text_field(apelementElemente[0]);
-  dlg_del_act_button(apelementElemente[1]);
-  dlg_del_act_button(apelementElemente[2]);
+  win_delete(winWindow);
   utl_short_cuts(ucShorts);
   return(ucReturnVar);
 }
 
 void user_editor (void)
 {
-
   UCHAR         ucShorts,
                 ucEnde               = FALSE,
               **ppucUser,
@@ -471,7 +460,6 @@ void user_editor (void)
                 uiSource,
                 uiEntry;
   WINDOW        winWindow;
-  DLG_ELEMENT  *apelementElemente[8];
   MNU_USER      userUser;
   MNU_DISK_MENU dmenuMenu =
                             {
@@ -484,77 +472,66 @@ void user_editor (void)
 
   ucShorts = utl_short_cuts(FALSE);
   user_list(&ppucUser);
-  winWindow = win_einrichten(15, 5, 49, 14);
-  win_titel(winWindow, " User-Editor ", TITEL_O_Z);
-  apelementElemente[0] = dlg_init_list_box(3, 4, 24, 8, 3, 2, uiUserID, TRUE,
-                                           BOX_EDIT, "#Vorhandene User",
+  winWindow = win_new(15, 5, 49, 14, NULL, 0);
+  win_title(winWindow, " User-Editor ", TITLE_T_C);
+  dlg_add_list_box(winWindow, 3, 4, 24, 8, 3, 2, uiUserID, TRUE,
+                                           100, "#Vorhandene User",
                                            (CHAR**)ppucUser, pucUserHelp);
-  apelementElemente[1] = dlg_init_act_button(32, 2, "OK", T_RETURN, BOX_OK,
-                                             pucOKHelp);
-  apelementElemente[2] = dlg_init_act_button(32, 5, "é#ndern", 0, BOX_EDIT,
-                                             pucEditHelp);
-  apelementElemente[3] = dlg_init_act_button(32, 6, "#Lîschen", 0,
-                                             BOX_DELETE, pucDeleteHelp);
-  apelementElemente[4] = dlg_init_act_button(32, 7, "#HinzufÅgen", 0,
-                                             BOX_ADD, pucAddHelp);
-  apelementElemente[5] = dlg_init_act_button(32, 10, "V#erbinden", 0,
-                                             BOX_LINK, pucLinkHelp);
-  apelementElemente[6] = dlg_init_act_button(32, 11, "#Kopieren", 0,
-                                             BOX_COPY, pucCopyHelp);
-  apelementElemente[7] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 29, 1, 1, 12, '≥', AKT_PALETTE.ucDlgBorder);
+  win_add_element(winWindow, dlg_init_act_button(32, 2, "OK", K_ENTER,
+                                             pucOKHelp, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(32, 5, "é#ndern", 0,
+                                             pucEditHelp, BOX_EDIT, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(32, 6, "#Lîschen", 0,
+                                             pucDeleteHelp, BOX_DELETE, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(32, 7, "#HinzufÅgen", 0,
+                                             pucAddHelp, BOX_ADD, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(32, 10, "V#erbinden", 0,
+                                             pucLinkHelp, BOX_LINK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(32, 11, "#Kopieren", 0,
+                                             pucCopyHelp, BOX_COPY, TRUE, NULL));
+  win_show(winWindow);
+  win_sw_za(NULL, 29, 1, 1, 12, '≥', win_get_color(NULL, PAL_COL_BORDER));
   win_ss(NULL, 32, 9, "MenÅ");
   do
   {
-    switch (dlg_aktivieren(apelementElemente, NULL, FALSE))
+    switch (dlg_aktivieren(winWindow))
     {
       case BOX_OK :
         ucEnde = TRUE;
         break;
+      // FIXME: also list box item double-clicked!
       case BOX_EDIT :
-        uiUser = dlg_ask_list_box(apelementElemente[0]);
+        uiUser = dlg_ask_list_box(winWindow, 100);
         read_user_info(uiUser, &userUser);
         if (edit_user(" User verÑndern ", &userUser))
         {
           write_user_info(uiUser, &userUser);
           if (uiUser == uiUserID)
             read_user(uiUser, &userAktUser);
-          dlg_del_list_box(apelementElemente[0]);
           for (uiCounter = 0; ppucUser[uiCounter]; uiCounter++)
             utl_free(ppucUser[uiCounter]);
           utl_free(ppucUser);
           user_list(&ppucUser);
-          apelementElemente[0] = dlg_init_list_box(3, 4, 24, 8, 3, 2,
-                                                   uiUser, TRUE, BOX_EDIT,
-                                                   "#Vorhandene User",
-                                                   (CHAR**)ppucUser,
-                                                   pucUserHelp);
+          dlg_list_box_new_list(win_get_element(winWindow, 100), ppucUser);
         }
         break;
       case BOX_DELETE :
-        uiUser = dlg_ask_list_box(apelementElemente[0]);
+        uiUser = dlg_ask_list_box(winWindow, 100);
         if (uiUser == uiUserID)
         {
           box_info(BOX_INFO, BOX_OK, pucCantUsrDel, 0);
           break;
         }
-        if (box_info(BOX_INFO, BOX_OK | BOX_ABBRUCH, pucWirklichUsrDel, 0)
-	    != BOX_OK)
+        if (box_info(BOX_INFO, BOX_OK | BOX_CANCEL, pucWirklichUsrDel, 0) != BOX_OK)
 	  break;
         delete_user(uiUser);
-        dlg_del_list_box(apelementElemente[0]);
         for (uiCounter = 0; ppucUser[uiCounter]; uiCounter++)
           utl_free(ppucUser[uiCounter]);
         utl_free(ppucUser);
         user_list(&ppucUser);
         if (uiUser == uiUsers)
           uiUser--;
-        apelementElemente[0] = dlg_init_list_box(3, 4, 24, 8, 3, 2, uiUser,
-                                                 TRUE, BOX_EDIT,
-                                                 "#Vorhandene User",
-                                                 (CHAR**)ppucUser,
-                                                 pucUserHelp);
+        dlg_list_box_new_list(win_get_element(winWindow, 100), ppucUser);
         break;
       case BOX_ADD :
         strcpy(userUser.aucName, pucLeer);
@@ -565,24 +542,18 @@ void user_editor (void)
         if (edit_user(" User hinzufÅgen ", &userUser))
         {
           write_user(uiUsers, &userUser);
-          dlg_del_list_box(apelementElemente[0]);
           for (uiCounter = 0; ppucUser[uiCounter]; uiCounter++)
             utl_free(ppucUser[uiCounter]);
           utl_free(ppucUser);
           user_list(&ppucUser);
-          apelementElemente[0] = dlg_init_list_box(3, 4, 24, 8, 3, 2,
-                                                   uiUsers - 1, TRUE,
-                                                   BOX_EDIT,
-                                                   "#Vorhandene User",
-                                                   (CHAR**)ppucUser,
-                                                   pucUserHelp);
+          dlg_list_box_new_list(win_get_element(winWindow, 100), ppucUser);
           uiEntry = get_next_free();
           set_menu(uiUsers - 1, uiEntry);
           write_entry(uiEntry, &dmenuMenu);
         }
         break;
       case BOX_LINK :
-        uiUser = dlg_ask_list_box(apelementElemente[0]);
+        uiUser = dlg_ask_list_box(winWindow, 100);
         uiSource = select_user(" MenÅ verbinden ", "Verbinden #von");
         if (uiSource != CANCEL)
         {
@@ -596,7 +567,7 @@ void user_editor (void)
         }
         break;
       case BOX_COPY :
-        uiUser = dlg_ask_list_box(apelementElemente[0]);
+        uiUser = dlg_ask_list_box(winWindow, 100);
         uiSource = select_user(" MenÅ kopieren ", "Kopieren #von");
         if (uiSource != CANCEL)
         {
@@ -612,12 +583,7 @@ void user_editor (void)
     }
   }
   while (!ucEnde);
-  win_entfernen(winWindow);
-  dlg_del_list_box(apelementElemente[0]);
-  dlg_del_act_button(apelementElemente[1]);
-  dlg_del_act_button(apelementElemente[2]);
-  dlg_del_act_button(apelementElemente[3]);
-  dlg_del_act_button(apelementElemente[4]);
+  win_delete(winWindow);
   for (uiCounter = 0; ppucUser[uiCounter]; uiCounter++)
     utl_free(ppucUser[uiCounter]);
   utl_free(ppucUser);
@@ -626,7 +592,6 @@ void user_editor (void)
 
 UCHAR edit_user (UCHAR *pucTitel, MNU_USER *puserUser)
 {
-
   WINDOW       winWindow;
   UCHAR        aucName[21],
                aucPassword[21],
@@ -642,71 +607,68 @@ UCHAR edit_user (UCHAR *pucTitel, MNU_USER *puserUser)
               *pucOKHelp             = " öbernimmt die énderungen",
               *pucAbbruchHelp        = " Verwirft die énderungen",
               *pucChangePwdHelp      = " éndert das Pa·wort des Users";
-  DLG_ELEMENT *apelementElemente[9];
 
   ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(17, 6, 45, 12);
-  win_titel(winWindow, pucTitel, TITEL_O_Z);
+  winWindow = win_new(17, 6, 45, 12, NULL, 0);
+  win_title(winWindow, pucTitel, TITLE_T_C);
   strcpy(aucName, puserUser->aucName);
-  apelementElemente[0] = dlg_init_text_field(3, 2, 20, 20, "#Name", aucName,
-                                             pucNameHelp);
-  apelementElemente[1] = dlg_init_push_button(3, 4,
+  dlg_add_text_field(winWindow, 3, 2, 20, 20, "#Name", aucName,
+                                             pucNameHelp, FALSE);
+  win_add_element(winWindow, dlg_init_push_button(3, 4,
                                               "User hat #Supervisor-Rechte",
                                               puserUser->uiRights &
                                                 RIGHT_SUPERVISOR,
-                                              pucSuperHelp);
-  apelementElemente[2] = dlg_init_push_button(3, 5,
+                                              pucSuperHelp, 100, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_push_button(3, 5,
                                               "User darf sein #MenÅ Ñndern",
                                               puserUser->uiRights &
                                                 RIGHT_CHANGE,
-                                              pucMenuHelp);
-  apelementElemente[3] = dlg_init_push_button(3, 6,
+                                              pucMenuHelp, 101, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_push_button(3, 6,
                                               "User darf sein P#a·wort Ñndern",
                                               puserUser->uiRights &
                                                 RIGHT_PWD_CHANGE,
-                                              pucPwdHelp);
-  apelementElemente[4] = dlg_init_push_button(3, 7,
+                                              pucPwdHelp, 102, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_push_button(3, 7,
                                               "User darf SE-Menu #beenden",
                                               puserUser->uiRights &
                                                 RIGHT_QUIT,
-                                              pucQuitHelp);
-  apelementElemente[5] = dlg_init_act_button(3, 10, "OK", T_RETURN, BOX_OK,
-                                             pucOKHelp);
-  apelementElemente[6] = dlg_init_act_button(11, 10, "Abbruch", T_ESC,
-                                             BOX_ABBRUCH, pucAbbruchHelp);
-  apelementElemente[7] = dlg_init_act_button(24, 10, "#Pa·wort Ñndern", 0,
-                                             BOX_CHANGE_PWD,
-                                             pucChangePwdHelp);
-  apelementElemente[8] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 9, 43, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
+                                              pucQuitHelp, 103, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(3, 10, "OK", K_ENTER,
+                                             pucOKHelp, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow,  dlg_init_act_button(11, 10, "Abbruch", K_ESC,
+                                             pucAbbruchHelp, BOX_CANCEL, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(24, 10, "#Pa·wort Ñndern", 0,
+                                             pucChangePwdHelp, BOX_CHANGE_PWD, TRUE, NULL));
+  win_show(winWindow);
+  win_sw_za(NULL, 1, 9, 43, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
   do
   {
-    switch (dlg_aktivieren(apelementElemente, NULL, FALSE))
+    switch (dlg_aktivieren(winWindow))
     {
       case BOX_OK :
         ucEnde = TRUE;
         ucReturnVar = TRUE;
-        utl_str_gross(strcpy(puserUser->aucName, aucName));
+        utl_str_upper(strcpy(puserUser->aucName, aucName));
         puserUser->uiRights = 0;
-        if (dlg_ask_push_button(apelementElemente[1]))
+        if (dlg_ask_push_button(winWindow, 100))
           puserUser->uiRights |= RIGHT_SUPERVISOR;
-        if (dlg_ask_push_button(apelementElemente[2]))
+        if (dlg_ask_push_button(winWindow, 101))
           puserUser->uiRights |= RIGHT_CHANGE;
-        if (dlg_ask_push_button(apelementElemente[3]))
+        if (dlg_ask_push_button(winWindow, 102))
           puserUser->uiRights |= RIGHT_PWD_CHANGE;
-        if (dlg_ask_push_button(apelementElemente[4]))
+        if (dlg_ask_push_button(winWindow, 103))
           puserUser->uiRights |= RIGHT_QUIT;
         break;
-      case BOX_ABBRUCH :
+      case BOX_CANCEL :
         ucEnde = TRUE;
         break;
       case BOX_CHANGE_PWD :
         if (password_box(aucPassword, " Pa·wort Ñndern "))
           if (password_box(aucPasswordVerify, " Pa·wort verifizieren "))
           {
-            if (!strcmp(utl_str_gross(aucPassword),
-                        utl_str_gross(aucPasswordVerify)))
+            if (!strcmp(utl_str_upper(aucPassword),
+                        utl_str_upper(aucPasswordVerify)))
             {
               strcpy(puserUser->aucPassword, aucPassword);
               encrypt_password(puserUser->aucPassword);
@@ -717,21 +679,12 @@ UCHAR edit_user (UCHAR *pucTitel, MNU_USER *puserUser)
         break;
     }
   } while (!ucEnde);
-  win_entfernen(winWindow);
-  dlg_del_text_field(apelementElemente[0]);
-  dlg_del_push_button(apelementElemente[1]);
-  dlg_del_push_button(apelementElemente[2]);
-  dlg_del_push_button(apelementElemente[3]);
-  dlg_del_push_button(apelementElemente[4]);
-  dlg_del_act_button(apelementElemente[5]);
-  dlg_del_act_button(apelementElemente[6]);
-  dlg_del_act_button(apelementElemente[7]);
+  win_delete(winWindow);
   return(ucReturnVar);
 }
 
 UCHAR* message_box (MNU_MESSAGE *pmsgMessage)
 {
-
   WINDOW       winWindow;
   UCHAR        ucShorts,
               *pucSubjectHelp       = " Kurze Beschreibung des Inhalts",
@@ -739,46 +692,36 @@ UCHAR* message_box (MNU_MESSAGE *pmsgMessage)
               *pucOKHelp            = " Speichert die Nachricht ab",
               *pucAbbruchHelp       = " Bricht die Aktion ab",
               *pucBuffer;
-  DLG_ELEMENT *apelementElemente[5];
 
   ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(17, 3, 46, 18);
-  win_titel(winWindow, " Nachricht eingeben ", TITEL_O_Z);
+  winWindow = win_new(17, 3, 46, 18, NULL, 0);
+  win_title(winWindow, " Nachricht eingeben ", TITLE_T_C);
   pucBuffer = utl_alloc(32768);
   strcpy(pucBuffer, pucLeer);
   strcpy(pmsgMessage->aucSubject, pucLeer);
-  apelementElemente[0] = dlg_init_text_field(3, 2, 31, 60, "#Inhalt",
+  dlg_add_text_field(winWindow, 3, 2, 31, 60, "#Inhalt",
                                              pmsgMessage->aucSubject,
-                                             pucSubjectHelp);
-  apelementElemente[1] = dlg_init_editor(3, 4, 40, 10, 32768, pucBuffer,
-                                         TRUE, pucEditHelp);
-  apelementElemente[2] = dlg_init_act_button(3, 16, "OK", T_RETURN, BOX_OK,
-                                             pucOKHelp);
-  apelementElemente[3] = dlg_init_act_button(11, 16, "Abbruch", T_ESC,
-                                             BOX_ABBRUCH, pucAbbruchHelp);
-  apelementElemente[4] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 15, 44, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
-  if (dlg_aktivieren(apelementElemente, NULL, FALSE) == BOX_OK)
-    dlg_ask_editor(apelementElemente[1]);
-  else
+                                             pucSubjectHelp, FALSE);
+  win_add_element(winWindow, dlg_init_editor(3, 4, 40, 10, 32768, pucBuffer,
+                                         TRUE, TRUE, pucEditHelp, 0, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(3, 16, "OK", K_ENTER,
+                                             pucOKHelp, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(11, 16, "Abbruch", K_ESC,
+                                             pucAbbruchHelp, BOX_CANCEL, TRUE, NULL));
+  win_show(winWindow);
+  win_sw_za(NULL, 1, 15, 44, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
+  if (dlg_aktivieren(winWindow) != BOX_OK)
   {
     free(pucBuffer);
     pucBuffer = NULL;
   }
-  win_entfernen(winWindow);
-  dlg_del_text_field(apelementElemente[0]);
-  dlg_del_editor(apelementElemente[1]);
-  dlg_del_act_button(apelementElemente[2]);
-  dlg_del_act_button(apelementElemente[3]);
+  win_delete(winWindow);
   utl_short_cuts(ucShorts);
   return(pucBuffer);
 }
 
 void send_mail (void)
 {
-
-  DLG_ELEMENT  *apelementElemente[4];
   WINDOW        winWindow;
   UINT          uiCounter;
   UCHAR         ucShorts,
@@ -792,20 +735,19 @@ void send_mail (void)
   struct date   dtDate;
 
   ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(26, 5, 28, 15);
-  win_titel(winWindow, " Nachricht senden ", TITEL_O_Z);
+  winWindow = win_new(26, 5, 28, 15, NULL, 0);
+  win_title(winWindow, " Nachricht senden ", TITLE_T_C);
   user_list(&ppucUser);
-  apelementElemente[0] = dlg_init_list_box(5, 3, 20, 8, 3, 2, 0, TRUE,
-                                           BOX_OK, "Senden #an",
+  dlg_add_list_box(winWindow, 5, 3, 20, 8, 3, 2, 0, TRUE,
+                                           100, "Senden #an",
                                            (CHAR**)ppucUser, pucToHelp);
-  apelementElemente[1] = dlg_init_act_button(3, 13, "OK", T_RETURN, BOX_OK,
-                                             pucOKHelp);
-  apelementElemente[2] = dlg_init_act_button(11, 13, "Abbruch", T_ESC,
-                                             BOX_ABBRUCH, pucAbbruchHelp);
-  apelementElemente[3] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 12, 26, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
-  if (dlg_aktivieren(apelementElemente, NULL, FALSE) == BOX_OK)
+  win_add_element(winWindow, dlg_init_act_button(3, 13, "OK", K_ENTER,
+                                             pucOKHelp, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(11, 13, "Abbruch", K_ESC,
+                                             pucAbbruchHelp, BOX_CANCEL, TRUE, NULL));
+  win_show(winWindow);
+  win_sw_za(NULL, 1, 12, 26, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
+  if (dlg_aktivieren(winWindow) == BOX_OK)
   {
     pucMsgText = message_box(&msgMessage);
     if (pucMsgText)
@@ -813,8 +755,8 @@ void send_mail (void)
       read_user_info(uiUserID, &userUser);
       strcpy(msgMessage.aucFrom, userUser.aucName);
       strcpy(msgMessage.aucTo,
-             ppucUser[dlg_ask_list_box(apelementElemente[0])]);
-      getdate(&dtDate);
+             ppucUser[dlg_ask_list_box(winWindow, 100)]);
+      get_local_date(&dtDate);
       msgMessage.ucDay = dtDate.da_day;
       msgMessage.ucMonth = dtDate.da_mon;
       msgMessage.uiYear = dtDate.da_year;
@@ -822,10 +764,7 @@ void send_mail (void)
       free(pucMsgText);
     }
   }
-  win_entfernen(winWindow);
-  dlg_del_list_box(apelementElemente[0]);
-  dlg_del_act_button(apelementElemente[1]);
-  dlg_del_act_button(apelementElemente[2]);
+  win_delete(winWindow);
   for (uiCounter = 0; ppucUser[uiCounter]; uiCounter++)
     utl_free(ppucUser[uiCounter]);
   utl_free(ppucUser);
@@ -834,129 +773,34 @@ void send_mail (void)
 
 void show_message (UCHAR *pucText, MNU_MESSAGE *pmsgMessage)
 {
-
-  DLG_ELEMENT *apelementElemente[3];
   WINDOW       winWindow;
   UCHAR        ucShorts,
               *pucEditHelp          = " Der Nachrichtentext",
               *pucOKHelp            = " Beendet das Lesen der Nachricht";
 
   ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(3, 3, 73, 20);
-  win_titel(winWindow, " Nachricht lesen ", TITEL_O_Z);
-  apelementElemente[0] = dlg_init_editor(3, 6, 67, 10,
-                                         pmsgMessage->uiLength + 10, pucText,
-                                         FALSE, pucEditHelp);
-  apelementElemente[1] = dlg_init_act_button(3, 18, "OK", T_RETURN, BOX_OK,
-                                             pucOKHelp);
-  apelementElemente[2] = NULL;
-  win_aktivieren(winWindow);
+  winWindow = win_new(3, 3, 73, 20, NULL, 0);
+  win_title(winWindow, " Nachricht lesen ", TITLE_T_C);
+  win_add_element(winWindow, dlg_init_editor(3, 6, 67, 10,
+                                         pmsgMessage->uiLength + 10, pucText, FALSE, TRUE,
+                                         pucEditHelp, 0, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(3, 18, "OK", K_ENTER,
+                                             pucOKHelp, BOX_OK, TRUE, NULL));
+  win_show(winWindow);
   win_ss(NULL, 3, 2, "Von  :");
   win_ss(NULL, 3, 3, "An   :");
   win_ss(NULL, 3, 4, "öber :");
   win_ss(NULL, 10, 2, pmsgMessage->aucFrom);
   win_ss(NULL, 10, 3, pmsgMessage->aucTo);
   win_ss(NULL, 10, 4, pmsgMessage->aucSubject);
-  win_sw_za(NULL, 1, 17, 71, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
-  dlg_aktivieren(apelementElemente, NULL, FALSE);
-  win_entfernen(winWindow);
-  dlg_del_editor(apelementElemente[0]);
-  dlg_del_act_button(apelementElemente[1]);
-  utl_short_cuts(ucShorts);
-}
-
-void sounds_box (void)
-{
-
-  DLG_ELEMENT *apelementElemente[7];
-  WINDOW       winWindow;
-  UCHAR        ucShorts,
-               ucEnde               = FALSE,
-              *pucStartHelp         = " Sound, der beim Login ausgegeben wird",
-              *pucLogoutHelp        = " Sound, der beim Logout ausgegeben wird",
-              *pucSearchStartHelp   = " LÑ·t Sie nach dem Login-Sound suchen",
-              *pucSearchLogoutHelp  = " LÑ·t Sie nach dem Logout-Sound suchen",
-              *pucOKHelp            = " Speichert die énderungen",
-              *pucCancelHelp        = " Bricht ohne énderung ab";
-  CHAR         acStart[128],
-               acLogout[128],
-               acDir[128],
-               acTemp[128];
-
-  ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(9, 8, 62, 8);
-  win_titel(winWindow, " Sounds festsetzen ", TITEL_O_Z);
-  strcpy(acStart, acStartVOC);
-  strcpy(acLogout, acLogoutVOC);
-  apelementElemente[0] = dlg_init_text_field(3, 2, 35, 127, "Log#in ",
-                                             acStart, pucStartHelp);
-  apelementElemente[1] = dlg_init_act_button(49, 2, "#Suchen", 0,
-                                             BOX_SEARCH_START,
-                                             pucSearchStartHelp);
-  apelementElemente[2] = dlg_init_text_field(3, 3, 35, 127, "Log#out",
-                                             acLogout, pucLogoutHelp);
-  apelementElemente[3] = dlg_init_act_button(49, 3, "S#uchen", 0,
-                                             BOX_SEARCH_LOGOUT,
-                                             pucSearchLogoutHelp);
-  apelementElemente[4] = dlg_init_act_button(3, 6, "OK", T_RETURN, BOX_OK,
-                                             pucOKHelp);
-  apelementElemente[5] = dlg_init_act_button(11, 6, "Abbruch", T_ESC,
-                                             BOX_ABBRUCH, pucCancelHelp);
-  apelementElemente[6] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 5, 60, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
-  do
-  {
-    switch (dlg_aktivieren(apelementElemente, NULL, FALSE))
-    {
-      case BOX_SEARCH_START :
-        utl_get_pfad(acDir);
-        strcpy(acTemp, "*.VOC");
-        if (box_laden_speichern(" Login-Sound suchen ", acTemp))
-        {
-          utl_get_pfad(acStart);
-          if (acStart[strlen(acStart) - 1] != '\\')
-            strcat(acStart, "\\");
-          strcat(acStart, acTemp);
-        }
-        utl_set_pfad(acDir);
-        break;
-      case BOX_SEARCH_LOGOUT :
-        utl_get_pfad(acDir);
-        strcpy(acTemp, "*.VOC");
-        if (box_laden_speichern(" Logout-Sound suchen ", acTemp))
-        {
-          utl_get_pfad(acLogout);
-          if (acLogout[strlen(acLogout) - 1] != '\\')
-            strcat(acLogout, "\\");
-          strcat(acLogout, acTemp);
-        }
-        utl_set_pfad(acDir);
-        break;
-      case BOX_OK :
-        ucEnde = TRUE;
-        strcpy(acStartVOC, acStart);
-        strcpy(acLogoutVOC, acLogout);
-        break;
-      case BOX_ABBRUCH :
-        ucEnde = TRUE;
-        break;
-    }
-  } while (!ucEnde);
-  win_entfernen(winWindow);
-  dlg_del_text_field(apelementElemente[0]);
-  dlg_del_act_button(apelementElemente[1]);
-  dlg_del_text_field(apelementElemente[2]);
-  dlg_del_act_button(apelementElemente[3]);
-  dlg_del_act_button(apelementElemente[4]);
-  dlg_del_act_button(apelementElemente[5]);
+  win_sw_za(NULL, 1, 17, 71, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
+  dlg_aktivieren(winWindow);
+  win_delete(winWindow);
   utl_short_cuts(ucShorts);
 }
 
 UINT select_user (CHAR *pcWindowTitle, CHAR *pcListBoxTitle)
 {
-
-  DLG_ELEMENT  *apelementElemente[4];
   WINDOW        winWindow;
   UINT          uiCounter,
                 uiReturnVar;
@@ -967,27 +811,23 @@ UINT select_user (CHAR *pcWindowTitle, CHAR *pcListBoxTitle)
                *pucAbbruchHelp       = " Bricht die Aktion ab";
 
   ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(26, 5, 28, 15);
-  win_titel(winWindow, pcWindowTitle, TITEL_O_Z);
+  winWindow = win_new(26, 5, 28, 15, NULL, 0);
+  win_title(winWindow, pcWindowTitle, TITLE_T_C);
   user_list(&ppucUser);
-  apelementElemente[0] = dlg_init_list_box(5, 3, 20, 8, 3, 2, 0, TRUE,
-                                           BOX_OK, pcListBoxTitle,
+  dlg_add_list_box(winWindow, 5, 3, 20, 8, 3, 2, 0, TRUE,
+                                           100, pcListBoxTitle,
                                            (CHAR**)ppucUser, pucToHelp);
-  apelementElemente[1] = dlg_init_act_button(3, 13, "OK", T_RETURN, BOX_OK,
-                                             pucOKHelp);
-  apelementElemente[2] = dlg_init_act_button(11, 13, "Abbruch", T_ESC,
-                                             BOX_ABBRUCH, pucAbbruchHelp);
-  apelementElemente[3] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 12, 26, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
-  if (dlg_aktivieren(apelementElemente, NULL, FALSE) == BOX_OK)
-    uiReturnVar = dlg_ask_list_box(apelementElemente[0]);
+  win_add_element(winWindow, dlg_init_act_button(3, 13, "OK", K_ENTER,
+                                             pucOKHelp, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(11, 13, "Abbruch", K_ESC,
+                                             pucAbbruchHelp, BOX_CANCEL, TRUE, NULL));
+  win_show(winWindow);
+  win_sw_za(NULL, 1, 12, 26, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
+  if (dlg_aktivieren(winWindow) == BOX_OK)
+    uiReturnVar = dlg_ask_list_box(winWindow, 100);
   else
     uiReturnVar = CANCEL;
-  win_entfernen(winWindow);
-  dlg_del_list_box(apelementElemente[0]);
-  dlg_del_act_button(apelementElemente[1]);
-  dlg_del_act_button(apelementElemente[2]);
+  win_delete(winWindow);
   for (uiCounter = 0; ppucUser[uiCounter]; uiCounter++)
     utl_free(ppucUser[uiCounter]);
   utl_free(ppucUser);
@@ -997,8 +837,6 @@ UINT select_user (CHAR *pcWindowTitle, CHAR *pcListBoxTitle)
 
 void termin_box (void)
 {
-
-  DLG_ELEMENT      *apelementElemente[6];
   WINDOW            winWindow;
   UINT              uiCounter,
                     uiID;
@@ -1016,27 +854,26 @@ void termin_box (void)
                    *pucDeleteHelp        = " Lîscht den angewÑhlten Termin";
 
   ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(14, 5, 52, 15);
-  win_titel(winWindow, " Terminkalender ", TITEL_O_Z);
+  winWindow = win_new(14, 5, 52, 15, NULL, 0);
+  win_title(winWindow, " Terminkalender ", TITLE_T_C);
   ptrmList = termin_list();
   ppcList = list_to_array(ptrmList);
-  apelementElemente[0] = dlg_init_list_box(5, 3, 45, 8, 3, 2, 0, TRUE,
-                                           BOX_CHANGE, "#Termine",
+  dlg_add_list_box(winWindow, 5, 3, 45, 8, 3, 2, 0, TRUE,
+                                           100, "#Termine",
                                            ppcList, pucListHelp);
-  apelementElemente[1] = dlg_init_act_button(3, 13, "OK", T_RETURN, BOX_OK,
-                                             pucOKHelp);
-  apelementElemente[2] = dlg_init_act_button(11, 13, "é#ndern", 0,
-                                             BOX_CHANGE, pucChangeHelp);
-  apelementElemente[3] = dlg_init_act_button(23, 13, "#EinfÅgen", 0, BOX_ADD,
-                                             pucAddHelp);
-  apelementElemente[4] = dlg_init_act_button(37, 13, "#Lîschen", 0,
-                                             BOX_DELETE, pucDeleteHelp);
-  apelementElemente[5] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 12, 50, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
+  win_add_element(winWindow, dlg_init_act_button(3, 13, "OK", K_ENTER,
+                                             pucOKHelp, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(11, 13, "é#ndern", 0,
+                                             pucChangeHelp, BOX_CHANGE, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(23, 13, "#EinfÅgen", 0,
+                                             pucAddHelp, BOX_ADD, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(37, 13, "#Lîschen", 0,
+                                             pucDeleteHelp, BOX_DELETE, TRUE, NULL));
+  win_show(winWindow);
+  win_sw_za(NULL, 1, 12, 50, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
   do
   {
-    switch (dlg_aktivieren(apelementElemente, NULL, FALSE))
+    switch (dlg_aktivieren(winWindow))
     {
       case BOX_OK :
         ucEnde = TRUE;
@@ -1063,20 +900,16 @@ void termin_box (void)
             }
             utl_free(ptrmList);
           }
-          dlg_del_list_box(apelementElemente[0]);
           ptrmList = termin_list();
           ppcList = list_to_array(ptrmList);
-          apelementElemente[0] = dlg_init_list_box(5, 3, 45, 8, 3, 2, 0,
-                                                   TRUE, BOX_CHANGE,
-                                                   "#Termine", ppcList,
-                                                   pucListHelp);
+          dlg_list_box_new_list(win_get_element(winWindow, 100), ppcList);
         }
         break;
       case BOX_CHANGE :
         if (list_length(ptrmList) == 0)
           break;
         uiCounter = 0;
-        uiID = dlg_ask_list_box(apelementElemente[0]);
+        uiID = dlg_ask_list_box(winWindow, 100);
         for (ptrmNext = ptrmList; uiCounter < uiID;
              ptrmNext = ptrmNext->ptrmNext)
           uiCounter++;
@@ -1101,24 +934,20 @@ void termin_box (void)
             }
             utl_free(ptrmList);
           }
-          dlg_del_list_box(apelementElemente[0]);
           ptrmList = termin_list();
           ppcList = list_to_array(ptrmList);
-          apelementElemente[0] = dlg_init_list_box(5, 3, 45, 8, 3, 2, 0,
-                                                   TRUE, BOX_CHANGE,
-                                                   "#Termine", ppcList,
-                                                   pucListHelp);
+          dlg_list_box_new_list(win_get_element(winWindow, 100), ppcList);
         }
         break;
       case BOX_DELETE :
         if (list_length(ptrmList) == 0)
           break;
         uiCounter = 0;
-        uiID = dlg_ask_list_box(apelementElemente[0]);
+        uiID = dlg_ask_list_box(winWindow, 100);
         for (ptrmNext = ptrmList; uiCounter < uiID;
              ptrmNext = ptrmNext->ptrmNext)
           uiCounter++;
-        if (box_info(BOX_INFO, BOX_OK | BOX_ABBRUCH, pucTerminDel, 0) ==
+        if (box_info(BOX_INFO, BOX_OK | BOX_CANCEL, pucTerminDel, 0) ==
               BOX_OK)
         {
           delete_termin(uiUserID, ptrmNext->uiID);
@@ -1135,23 +964,14 @@ void termin_box (void)
             }
             utl_free(ptrmList);
           }
-          dlg_del_list_box(apelementElemente[0]);
           ptrmList = termin_list();
           ppcList = list_to_array(ptrmList);
-          apelementElemente[0] = dlg_init_list_box(5, 3, 45, 8, 3, 2, 0,
-                                                   TRUE, BOX_CHANGE,
-                                                   "#Termine", ppcList,
-                                                   pucListHelp);
+          dlg_list_box_new_list(win_get_element(winWindow, 100), ppcList);
         }
         break;
     }
   } while (!ucEnde);
-  win_entfernen(winWindow);
-  dlg_del_list_box(apelementElemente[0]);
-  dlg_del_act_button(apelementElemente[1]);
-  dlg_del_act_button(apelementElemente[2]);
-  dlg_del_act_button(apelementElemente[3]);
-  dlg_del_act_button(apelementElemente[4]);
+  win_delete(winWindow);
   for (uiCounter = 0; ppcList[uiCounter]; uiCounter++)
     utl_free(ppcList[uiCounter]);
   utl_free(ppcList);
@@ -1170,9 +990,6 @@ void termin_box (void)
 
 UCHAR edit_termin_box (UCHAR ucEdit, MNU_TERMIN *ptrmTermin)
 {
-
-
-  DLG_ELEMENT  *apelementElemente[7];
   WINDOW        winWindow;
   CHAR          acDate[11],
                 acTime[6],
@@ -1200,11 +1017,11 @@ UCHAR edit_termin_box (UCHAR ucEdit, MNU_TERMIN *ptrmTermin)
   }
   else
     strcpy(pcMemo, "");
-  winWindow = win_einrichten(17, 7, 45, 10);
+  winWindow = win_new(17, 7, 45, 10, NULL, 0);
   if (ucEdit)
-    win_titel(winWindow, " Termin Ñndern ", TITEL_O_Z);
+    win_title(winWindow, " Termin Ñndern ", TITLE_T_C);
   else
-    win_titel(winWindow, " Termin eingeben ", TITEL_O_Z);
+    win_title(winWindow, " Termin eingeben ", TITLE_T_C);
   if (ucEdit)
   {
     date_to_string(&(ptrmTermin->dtDate), acDate);
@@ -1217,24 +1034,23 @@ UCHAR edit_termin_box (UCHAR ucEdit, MNU_TERMIN *ptrmTermin)
     strcpy(acTime, "HH:MM");
     strcpy(acDesc, pucLeer);
   }
-  apelementElemente[0] = dlg_init_text_field(3, 2, 10, 10, "#Datum      ",
-                                             acDate, pucDateHelp);
-  apelementElemente[1] = dlg_init_text_field(3, 3, 5, 5, "#Zeit       ",
-                                             acTime, pucTimeHelp);
-  apelementElemente[2] = dlg_init_text_field(3, 5, 26, 50, "#Bezeichnung",
-                                             acDesc, pucDescHelp);
-  apelementElemente[3] = dlg_init_act_button(3, 8, "OK", T_RETURN, BOX_OK,
-                                             pucOKHelp);
-  apelementElemente[4] = dlg_init_act_button(11, 8, "Abbruch", T_ESC,
-                                             BOX_ABBRUCH, pucAbbruchHelp);
-  apelementElemente[5] = dlg_init_act_button(24, 8, "#Memo", 0, BOX_MEMO,
-                                             pucMemoHelp);
-  apelementElemente[6] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 7, 43, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
+  dlg_add_text_field(winWindow, 3, 2, 10, 10, "#Datum      ",
+                                             acDate, pucDateHelp, FALSE);
+  dlg_add_text_field(winWindow, 3, 3, 5, 5, "#Zeit       ",
+                                             acTime, pucTimeHelp, FALSE);
+  dlg_add_text_field(winWindow, 3, 5, 26, 50, "#Bezeichnung",
+                                             acDesc, pucDescHelp, FALSE);
+  win_add_element(winWindow, dlg_init_act_button(3, 8, "OK", K_ENTER,
+                                             pucOKHelp, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(11, 8, "Abbruch", K_ESC,
+                                             pucAbbruchHelp, BOX_CANCEL, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(24, 8, "#Memo", 0,
+                                             pucMemoHelp, BOX_MEMO, TRUE, NULL));
+  win_show(winWindow);
+  win_sw_za(NULL, 1, 7, 43, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
   do
   {
-    switch (dlg_aktivieren(apelementElemente, NULL, FALSE))
+    switch (dlg_aktivieren(winWindow))
     {
       case BOX_OK :
         if (!string_to_date(&(ptrmTermin->dtDate), acDate))
@@ -1256,7 +1072,7 @@ UCHAR edit_termin_box (UCHAR ucEdit, MNU_TERMIN *ptrmTermin)
         ucEnde = TRUE;
         ucReturnVar = TRUE;
         break;
-      case BOX_ABBRUCH :
+      case BOX_CANCEL :
         ucEnde = TRUE;
         break;
       case BOX_MEMO :
@@ -1270,21 +1086,13 @@ UCHAR edit_termin_box (UCHAR ucEdit, MNU_TERMIN *ptrmTermin)
     }
   } while (!ucEnde);
   utl_free(pcMemo);
-  win_entfernen(winWindow);
-  dlg_del_text_field(apelementElemente[0]);
-  dlg_del_text_field(apelementElemente[1]);
-  dlg_del_text_field(apelementElemente[2]);
-  dlg_del_act_button(apelementElemente[3]);
-  dlg_del_act_button(apelementElemente[4]);
-  dlg_del_act_button(apelementElemente[5]);
+  win_delete(winWindow);
   utl_short_cuts(ucShorts);
   return(ucReturnVar);
 }
 
 void remember_box (void)
 {
-
-  DLG_ELEMENT      *apelementElemente[4];
   WINDOW            winWindow;
   UINT              uiCounter,
                     uiID;
@@ -1301,7 +1109,6 @@ void remember_box (void)
                    *pucMemoHelp          = " Zeigt das Memo zum angewÑhlten Termin";
 
   ptrmList = remember_list();
-  strcpy(pcMemo, "");
   if (list_length(ptrmList) == 0)
   {
     box_info(BOX_INFO, BOX_OK, pucNoTermin, 0);
@@ -1309,21 +1116,20 @@ void remember_box (void)
   }
   ppcList = list_to_array(ptrmList);
   ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(14, 5, 52, 15);
-  win_titel(winWindow, " Remember-Liste ", TITEL_O_Z);
-  apelementElemente[0] = dlg_init_list_box(5, 3, 45, 8, 3, 2, 0, TRUE,
-                                           BOX_MEMO, "#Termine",
+  winWindow = win_new(14, 5, 52, 15, NULL, 0);
+  win_title(winWindow, " Remember-Liste ", TITLE_T_C);
+  dlg_add_list_box(winWindow, 5, 3, 45, 8, 3, 2, 0, TRUE,
+                                           100, "#Termine",
                                            ppcList, pucListHelp);
-  apelementElemente[1] = dlg_init_act_button(3, 13, "OK", T_RETURN, BOX_OK,
-                                             pucOKHelp);
-  apelementElemente[2] = dlg_init_act_button(11, 13, "#Memo", 0,
-                                             BOX_MEMO, pucMemoHelp);
-  apelementElemente[3] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 12, 50, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
+  win_add_element(winWindow, dlg_init_act_button(3, 13, "OK", K_ENTER,
+                                             pucOKHelp, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(11, 13, "#Memo", 0,
+                                             pucMemoHelp, BOX_MEMO, TRUE, NULL));
+  win_show(winWindow);
+  win_sw_za(NULL, 1, 12, 50, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
   do
   {
-    switch (dlg_aktivieren(apelementElemente, NULL, FALSE))
+    switch (dlg_aktivieren(winWindow))
     {
       case BOX_OK :
         ucEnde = TRUE;
@@ -1332,7 +1138,7 @@ void remember_box (void)
         if (list_length(ptrmList) == 0)
           break;
         uiCounter = 0;
-        uiID = dlg_ask_list_box(apelementElemente[0]);
+        uiID = dlg_ask_list_box(winWindow, 100);
         for (ptrmNext = ptrmList; uiCounter < uiID;
              ptrmNext = ptrmNext->ptrmNext)
           uiCounter++;
@@ -1347,10 +1153,7 @@ void remember_box (void)
         break;
     }
   } while (!ucEnde);
-  win_entfernen(winWindow);
-  dlg_del_list_box(apelementElemente[0]);
-  dlg_del_act_button(apelementElemente[1]);
-  dlg_del_act_button(apelementElemente[2]);
+  win_delete(winWindow);
   for (uiCounter = 0; ppcList[uiCounter]; uiCounter++)
     utl_free(ppcList[uiCounter]);
   utl_free(ppcList);
@@ -1369,8 +1172,6 @@ void remember_box (void)
 
 UCHAR memo_box (CHAR *pcBuffer, UCHAR ucEdit)
 {
-
-  DLG_ELEMENT  *apelementElemente[4];
   WINDOW        winWindow;
   UCHAR         ucShorts,
                 ucReturnVar          = TRUE,
@@ -1379,40 +1180,31 @@ UCHAR memo_box (CHAR *pcBuffer, UCHAR ucEdit)
                *pucAbbruchHelp       = " Bricht die Aktion ab";
 
   ucShorts = utl_short_cuts(FALSE);
-  winWindow = win_einrichten(12, 3, 56, 19);
+  winWindow = win_new(12, 3, 56, 19, NULL, 0);
   if (ucEdit)
-    win_titel(winWindow, " Memo editieren ", TITEL_O_Z);
+    win_title(winWindow, " Memo editieren ", TITLE_T_C);
   else
-    win_titel(winWindow, " Memo ansehen ", TITEL_O_Z);
-  apelementElemente[0] = dlg_init_editor(3, 2, 50, 13, 32000, pcBuffer,
-                                         ucEdit, pucEditHelp);
-  apelementElemente[1] = dlg_init_act_button(3, 17, "OK", T_RETURN, BOX_OK,
-                                             pucOKHelp);
+    win_title(winWindow, " Memo ansehen ", TITLE_T_C);
+  win_add_element(winWindow, dlg_init_editor(3, 2, 50, 13, 32000, pcBuffer,
+                                         ucEdit, TRUE, pucEditHelp, 0, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(3, 17, "OK", K_ENTER,
+                                             pucOKHelp, BOX_OK, TRUE, NULL));
   if (ucEdit)
   {
-    apelementElemente[2] = dlg_init_act_button(11, 17, "Abbruch", T_ESC,
-                                               BOX_ABBRUCH, pucAbbruchHelp);
-    apelementElemente[3] = NULL;
+    win_add_element(winWindow, dlg_init_act_button(11, 17, "Abbruch", K_ESC,
+                                               pucAbbruchHelp, BOX_CANCEL, TRUE, NULL));
   }
-  else
-    apelementElemente[2] = NULL;
-  win_aktivieren(winWindow);
-  win_sw_za(NULL, 1, 16, 54, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
-  if (dlg_aktivieren(apelementElemente, NULL, FALSE) == BOX_ABBRUCH)
+  win_show(winWindow);
+  win_sw_za(NULL, 1, 16, 54, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
+  if (dlg_aktivieren(winWindow) == BOX_CANCEL)
     ucReturnVar = FALSE;
-  dlg_ask_editor(apelementElemente[0]);
-  win_entfernen(winWindow);
-  dlg_del_editor(apelementElemente[0]);
-  dlg_del_act_button(apelementElemente[1]);
-  if (ucEdit)
-    dlg_del_act_button(apelementElemente[2]);
+  win_delete(winWindow);
   utl_short_cuts(ucShorts);
   return(ucReturnVar);
 }
 
 void termin_option_box (void)
 {
-
   DLG_BUTTON   abutButtons[]        =
 				      {
 					{
@@ -1433,38 +1225,34 @@ void termin_option_box (void)
                                           0,
                                           "#bei jedem Start"
                                         },
-					DLG_RADIO_ENDE
+					DLG_RADIO_END
 				      };
-  DLG_ELEMENT *apelementElemente[5];
   WINDOW       winWindow;
   UCHAR       *pucListHelp          = " Wie oft soll die Remember-Liste erscheinen?",
 	      *pucRememberHelp      = " Wollen Sie zur rechten Zeit an Ihre Termine erinnert werden?",
 	      *pucOK                = " öbernimmt die eingestellten Werte",
 	      *pucAbbruch           = " BelÑ·t die alten Werte";
 
-  winWindow = win_einrichten(25, 6, 30, 12);
-  win_titel(winWindow, " Sonstige Einstellungen ", TITEL_O_Z);
-  apelementElemente[0] = dlg_init_radio_button(abutButtons, ucRememberList,
-                                               pucListHelp);
-  apelementElemente[1] = dlg_init_push_button(3, 7, "#an Termine erinnern",
+  winWindow = win_new(25, 6, 30, 12, NULL, 0);
+  win_title(winWindow, " Sonstige Einstellungen ", TITLE_T_C);
+  win_add_element(winWindow, dlg_init_radio_button(abutButtons, ucRememberList,
+                                               pucListHelp, 100, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_push_button(3, 7, "#an Termine erinnern",
                                               ucTerminWarning,
-                                              pucRememberHelp);
-  apelementElemente[2] = dlg_init_act_button(3, 10, "OK", T_RETURN, BOX_OK,
-					     pucOK);
-  apelementElemente[3] = dlg_init_act_button(11, 10, "Abbruch", T_ESC,
-					     BOX_ABBRUCH, pucAbbruch);
-  apelementElemente[4] = NULL;
-  win_aktivieren(winWindow);
+                                              pucRememberHelp, 101, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(3, 10, "OK", K_ENTER,
+					     pucOK, BOX_OK, TRUE, NULL));
+  win_add_element(winWindow, dlg_init_act_button(11, 10, "Abbruch", K_ESC,
+					     pucAbbruch, BOX_CANCEL, TRUE, NULL));
+  win_show(winWindow);
   win_ss(NULL, 3, 2, "Remember-Liste");
-  win_sw_za(NULL, 1, 9, 28, 1, 'ƒ', AKT_PALETTE.ucDlgBorder);
-  if (dlg_aktivieren(apelementElemente, NULL, FALSE) == BOX_OK)
+  win_sw_za(NULL, 1, 9, 28, 1, 'ƒ', win_get_color(NULL, PAL_COL_BORDER));
+  if (dlg_aktivieren(winWindow) == BOX_OK)
   {
-    ucRememberList = dlg_ask_radio_button(apelementElemente[0]);
-    ucTerminWarning = dlg_ask_push_button(apelementElemente[1]);
+      INT iResult;
+      dlg_radio_button_query_values(win_get_element(winWindow, 100), &iResult);
+      ucRememberList = iResult;
+      ucTerminWarning = dlg_ask_push_button(winWindow, 101);
   }
-  win_entfernen(winWindow);
-  dlg_del_radio_button(apelementElemente[0]);
-  dlg_del_push_button(apelementElemente[1]);
-  dlg_del_act_button(apelementElemente[2]);
-  dlg_del_act_button(apelementElemente[3]);
+  win_delete(winWindow);
 }
